@@ -46,13 +46,16 @@ public class ComputerDAO {
 						.introduced(ComputerDAO.timestampToLocalDate(resSet.getTimestamp("introduced")))
 						.discontinued(ComputerDAO.timestampToLocalDate(resSet.getTimestamp("discontinued")))
 						.companyId(resSet.getInt("company_id")).build();
-				//System.out.println(pc);
 				res.add(pc);
 			}
 		}
 		return res;
 	}
 	
+	/**
+	 * Create an ArrayList of Computers corresponding to all the registered Computer in the DB
+	 * @return ArrayList with all the computers in computer-database
+	 */
 	public static ArrayList<Computer> getAllComputers() {
 		ArrayList<Computer> res = new ArrayList<Computer>();
 		try(MysqlConnection db = MysqlConnection.getDbConnection();
@@ -63,6 +66,20 @@ public class ComputerDAO {
 			e.printStackTrace();
 		}
 		return res;
+	}
+	
+	public static Optional<Computer> getOneComputers(int id) {
+		ArrayList<Computer> temp = new ArrayList<Computer>();
+		try(MysqlConnection db = MysqlConnection.getDbConnection();
+			PreparedStatement stmt = db.getConnect().prepareStatement(ComputerDAO.getComputerDetailsQuery);){
+			stmt.setInt(1, id);
+			ResultSet res1 = stmt.executeQuery();
+			temp = ComputerDAO.storeComputersFromRequest(res1);
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+		if(temp.isEmpty()) { return Optional.empty();}
+		else {return Optional.of(temp.get(0));}
 	}
 
 }

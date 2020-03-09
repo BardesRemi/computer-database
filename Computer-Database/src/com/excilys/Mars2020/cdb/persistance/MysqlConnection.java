@@ -45,7 +45,6 @@ public class MysqlConnection implements AutoCloseable{
 		if(connect != null) {
 			connect.close();
 			connect = null;
-			System.out.println("Connection close !");
 		}
 	}
 	
