@@ -27,11 +27,12 @@ public class MainClass {
 		if(pcFromQuery.isEmpty()) { System.out.format("aucun PC correspondant à %d trouvé", idSearched);}
 		else {System.out.println(pcFromQuery.get());}
 		System.out.println("*-----------------------------------------------*");
-		/*
+		
 		String name = "TestingCreate";
 		Computer pcTesting = new Computer.Builder(name).build();
 		int idCreated = ComputerDAO.getComputerDAO().addNewComputer(pcTesting);
-		System.out.format("Un PC nommé : " + name + " à été ajouté a la DB avec l'id : " + idCreated);
+		System.out.println(pcTesting);
+		System.out.format("Un PC nommé : " + name + " à été ajouté a la DB avec l'id : " + idCreated + "\n");
 		System.out.println(pcTesting);
 		Optional<Computer> pcFromQueryTest1 = ComputerDAO.getComputerDAO().getOneComputers(idCreated);
 		if(pcFromQueryTest1.isEmpty()) { System.out.format("aucun PC correspondant à %d trouvé", idCreated);}
@@ -52,7 +53,7 @@ public class MainClass {
 		if(pcFromQueryTest3.isEmpty()) { System.out.format("aucun PC correspondant à %d trouvé", idCreated);}
 		else {System.out.println(pcFromQueryTest3.get());}
 		System.out.println("*-----------------------------------------------*");
-		*/
+		
 	}
 	
 }

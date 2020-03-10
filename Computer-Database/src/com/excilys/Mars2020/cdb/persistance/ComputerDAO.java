@@ -55,16 +55,14 @@ public class ComputerDAO {
 	 */
 	private ArrayList<Computer> storeComputersFromRequest(ResultSet resSet) throws SQLException{
 		ArrayList<Computer> res = new ArrayList<Computer>();
-		if(resSet != null) {
-			while(resSet.next()) {
-				Computer pc = new Computer.Builder(resSet.getString("pc.name"))
-						.id(resSet.getInt("pc.id"))
-						.introduced(pcdao.timestampToLocalDate(resSet.getTimestamp("pc.introduced")))
-						.discontinued(pcdao.timestampToLocalDate(resSet.getTimestamp("pc.discontinued")))
-						.company(new Company(resSet.getString("comp.name"), resSet.getInt("pc.company_id"))).build();
-				res.add(pc);
+		while(resSet.next()) {
+			Computer pc = new Computer.Builder(resSet.getString("pc.name"))
+					.id(resSet.getInt("pc.id"))
+					.introduced(pcdao.timestampToLocalDate(resSet.getTimestamp("pc.introduced")))
+					.discontinued(pcdao.timestampToLocalDate(resSet.getTimestamp("pc.discontinued")))
+					.company(new Company(resSet.getString("comp.name"), resSet.getInt("pc.company_id"))).build();
+			res.add(pc);
 			}
-		}
 		return res;
 	}
 	
@@ -75,11 +73,10 @@ public class ComputerDAO {
 	 * @throws SQLException
 	 */
 	private Optional<Computer> storeOneOrNoneComputerFromReq(ResultSet resSet) throws SQLException{
-		if(resSet == null) {
+		if(!resSet.next()) {
 			return Optional.empty();
 		}
 		else {
-			resSet.next();
 			Computer pc = new Computer.Builder(resSet.getString("name"))
 					.id(resSet.getInt("id"))
 					.introduced(pcdao.timestampToLocalDate(resSet.getTimestamp("introduced")))
@@ -127,15 +124,17 @@ public class ComputerDAO {
 	 * @param pc
 	 * @return the id associated to the new PC
 	 */
-	/*public int addNewComputer(Computer pc) {
+	public int addNewComputer(Computer pc) {
 		try(MysqlConnection db = MysqlConnection.getDbConnection();
-			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.addNewComputerDB);){
+			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.addNewComputerDB, PreparedStatement.RETURN_GENERATED_KEYS);){
 			stmt.setString(1, pc.getName());
 			LocalDate intro = pc.getIntroduce();
 			stmt.setTimestamp(2, (intro == null ? null : Timestamp.valueOf(intro.atStartOfDay())));
 			LocalDate discont = pc.getDiscontinued();
 			stmt.setTimestamp(3, (discont == null ? null : Timestamp.valueOf(discont.atStartOfDay())));
-			stmt.setInt(4, pc.getcompany().getId());
+			Company comp = pc.getcompany();
+			if(comp == null) { stmt.setNull(4, java.sql.Types.INTEGER); }
+			else { stmt.setInt(4, comp.getId());}
 			stmt.executeUpdate();
 			ResultSet resSet = stmt.getGeneratedKeys();
 			if(resSet.next()) {return resSet.getInt(1);}
@@ -143,7 +142,7 @@ public class ComputerDAO {
 			e.printStackTrace();
 		}
 		return 0;
-	}*/
+	}
 	
 	/**
 	 * update a PC with id=id in the db
@@ -151,7 +150,7 @@ public class ComputerDAO {
 	 * @param pc
 	 * @return 1 if the update were done correctly, 0 otherwise
 	 */
-	/*public int updateComputer(int id, Computer pc) {
+	public int updateComputer(int id, Computer pc) {
 		try(MysqlConnection db = MysqlConnection.getDbConnection();
 				PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.updateComputerDB);){
 				stmt.setInt(5, id);
@@ -160,20 +159,22 @@ public class ComputerDAO {
 				stmt.setTimestamp(2, (intro == null ? null : Timestamp.valueOf(intro.atStartOfDay())));
 				LocalDate discont = pc.getDiscontinued();
 				stmt.setTimestamp(3, (discont == null ? null : Timestamp.valueOf(discont.atStartOfDay())));
-				stmt.setInt(4, pc.getcompany().getId());
+				Company comp = pc.getcompany();
+				if(comp == null) { stmt.setNull(4, java.sql.Types.INTEGER); }
+				else { stmt.setInt(4, comp.getId());}
 				return stmt.executeUpdate();
 			} catch (SQLException e ) {
 				e.printStackTrace();
 			}
 			return 0;
-	}*/
+	}
 	
 	/**
 	 * delete a specified computer in the db
 	 * @param id
 	 * @return number of row deleted (should be 1 or 0)
 	 */
-	/*public int deleteComputer (int id) {
+	public int deleteComputer (int id) {
 		try(MysqlConnection db = MysqlConnection.getDbConnection();
 			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.deleteComputerDB);){
 			stmt.setInt(1, id);
@@ -182,6 +183,6 @@ public class ComputerDAO {
 			e.printStackTrace();
 		}
 		return 0;
-	}*/
+	}
 
 }
