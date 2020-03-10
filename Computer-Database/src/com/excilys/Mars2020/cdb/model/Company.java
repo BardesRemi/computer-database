@@ -10,14 +10,6 @@ public class Company {
 	private int id;
 	private String name;
 	
-	/**
-	 * Default & Only constructor for Company
-	 * @param name
-	 */
-	public Company(String name) {
-		this.name = name;
-	}
-	
 	public Company(String name, int id) {
 		this.name = name;
 		this.id = id;

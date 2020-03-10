@@ -51,7 +51,7 @@ public class Computer {
 		this.id = id;
 	}
 
-	public LocalDate getIntroduce() {
+	public LocalDate getIntroduced() {
 		return introduced;
 	}
 

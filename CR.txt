@@ -28,5 +28,6 @@ Pour le DAO :
 
 Pour le service :
 	-> sert de "pont" entre l'ui et le DAO.
+	-> c'est ici que je vais faire les tests de conformité des demandes utilisateurs.
 
 Pour l'Ui, juste lancer un main qui testera les chose pour le moment
