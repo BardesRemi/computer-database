@@ -15,7 +15,7 @@ public class Computer {
 	private int id;
 	private LocalDate introduced;
 	private LocalDate discontinued;
-	private int companyId;
+	private Company company;
 	
 	/**
 	 * Constructor using BUILDER design pattern
@@ -26,13 +26,13 @@ public class Computer {
 		this.id = builder.id;
 		this.introduced = builder.introduced;
 		this.discontinued = builder.discontinued;
-		this.companyId = builder.companyId;
+		this.company = builder.company;
 	}
 
 	@Override
 	public String toString() {
-		return "Computer [name=" + name + ", id=" + id + ", introduce=" + introduced + ", discontinued=" + discontinued
-				+ ", company_id=" + companyId + "]";
+		return "Computer [name=" + name + ", id=" + id + ", introduced=" + introduced + ", discontinued=" + discontinued
+				+ ", company=" + company + "]";
 	}
 
 	public String getName() {
@@ -55,8 +55,8 @@ public class Computer {
 		return introduced;
 	}
 
-	public void setIntroduce(LocalDate introduce) {
-		this.introduced = introduce;
+	public void setIntroduced(LocalDate introduced) {
+		this.introduced = introduced;
 	}
 
 	public LocalDate getDiscontinued() {
@@ -67,12 +67,12 @@ public class Computer {
 		this.discontinued = discontinued;
 	}
 
-	public int getCompany_id() {
-		return companyId;
+	public Company getcompany() {
+		return company;
 	}
 
-	public void setCompany_id(int company_id) {
-		this.companyId = company_id;
+	public void setcompany(Company company) {
+		this.company = company;
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class Computer {
 		private int id;
 		private LocalDate introduced;
 		private LocalDate discontinued;
-		private int companyId;
+		private Company company;
 		
 		public Builder(String name) {
 			this.name = name;
@@ -108,8 +108,8 @@ public class Computer {
 			return this;
 		}
 		
-		public Builder companyId(int id) {
-			this.companyId = id;
+		public Builder company(Company company) {
+			this.company = company;
 			return this;
 		}
 		

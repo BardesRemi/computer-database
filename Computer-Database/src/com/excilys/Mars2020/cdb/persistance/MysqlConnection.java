@@ -8,7 +8,7 @@ import java.sql.DriverManager;
  *
  */
 public class MysqlConnection implements AutoCloseable{
-	private Connection connect;
+	private static Connection connect;
 	private static MysqlConnection db;
 	private String url= "jdbc:mysql://localhost/";
 	private String dbName = "computer-database-db";
@@ -19,32 +19,33 @@ public class MysqlConnection implements AutoCloseable{
 	private MysqlConnection() {
 		try {
 			Class.forName(driver);
-			this.connect = DriverManager.getConnection(url+dbName, userName, password);
+			connect = DriverManager.getConnection(url+dbName, userName, password);
 		}
 		catch (Exception sqle) {
 			sqle.printStackTrace();
 		}
 	}
 	
-	public static synchronized MysqlConnection getDbConnection() {
-		if(db==null) {
+	public static synchronized MysqlConnection getDbConnection() throws SQLException {
+		if(db==null || connect.isClosed()) {
 			db = new MysqlConnection();
 		}
 		return db;
 	}
 	
 	public Connection getConnect () {
-		return this.connect;
+		return connect;
 	}
 	
 	/**
 	 * Close the session explicitly
 	 * @throws SQLException
 	 */
-	public void close() throws SQLException {
+	public synchronized void close() throws SQLException {
 		if(connect != null) {
 			connect.close();
 			connect = null;
+			db = null;
 		}
 	}
 	

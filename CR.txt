@@ -23,13 +23,10 @@ Pour le package model :
 	-> Class Company
 
 Pour le DAO :
-	-> Connection en Singleton
-	-> créer une classe pour company et une pour computer où se trouveront les requettes en prepared statement
+	-> Connection en Singleton (/!\ multi thread /!\)
+	-> créer une classe pour company et une pour computer où se trouveront les requettes en prepared statement (En singleton aussi)
 
 Pour le service :
-	-> rien de particulier, on pourrait totalement 
+	-> sert de "pont" entre l'ui et le DAO.
 
 Pour l'Ui, juste lancer un main qui testera les chose pour le moment
-
-
-

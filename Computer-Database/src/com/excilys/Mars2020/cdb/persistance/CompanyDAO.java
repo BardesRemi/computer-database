@@ -13,9 +13,17 @@ import com.excilys.Mars2020.cdb.model.Company;
  */
 public class CompanyDAO {
 
-	private static final String getAllCompaniesQuery = "SELECT * from company";
+	private static CompanyDAO compdao;
+	private final String getAllCompaniesQuery = "SELECT id, name from company";
 	
 	private CompanyDAO() {} //private constructor, forcing all methods to be static
+	
+	public static synchronized CompanyDAO getCompanyDAO() {
+		if(compdao == null) {
+			compdao = new CompanyDAO();
+		}
+		return compdao;
+	}
 	
 	/**
 	 * Create an ArrayList of companies corresponding to the ResultSet argument
@@ -23,7 +31,7 @@ public class CompanyDAO {
 	 * @return ArrayList with all the companies
 	 * @throws SQLException
 	 */
-	private static ArrayList<Company> storeCompaniesFromRequest(ResultSet resSet) throws SQLException{
+	private ArrayList<Company> storeCompaniesFromRequest(ResultSet resSet) throws SQLException{
 		ArrayList<Company> res = new ArrayList<Company>();
 		if(resSet != null) {
 			while(resSet.next()) {
@@ -37,13 +45,13 @@ public class CompanyDAO {
 	 * fetch all Companies from db and return them as an ArrayList
 	 * @return ArrayList with all the companies
 	 */
-	public static ArrayList<Company> getAllCompanies() {
+	public ArrayList<Company> getAllCompanies() {
 		
 		ArrayList<Company> res = new ArrayList<Company>();
 		try(MysqlConnection db = MysqlConnection.getDbConnection();
-			PreparedStatement stmt = db.getConnect().prepareStatement(CompanyDAO.getAllCompaniesQuery);){
+			PreparedStatement stmt = db.getConnect().prepareStatement(compdao.getAllCompaniesQuery);){
 			ResultSet res1 = stmt.executeQuery();
-			res = CompanyDAO.storeCompaniesFromRequest(res1);
+			res = compdao.storeCompaniesFromRequest(res1);
 		}
 		catch(SQLException e){
 			e.printStackTrace();
