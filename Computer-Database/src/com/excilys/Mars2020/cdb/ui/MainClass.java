@@ -28,24 +28,10 @@ public class MainClass {
 		String compId = "";
 		CLI.displayInsertComputer(pcServ.addNewComputer(name, introducedD, discontinuedD, compName, compId));
 		System.out.println("*-----------------------------------------------*");
-		CLI.displayUpdateComputer(pcServ.updateComputer(name, "581", introducedD, discontinuedD, compName, compId));
-		/*
-		pcTesting.setcompany(new Company("RCA", 3));
-		pcTesting.setId(idCreated);
-		int updateRes = ComputerDAO.getComputerDAO().updateComputer(pcTesting);
-		System.out.println("Mise a jour du PC : " + pcTesting + " dans la bd avec le résultat : " + updateRes);
-		Optional<Computer> pcFromQueryTest2 = ComputerDAO.getComputerDAO().getOneComputers(idCreated);
-		if(pcFromQueryTest2.isEmpty()) { System.out.format("aucun PC correspondant à %d trouvé", idCreated);}
-		else {System.out.println(pcFromQueryTest2.get());}
+		CLI.displayUpdateComputer(pcServ.updateComputer(name, "588", introducedD, discontinuedD, compName, compId));
 		System.out.println("*-----------------------------------------------*");
-		
-		int deleteRes = ComputerDAO.getComputerDAO().deleteComputer(idCreated);
-		System.out.println("Suppression du PC : " + pcTesting + " dans la bd avec le resultat : " + deleteRes);
-		Optional<Computer> pcFromQueryTest3 = ComputerDAO.getComputerDAO().getOneComputers(idCreated);
-		if(pcFromQueryTest3.isEmpty()) { System.out.format("aucun PC correspondant à %d trouvé", idCreated);}
-		else {System.out.println(pcFromQueryTest3.get());}
+		CLI.displayDeleteComputer(pcServ.deleteComputer("588"));
 		System.out.println("*-----------------------------------------------*");
-		*/
 	}
 	
 }

@@ -59,6 +59,11 @@ public class CLI {
 		}
 	}
 	
+	/**
+	 * Display the result of an update of a specified PC
+	 * and eventually why the update wasn't made.
+	 * @param result
+	 */
 	public static void displayUpdateComputer(int result) {
 		switch(result) {
 		case 0:
@@ -84,6 +89,25 @@ public class CLI {
 			break;
 		default:
 			System.out.println("Mise a jour réussie avec succé !");
+			break;
+			
+		}
+	}
+	
+	/**
+	 * Display the result of a delete
+	 * @param result
+	 */
+	public static void displayDeleteComputer(int result) {
+		switch(result) {
+		case 0:
+			System.out.println("No PC corresponding to the specified ID, no row deleted");
+			break;
+		case -1:
+			System.out.println("Given Computer Id shouldn't be empty !");
+			break;
+		default:
+			System.out.println("Delete done correctly");
 			break;
 			
 		}

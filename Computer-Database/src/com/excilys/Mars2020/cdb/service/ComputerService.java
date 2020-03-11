@@ -111,9 +111,17 @@ public class ComputerService {
 			Computer pc = new Computer.Builder(name).id(idInt).introduced(intro).discontinued(discont).company(tempComp).build();
 			return pcdao.updateComputer(pc);
 		}
-		
-		
 	}
 	
+	/**
+	 * Delete a row in computer where id=id
+	 * @param id
+	 * @return 0< if something went wrong, 0 if nothing deleted, 1 if row correctly deleted
+	 */
+	public int deleteComputer(String id) {
+		if(id.isEmpty()) { return -1;}
+		int idInt = Integer.valueOf(id);
+		return pcdao.deleteComputer(idInt);
+	}
 	
 }
