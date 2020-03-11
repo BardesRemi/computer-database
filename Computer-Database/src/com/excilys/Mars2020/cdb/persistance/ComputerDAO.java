@@ -10,6 +10,7 @@ import java.util.Optional;
 import com.excilys.Mars2020.cdb.mapper.DateAPI;
 import com.excilys.Mars2020.cdb.model.Company;
 import com.excilys.Mars2020.cdb.model.Computer;
+import com.excilys.Mars2020.cdb.model.PaginationComputer;
 
 /**
  * Class gathering computers interaction methods from database
@@ -31,6 +32,13 @@ public class ComputerDAO {
 	private final String addNewComputerDB = "INSERT INTO computer (name,introduced,discontinued,company_id) VALUES ( ?, ?, ?, ?)";
 	private final String updateComputerDB = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
 	private final String deleteComputerDB = "DELETE FROM computer WHERE id = ?";
+	private final String countAllComputerQuery = "SELECT COUNT(id) AS rowcount FROM computer";
+	private final String getPageComputersQuery = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
+			  + "FROM computer AS pc "
+			  + "LEFT JOIN company AS comp ON "
+			  + "comp.id = pc.company_id "
+			  + "ORDER BY pc.id "
+			  + "LIMIT ?, ?";
 	
 	private ComputerDAO() {} //private constructor, singleton
 	
@@ -176,6 +184,39 @@ public class ComputerDAO {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+	/**
+	 * Get the number of different PC in computer
+	 * @return the number of PC
+	 */
+	public int countAllComputer() {
+		try(MysqlConnection db = MysqlConnection.getDbConnection();
+			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.countAllComputerQuery);){
+			ResultSet res1 = stmt.executeQuery();
+			if(res1.next()) {return res1.getInt("rowcount");}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	/**
+	 * Create an ArrayList of Computers corresponding to the registered Computer in the DB in the page range
+	 * @return ArrayList with the computers in computer-database
+	 */
+	public ArrayList<Computer> getPageComputersRequest(PaginationComputer page) {
+		ArrayList<Computer> res = new ArrayList<Computer>();
+		try(MysqlConnection db = MysqlConnection.getDbConnection();
+			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.getPageComputersQuery);){
+			stmt.setInt(1, page.getActualPageNb()*page.getPageSize());
+			stmt.setInt(2, page.getPageSize());
+			ResultSet res1 = stmt.executeQuery();
+			res = pcdao.storeComputersFromRequest(res1);
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+		return res;
 	}
 
 }

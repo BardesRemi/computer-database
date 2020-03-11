@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.excilys.Mars2020.cdb.mapper.DateAPI;
 import com.excilys.Mars2020.cdb.model.Company;
 import com.excilys.Mars2020.cdb.model.Computer;
+import com.excilys.Mars2020.cdb.model.PaginationComputer;
 import com.excilys.Mars2020.cdb.persistance.CompanyDAO;
 import com.excilys.Mars2020.cdb.persistance.ComputerDAO;
 
@@ -30,6 +31,15 @@ public class ComputerService {
 	 */
 	public ArrayList<Computer> getAllComputers() {
 		return pcdao.getAllComputersRequest();
+	}
+	
+	/**
+	 * 
+	 * @param page
+	 * @return Computers in the page
+	 */
+	public ArrayList<Computer> getPageComputers(PaginationComputer page){
+		return pcdao.getPageComputersRequest(page);
 	}
 	
 	/**

@@ -24,7 +24,7 @@ public class CLI {
 	 * @param <T> the type of the data being displayed (need to have .toString() method)
 	 * @param array
 	 */
-	public <T> void displayAll(ArrayList<T> array) {
+	public static <T> void displayAll(ArrayList<T> array) {
 		for(T o : array) {
 			System.out.println(o.toString());
 		}

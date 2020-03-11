@@ -3,6 +3,8 @@ package com.excilys.Mars2020.cdb.ui;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import com.excilys.Mars2020.cdb.model.PaginationCompany;
+import com.excilys.Mars2020.cdb.model.PaginationComputer;
 import com.excilys.Mars2020.cdb.service.CompanyService;
 import com.excilys.Mars2020.cdb.service.ComputerService;
 
@@ -68,10 +70,10 @@ public class ControlerUi {
 	private void actionSelecter(int action) {
 		switch(action) {
 		case 1:
-			this.displayAllCompany();
+			this.displayCompanies();
 			break;
 		case 2:
-			this.displayAllComputer();
+			this.displayComputers();
 			break;
 		case 3:
 			this.searchAndDisplayOneComputer();
@@ -92,15 +94,54 @@ public class ControlerUi {
 	/**
 	 * Display all the company in the DB
 	 */
-	private void displayAllCompany() {
-		this.view.displayAll(this.compServ.getAllCompanies());
+	private void displayCompanies() {
+		boolean end = false;
+		PaginationCompany currPage = new PaginationCompany();
+		while(!end) {
+			CLI.displayAll(this.compServ.getPageCompanies(currPage));
+			System.out.println("*------------------------------------------------------------------*");
+			System.out.format("page %d / %d | next page : u | prev page : d | quit : q \n", currPage.getActualPageNb(), currPage.getMaxPages());
+			String line = this.scanner.nextLine();
+			switch(line) {
+			case "u" :
+				currPage.nextPage();
+				break;
+			case "d" :
+				currPage.PrevPage();
+				break;
+			case "q" :
+				end = true;
+				break;
+			default :
+				System.out.println("Wrong entry, please use a proposed answer");
+			}
+		}
 	}
 	
 	/**
 	 * Display all the computer in the DB
 	 */
-	private void displayAllComputer() {
-		this.view.displayAll(this.pcServ.getAllComputers());
+	private void displayComputers() {
+		boolean end = false;
+		PaginationComputer currPage = new PaginationComputer();
+		while(!end) {
+			CLI.displayAll(this.pcServ.getPageComputers(currPage));
+			System.out.println("*------------------------------------------------------------------*");
+			System.out.format("page %d / %d | next page : u | prev page : d | quit : q \n", currPage.getActualPageNb(), currPage.getMaxPages());
+			String line = this.scanner.nextLine();
+			switch(line) {
+			case "u" :
+				currPage.nextPage();
+				break;
+			case "d" :
+				currPage.PrevPage();
+				break;
+			case "q" :
+				end = true;
+			default :
+				System.out.println("Wrong entry, please use a proposed answer");
+			}
+		}
 	}
 	
 	/**
@@ -108,7 +149,7 @@ public class ControlerUi {
 	 */
 	private void searchAndDisplayOneComputer() throws InputMismatchException{
 		System.out.println("You want to search a specific computer, please enter a non decimal number as identifier for it : ");
-		int id = this.scanner.nextInt();
+		int id = Integer.valueOf(this.scanner.nextLine());
 		this.view.displayComputerOption(this.pcServ.getOneComputer(id), id);
 	}
 	
@@ -139,7 +180,7 @@ public class ControlerUi {
 	 */
 	private void uiDeleteComputer() throws InputMismatchException{
 		System.out.println("You want to delete a specific computer, please enter a non decimal number as identifier for it : ");
-		int id = scanner.nextInt();
+		int id = Integer.valueOf(scanner.nextLine());
 		this.view.displayDeleteComputer(this.pcServ.deleteComputer(id));
 	}
 	

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import com.excilys.Mars2020.cdb.model.Company;
+import com.excilys.Mars2020.cdb.model.Computer;
+import com.excilys.Mars2020.cdb.model.PaginationCompany;
+import com.excilys.Mars2020.cdb.model.PaginationComputer;
 
 /**
  * Class gathering companies query methods from database
@@ -17,6 +20,8 @@ public class CompanyDAO {
 	
 	private final String getAllCompaniesQuery = "SELECT id, name FROM company";
 	private final String getOneCompaniesQuery = "SELECT id, name FROM company WHERE id = ?";
+	private final String countAllCompaniesQuery = "SELECT COUNT(id) AS rowcount FROM company";
+	private final String getPageCompaniesQuery = "SELECT id, name FROM company ORDER BY id LIMIT ?, ?";
 	
 	private CompanyDAO() {} //private constructor, forcing all methods to be static
 	
@@ -79,8 +84,6 @@ public class CompanyDAO {
 	 * @param id
 	 * @return Optional with the company, empty if doesn't exist
 	 */
-	
-	
 	public Optional<Company> getOneCompanyRequest(int id){
 		try(MysqlConnection db = MysqlConnection.getDbConnection();
 			PreparedStatement stmt = db.getConnect().prepareStatement(compdao.getOneCompaniesQuery);){
@@ -92,5 +95,38 @@ public class CompanyDAO {
 			e.printStackTrace();
 		}
 		return Optional.empty();
+	}
+	
+	/**
+	 * Get the number of different Companies in company
+	 * @return the number of companies
+	 */
+	public int countAllCompanies() {
+		try(MysqlConnection db = MysqlConnection.getDbConnection();
+			PreparedStatement stmt = db.getConnect().prepareStatement(compdao.countAllCompaniesQuery);){
+			ResultSet res1 = stmt.executeQuery();
+			if(res1.next()) {return res1.getInt("rowcount");}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	/**
+	 * Create an ArrayList of Companies corresponding to the registered Companies in the DB in the page range
+	 * @return ArrayList with the Companies in computer-database
+	 */
+	public ArrayList<Company> getPageCompaniesRequest(PaginationCompany page) {
+		ArrayList<Company> res = new ArrayList<Company>();
+		try(MysqlConnection db = MysqlConnection.getDbConnection();
+			PreparedStatement stmt = db.getConnect().prepareStatement(compdao.getPageCompaniesQuery);){
+			stmt.setInt(1, page.getActualPageNb()*page.getPageSize());
+			stmt.setInt(2, page.getPageSize());
+			ResultSet res1 = stmt.executeQuery();
+			res = compdao.storeCompaniesFromRequest(res1);
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+		return res;
 	}
 }
