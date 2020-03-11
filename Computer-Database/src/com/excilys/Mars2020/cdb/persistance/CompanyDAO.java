@@ -79,6 +79,8 @@ public class CompanyDAO {
 	 * @param id
 	 * @return Optional with the company, empty if doesn't exist
 	 */
+	
+	
 	public Optional<Company> getOneCompanyRequest(int id){
 		try(MysqlConnection db = MysqlConnection.getDbConnection();
 			PreparedStatement stmt = db.getConnect().prepareStatement(compdao.getOneCompaniesQuery);){

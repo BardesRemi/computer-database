@@ -1,10 +1,14 @@
 package com.excilys.Mars2020.cdb.ui;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Optional;
+import java.util.Scanner;
 
 import com.excilys.Mars2020.cdb.model.Company;
 import com.excilys.Mars2020.cdb.model.Computer;
+import com.excilys.Mars2020.cdb.service.CompanyService;
+import com.excilys.Mars2020.cdb.service.ComputerService;
 
 /**
  * Class managing all the displays and user interactions
@@ -13,12 +17,14 @@ import com.excilys.Mars2020.cdb.model.Computer;
  */
 public class CLI {
 	
+	public CLI () {}
+	
 	/**
-	 * Generic version of DisplayAll
+	 * Generic version of DisplayArrayList
 	 * @param <T> the type of the data being displayed (need to have .toString() method)
 	 * @param array
 	 */
-	public static <T> void displayAll(ArrayList<T> array) {
+	public <T> void displayAll(ArrayList<T> array) {
 		for(T o : array) {
 			System.out.println(o.toString());
 		}
@@ -29,7 +35,7 @@ public class CLI {
 	 * @param pcOpt
 	 * @param idSearched
 	 */
-	public static void displayComputerOption(Optional<Computer> pcOpt, int idSearched) {
+	public void displayComputerOption(Optional<Computer> pcOpt, int idSearched) {
 		if(pcOpt.isEmpty()) { System.out.format("no PC with id = %d founded \n", idSearched);}
 		else {System.out.println(pcOpt.get().toString());}
 	}
@@ -39,7 +45,7 @@ public class CLI {
 	 * and eventually why the insertion wasn't made
 	 * @param result
 	 */
-	public static void displayInsertComputer(int result) {
+	public void displayInsertComputer(int result) {
 		switch (result) {
 		case 0:
 			System.out.println("The computer name shouldn't be empty");
@@ -64,7 +70,7 @@ public class CLI {
 	 * and eventually why the update wasn't made.
 	 * @param result
 	 */
-	public static void displayUpdateComputer(int result) {
+	public void displayUpdateComputer(int result) {
 		switch(result) {
 		case 0:
 			System.out.println("Given Computer Id shouldn't be empty !");
@@ -98,13 +104,10 @@ public class CLI {
 	 * Display the result of a delete
 	 * @param result
 	 */
-	public static void displayDeleteComputer(int result) {
+	public void displayDeleteComputer(int result) {
 		switch(result) {
 		case 0:
 			System.out.println("No PC corresponding to the specified ID, no row deleted");
-			break;
-		case -1:
-			System.out.println("Given Computer Id shouldn't be empty !");
 			break;
 		default:
 			System.out.println("Delete done correctly");

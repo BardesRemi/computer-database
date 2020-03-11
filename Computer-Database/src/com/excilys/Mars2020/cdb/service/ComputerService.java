@@ -118,10 +118,8 @@ public class ComputerService {
 	 * @param id
 	 * @return 0< if something went wrong, 0 if nothing deleted, 1 if row correctly deleted
 	 */
-	public int deleteComputer(String id) {
-		if(id.isEmpty()) { return -1;}
-		int idInt = Integer.valueOf(id);
-		return pcdao.deleteComputer(idInt);
+	public int deleteComputer(int id) {
+		return pcdao.deleteComputer(id);
 	}
 	
 }
