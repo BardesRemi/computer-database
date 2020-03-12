@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import com.excilys.Mars2020.cdb.model.Company;
-import com.excilys.Mars2020.cdb.model.Computer;
-import com.excilys.Mars2020.cdb.model.PaginationCompany;
+import com.excilys.Mars2020.cdb.model.Pagination;
 import com.excilys.Mars2020.cdb.persistance.CompanyDAO;
 
 /**
@@ -49,7 +48,15 @@ public class CompanyService {
 	 * @param page
 	 * @return Computers in the page
 	 */
-	public ArrayList<Company> getPageCompanies(PaginationCompany page){
+	public ArrayList<Company> getPageCompanies(Pagination page){
 		return compdao.getPageCompaniesRequest(page);
+	}
+	
+	/**
+	 * 
+	 * @return the number of company in the database
+	 */
+	public int getCountCompanies() {
+		return compdao.countAllCompanies();
 	}
 }

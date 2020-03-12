@@ -3,8 +3,7 @@ package com.excilys.Mars2020.cdb.ui;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.excilys.Mars2020.cdb.model.PaginationCompany;
-import com.excilys.Mars2020.cdb.model.PaginationComputer;
+import com.excilys.Mars2020.cdb.model.Pagination;
 import com.excilys.Mars2020.cdb.service.CompanyService;
 import com.excilys.Mars2020.cdb.service.ComputerService;
 
@@ -92,56 +91,46 @@ public class ControlerUi {
 		}
 	}
 	/**
-	 * Display all the company in the DB
+	 * Display all the company in the DB with user interactions
 	 */
 	private void displayCompanies() {
 		boolean end = false;
-		PaginationCompany currPage = new PaginationCompany();
+		Pagination currPage = new Pagination(compServ.getCountCompanies());
 		while(!end) {
-			CLI.displayAll(this.compServ.getPageCompanies(currPage));
-			System.out.println("*------------------------------------------------------------------*");
-			System.out.format("page %d / %d | next page : u | prev page : d | quit : q \n", currPage.getActualPageNb(), currPage.getMaxPages());
-			String line = this.scanner.nextLine();
-			switch(line) {
-			case "u" :
-				currPage.nextPage();
-				break;
-			case "d" :
-				currPage.PrevPage();
-				break;
-			case "q" :
-				end = true;
-				break;
-			default :
-				System.out.println("Wrong entry, please use a proposed answer");
-			}
+			CLI.displayArrayList(this.compServ.getPageCompanies(currPage));
+			end = displayPage(currPage, end);
 		}
 	}
 	
 	/**
-	 * Display all the computer in the DB
+	 * Display all the computer in the DB with user interaction
 	 */
 	private void displayComputers() {
 		boolean end = false;
-		PaginationComputer currPage = new PaginationComputer();
+		Pagination currPage = new Pagination(pcServ.getCountComputers());
 		while(!end) {
-			CLI.displayAll(this.pcServ.getPageComputers(currPage));
-			System.out.println("*------------------------------------------------------------------*");
-			System.out.format("page %d / %d | next page : u | prev page : d | quit : q \n", currPage.getActualPageNb(), currPage.getMaxPages());
-			String line = this.scanner.nextLine();
-			switch(line) {
-			case "u" :
-				currPage.nextPage();
-				break;
-			case "d" :
-				currPage.PrevPage();
-				break;
-			case "q" :
-				end = true;
-			default :
-				System.out.println("Wrong entry, please use a proposed answer");
-			}
+			CLI.displayArrayList(this.pcServ.getPageComputers(currPage));
+			end = displayPage(currPage, end);
 		}
+	}
+
+	private boolean displayPage(Pagination currPage, boolean end) {
+		System.out.println("*------------------------------------------------------------------*");
+		System.out.format("page %d / %d | next page : u | prev page : d | quit : q \n", currPage.getActualPageNb(), currPage.getMaxPages());
+		String line = this.scanner.nextLine();
+		switch(line) {
+		case "u" :
+			currPage.nextPage();
+			break;
+		case "d" :
+			currPage.PrevPage();
+			break;
+		case "q" :
+			end = true;
+		default :
+			System.out.println("Wrong entry, please use a proposed answer");
+		}
+		return end;
 	}
 	
 	/**

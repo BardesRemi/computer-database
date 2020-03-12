@@ -9,11 +9,17 @@ import com.excilys.Mars2020.cdb.ui.CLI;
  * @author remi
  *
  */
-public abstract class Pagination {
+public class Pagination {
 	
-	protected int actualPageNb;
-	protected int pageSize;
-	protected int maxPages;
+	private int actualPageNb;
+	private int pageSize;
+	private int maxPages;
+	
+	public Pagination(int maxEntities) {
+		this.actualPageNb = 0;
+		this.pageSize = 15;
+		this.maxPages = maxEntities / this.pageSize;
+	}
 	
 	/**
 	 * advancing of 1 pages
@@ -40,7 +46,7 @@ public abstract class Pagination {
 	 */
 	public <T> void displayPageContent(ArrayList<T> pageContent) {
 		System.out.println("*-------------------------------------------------------------*");
-		CLI.displayAll(pageContent);
+		CLI.displayArrayList(pageContent);
 		System.out.println("*-------------------------------------------------------------*");
 	}
 

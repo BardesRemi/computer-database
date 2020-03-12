@@ -7,8 +7,7 @@ import java.util.Optional;
 import com.excilys.Mars2020.cdb.mapper.DateAPI;
 import com.excilys.Mars2020.cdb.model.Company;
 import com.excilys.Mars2020.cdb.model.Computer;
-import com.excilys.Mars2020.cdb.model.PaginationComputer;
-import com.excilys.Mars2020.cdb.persistance.CompanyDAO;
+import com.excilys.Mars2020.cdb.model.Pagination;
 import com.excilys.Mars2020.cdb.persistance.ComputerDAO;
 
 /**
@@ -38,8 +37,16 @@ public class ComputerService {
 	 * @param page
 	 * @return Computers in the page
 	 */
-	public ArrayList<Computer> getPageComputers(PaginationComputer page){
+	public ArrayList<Computer> getPageComputers(Pagination page){
 		return pcdao.getPageComputersRequest(page);
+	}
+	
+	/**
+	 * 
+	 * @return number of Computer in the database
+	 */
+	public int getCountComputers() {
+		return pcdao.countAllComputer();
 	}
 	
 	/**

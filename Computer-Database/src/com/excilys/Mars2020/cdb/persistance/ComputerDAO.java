@@ -10,7 +10,7 @@ import java.util.Optional;
 import com.excilys.Mars2020.cdb.mapper.DateAPI;
 import com.excilys.Mars2020.cdb.model.Company;
 import com.excilys.Mars2020.cdb.model.Computer;
-import com.excilys.Mars2020.cdb.model.PaginationComputer;
+import com.excilys.Mars2020.cdb.model.Pagination;
 
 /**
  * Class gathering computers interaction methods from database
@@ -34,11 +34,11 @@ public class ComputerDAO {
 	private final String deleteComputerDB = "DELETE FROM computer WHERE id = ?";
 	private final String countAllComputerQuery = "SELECT COUNT(id) AS rowcount FROM computer";
 	private final String getPageComputersQuery = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
-			  + "FROM computer AS pc "
-			  + "LEFT JOIN company AS comp ON "
-			  + "comp.id = pc.company_id "
-			  + "ORDER BY pc.id "
-			  + "LIMIT ?, ?";
+											   + "FROM computer AS pc "
+											   + "LEFT JOIN company AS comp ON "
+											   + "comp.id = pc.company_id "
+											   + "ORDER BY pc.id "
+											   + "LIMIT ?, ?";
 	
 	private ComputerDAO() {} //private constructor, singleton
 	
@@ -205,7 +205,7 @@ public class ComputerDAO {
 	 * Create an ArrayList of Computers corresponding to the registered Computer in the DB in the page range
 	 * @return ArrayList with the computers in computer-database
 	 */
-	public ArrayList<Computer> getPageComputersRequest(PaginationComputer page) {
+	public ArrayList<Computer> getPageComputersRequest(Pagination page) {
 		ArrayList<Computer> res = new ArrayList<Computer>();
 		try(MysqlConnection db = MysqlConnection.getDbConnection();
 			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.getPageComputersQuery);){

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import com.excilys.Mars2020.cdb.model.Company;
-import com.excilys.Mars2020.cdb.model.Computer;
-import com.excilys.Mars2020.cdb.model.PaginationCompany;
-import com.excilys.Mars2020.cdb.model.PaginationComputer;
+import com.excilys.Mars2020.cdb.model.Pagination;
 
 /**
  * Class gathering companies query methods from database
@@ -116,7 +114,7 @@ public class CompanyDAO {
 	 * Create an ArrayList of Companies corresponding to the registered Companies in the DB in the page range
 	 * @return ArrayList with the Companies in computer-database
 	 */
-	public ArrayList<Company> getPageCompaniesRequest(PaginationCompany page) {
+	public ArrayList<Company> getPageCompaniesRequest(Pagination page) {
 		ArrayList<Company> res = new ArrayList<Company>();
 		try(MysqlConnection db = MysqlConnection.getDbConnection();
 			PreparedStatement stmt = db.getConnect().prepareStatement(compdao.getPageCompaniesQuery);){
