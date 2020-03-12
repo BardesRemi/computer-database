@@ -1,7 +1,7 @@
 package com.excilys.Mars2020.cdb.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.excilys.Mars2020.cdb.mapper.DateAPI;
@@ -18,7 +18,7 @@ import com.excilys.Mars2020.cdb.persistance.ComputerDAO;
  */
 public class ComputerService {
 	
-	ComputerDAO pcdao;
+	private ComputerDAO pcdao;
 	
 	public ComputerService() {
 		this.pcdao = ComputerDAO.getComputerDAO();
@@ -28,7 +28,7 @@ public class ComputerService {
 	 * 
 	 * @return All the computers in the db
 	 */
-	public ArrayList<Computer> getAllComputers() {
+	public List<Computer> getAllComputers() {
 		return pcdao.getAllComputersRequest();
 	}
 	
@@ -37,7 +37,7 @@ public class ComputerService {
 	 * @param page
 	 * @return Computers in the page
 	 */
-	public ArrayList<Computer> getPageComputers(Pagination page){
+	public List<Computer> getPageComputers(Pagination page){
 		return pcdao.getPageComputersRequest(page);
 	}
 	
@@ -72,8 +72,8 @@ public class ComputerService {
 	 */
 	public int addNewComputer (String name, String introducedD, String discontinuedD, String compName, String compId) {
 		if(name.isEmpty()) { return 0;}
-		LocalDate intro = DateAPI.stringToLocalDate(introducedD);
-		LocalDate discont = DateAPI.stringToLocalDate(discontinuedD);
+		LocalDate intro = (DateAPI.stringToLocalDate(introducedD).isEmpty() ? null : DateAPI.stringToLocalDate(introducedD).get());
+		LocalDate discont = (DateAPI.stringToLocalDate(discontinuedD).isEmpty() ? null : DateAPI.stringToLocalDate(discontinuedD).get());
 		if(intro != null && (discont==null || intro.compareTo(discont) > 0)) { return -1;}
 		if(!compName.isEmpty() && compId.isEmpty()) { return -2; }
 		if(compName.isEmpty() && compId.isEmpty()) {
@@ -81,8 +81,8 @@ public class ComputerService {
 			return pcdao.insertNewComputer(pc);
 		}
 		else {
-			int companyId = Integer.valueOf(compId);
-			Company tempComp = new Company(compName, companyId);
+			long companyId = Long.valueOf(compId);
+			Company tempComp = new Company.Builder().name(compName).compId(companyId).build();
 			if(!CompanyService.companyInDb(tempComp)) { return -3; }
 			Computer pc = new Computer.Builder(name).introduced(intro).discontinued(discont).company(tempComp).build();
 			return pcdao.insertNewComputer(pc);
@@ -111,21 +111,21 @@ public class ComputerService {
 		if(optCheckingPc.isEmpty()) {return -1;}
 		Computer checkingPc = optCheckingPc.get();
 		if(name.isEmpty()) {return -2;}
-		LocalDate intro = DateAPI.stringToLocalDate(introducedD);
-		LocalDate discont = DateAPI.stringToLocalDate(discontinuedD);
+		LocalDate intro = (DateAPI.stringToLocalDate(introducedD).isEmpty() ? null : DateAPI.stringToLocalDate(introducedD).get());
+		LocalDate discont = (DateAPI.stringToLocalDate(discontinuedD).isEmpty() ? null : DateAPI.stringToLocalDate(discontinuedD).get());
 		if(intro != null && (discont!=null || intro.compareTo(discont) > 0)) { return -3;}
 		if(checkingPc.getIntroduced() != null && (discont!=null || checkingPc.getIntroduced().compareTo(discont) > 0)) {return -4;}
 		if(intro != null && (checkingPc.getDiscontinued()!=null || intro.compareTo(checkingPc.getDiscontinued()) > 0)) {return -4;}
 		if(!compName.isEmpty() && compId.isEmpty()) { return -5; }
 		if(compName.isEmpty() && compId.isEmpty()) {
-			Computer pc = new Computer.Builder(name).id(idInt).introduced(intro).discontinued(discont).build();
+			Computer pc = new Computer.Builder(name).pcId(idInt).introduced(intro).discontinued(discont).build();
 			return pcdao.insertNewComputer(pc);
 		}
 		else {
-			int companyId = Integer.valueOf(compId);
-			Company tempComp = new Company(compName, companyId);
+			long companyId = Long.valueOf(compId);
+			Company tempComp = new Company.Builder().name(compName).compId(companyId).build();
 			if(!CompanyService.companyInDb(tempComp)) { return -6; }
-			Computer pc = new Computer.Builder(name).id(idInt).introduced(intro).discontinued(discont).company(tempComp).build();
+			Computer pc = new Computer.Builder(name).pcId(idInt).introduced(intro).discontinued(discont).company(tempComp).build();
 			return pcdao.updateComputer(pc);
 		}
 	}

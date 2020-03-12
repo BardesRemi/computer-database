@@ -40,24 +40,23 @@ public class ControlerUi {
 	 * Starting point of the Ui prog in CLI
 	 */
 	public void startProgramme (){
-		
 		try{
 			System.out.print(this.startingText);
 			int action = Integer.parseInt(scanner.nextLine());
-			if(action>0 && action<7) {
+			if (action > 0 && action < 7) {
 				System.out.println("You choose the " + action);
 				this.actionSelecter(action);
 				this.endAction();
 			}
-			else if(action==7) {this.closeProgram();}
+			else if (action == 7) {
+				this.closeProgram();
+			}
 			else {
 				System.out.println("Wrong entry, please use a proposed answer");
 			}
-		}
-		catch(InputMismatchException e) {
+		} catch (InputMismatchException inMismatche) {
 			System.out.println("Wrong entry, please use a proposed answer");
-		}
-		finally {
+		} finally {
 			this.scanner.close();
 		}
 	}
@@ -67,7 +66,7 @@ public class ControlerUi {
 	 * @param action
 	 */
 	private void actionSelecter(int action) {
-		switch(action) {
+		switch (action) {
 		case 1:
 			this.displayCompanies();
 			break;
@@ -96,8 +95,8 @@ public class ControlerUi {
 	private void displayCompanies() {
 		boolean end = false;
 		Pagination currPage = new Pagination(compServ.getCountCompanies());
-		while(!end) {
-			CLI.displayArrayList(this.compServ.getPageCompanies(currPage));
+		while (!end) {
+			CLI.displayList(this.compServ.getPageCompanies(currPage));
 			end = displayPage(currPage, end);
 		}
 	}
@@ -108,17 +107,23 @@ public class ControlerUi {
 	private void displayComputers() {
 		boolean end = false;
 		Pagination currPage = new Pagination(pcServ.getCountComputers());
-		while(!end) {
-			CLI.displayArrayList(this.pcServ.getPageComputers(currPage));
+		while (!end) {
+			CLI.displayList(this.pcServ.getPageComputers(currPage));
 			end = displayPage(currPage, end);
 		}
 	}
 
+	/**
+	 * intermediaite method. Used when displaying a page
+	 * @param currPage current page to display and interact with
+	 * @param end stop point
+	 * @return end
+	 */
 	private boolean displayPage(Pagination currPage, boolean end) {
 		System.out.println("*------------------------------------------------------------------*");
 		System.out.format("page %d / %d | next page : u | prev page : d | quit : q \n", currPage.getActualPageNb(), currPage.getMaxPages());
 		String line = this.scanner.nextLine();
-		switch(line) {
+		switch (line) {
 		case "u" :
 			currPage.nextPage();
 			break;
@@ -180,11 +185,17 @@ public class ControlerUi {
 	private void endAction(){
 		System.out.print(this.endingText);
 		String answer = scanner.nextLine();
-		if(answer.contentEquals("y")) { this.startProgramme();}
-		else if(answer.contentEquals("n")){ this.closeProgram();}
-		else {
+		switch (answer) {
+		case "y":
+			this.startProgramme();
+			break;
+		case "n":
+			this.closeProgram();
+			break;
+		default :
 			System.out.println("invalid answer, default restart");
 			this.startProgramme();
+			break;
 		}
 	}
 	

@@ -1,6 +1,6 @@
 package com.excilys.Mars2020.cdb.service;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.excilys.Mars2020.cdb.model.Company;
@@ -15,7 +15,7 @@ import com.excilys.Mars2020.cdb.persistance.CompanyDAO;
  */
 public class CompanyService {
 		
-	CompanyDAO compdao;
+	private CompanyDAO compdao;
 	
 	public CompanyService() {
 		this.compdao = CompanyDAO.getCompanyDAO();
@@ -27,11 +27,12 @@ public class CompanyService {
 	 * @return true if comp E DB, false if not
 	 */
 	public static boolean companyInDb(Company comp) {
-		Optional<Company> checkingComp = CompanyDAO.getCompanyDAO().getOneCompanyRequest(comp.getId());
-		if(checkingComp.isEmpty()) { return false; }
+		Optional<Company> checkingComp = CompanyDAO.getCompanyDAO().getOneCompanyRequest(comp.getCompId());
+		if (!checkingComp.isEmpty()) {
+			return false; 
+		}
 		else { 
-			if(comp.getName().isEmpty() || checkingComp.get().getName() == comp.getName()) {return true;}
-			else {return false; }
+			return (comp.getName().isEmpty() || checkingComp.get().getName() == comp.getName());
 		}
 	}
 	
@@ -39,7 +40,7 @@ public class CompanyService {
 	 * 
 	 * @return All the companies in the db
 	 */
-	public ArrayList<Company> getAllCompanies() {
+	public List<Company> getAllCompanies() {
 		return this.compdao.getAllCompaniesRequest();
 	}
 	
@@ -48,7 +49,7 @@ public class CompanyService {
 	 * @param page
 	 * @return Computers in the page
 	 */
-	public ArrayList<Company> getPageCompanies(Pagination page){
+	public List<Company> getPageCompanies(Pagination page){
 		return compdao.getPageCompaniesRequest(page);
 	}
 	

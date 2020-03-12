@@ -12,7 +12,7 @@ public class Computer {
 	//required attribute
 	private String name;
 	//optionnal attributes
-	private int id;
+	private long pcId;
 	private LocalDate introduced;
 	private LocalDate discontinued;
 	private Company company;
@@ -23,7 +23,7 @@ public class Computer {
 	 */
 	private Computer (Builder builder) {
 		this.name = builder.name;
-		this.id = builder.id;
+		this.pcId = builder.pcId;
 		this.introduced = builder.introduced;
 		this.discontinued = builder.discontinued;
 		this.company = builder.company;
@@ -31,7 +31,7 @@ public class Computer {
 
 	@Override
 	public String toString() {
-		return "Computer [name=" + name + ", id=" + id + ", introduced=" + introduced + ", discontinued=" + discontinued
+		return "Computer [name=" + name + ", id=" + pcId + ", introduced=" + introduced + ", discontinued=" + discontinued
 				+ ", company=" + company + "]";
 	}
 
@@ -39,40 +39,20 @@ public class Computer {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
+	public long getPcId() {
+		return pcId;
 	}
 
 	public LocalDate getIntroduced() {
 		return introduced;
 	}
 
-	public void setIntroduced(LocalDate introduced) {
-		this.introduced = introduced;
-	}
-
 	public LocalDate getDiscontinued() {
 		return discontinued;
 	}
 
-	public void setDiscontinued(LocalDate discontinued) {
-		this.discontinued = discontinued;
-	}
-
 	public Company getcompany() {
 		return company;
-	}
-
-	public void setcompany(Company company) {
-		this.company = company;
 	}
 	
 	/**
@@ -84,7 +64,7 @@ public class Computer {
 	public static class Builder{
 
 		private final String name;
-		private int id;
+		private int pcId;
 		private LocalDate introduced;
 		private LocalDate discontinued;
 		private Company company;
@@ -93,8 +73,8 @@ public class Computer {
 			this.name = name;
 		}
 		
-		public Builder id(int id) {
-			this.id = id;
+		public Builder pcId(int pcId) {
+			this.pcId = pcId;
 			return this;
 		}
 		

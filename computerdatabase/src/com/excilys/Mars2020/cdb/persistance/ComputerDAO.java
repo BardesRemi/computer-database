@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.excilys.Mars2020.cdb.mapper.DateAPI;
@@ -43,7 +44,7 @@ public class ComputerDAO {
 	private ComputerDAO() {} //private constructor, singleton
 	
 	public static synchronized ComputerDAO getComputerDAO() {
-		if(pcdao == null) {
+		if (pcdao == null) {
 			pcdao = new ComputerDAO();
 		}
 		return pcdao;
@@ -55,14 +56,16 @@ public class ComputerDAO {
 	 * @return ArrayList with all the computers in resSet
 	 * @throws SQLException
 	 */
-	private ArrayList<Computer> storeComputersFromRequest(ResultSet resSet) throws SQLException{
-		ArrayList<Computer> res = new ArrayList<Computer>();
-		while(resSet.next()) {
+	private List<Computer> storeComputersFromRequest(ResultSet resSet) throws SQLException{
+		List<Computer> res = new ArrayList<Computer>();
+		while (resSet.next()) {
+			Optional<LocalDate> introD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
+			Optional<LocalDate> discontD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
 			Computer pc = new Computer.Builder(resSet.getString("pc.name"))
-					.id(resSet.getInt("pc.id"))
-					.introduced(DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.introduced")))
-					.discontinued(DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.discontinued")))
-					.company(new Company(resSet.getString("comp.name"), resSet.getInt("pc.company_id"))).build();
+					.pcId(resSet.getInt("pc.id"))
+					.introduced(introD.isEmpty() ? null : introD.get())
+					.discontinued(discontD.isEmpty() ? null : discontD.get())
+					.company(new Company.Builder().name(resSet.getString("name")).compId(resSet.getInt("id")).build()).build();
 			res.add(pc);
 			}
 		return res;
@@ -75,12 +78,14 @@ public class ComputerDAO {
 	 * @throws SQLException
 	 */
 	private Optional<Computer> storeOneOrNoneComputerFromReq(ResultSet resSet) throws SQLException{
-		if(resSet.next()) {
+		if (resSet.next()) {
+			Optional<LocalDate> introD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
+			Optional<LocalDate> discontD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
 			Computer pc = new Computer.Builder(resSet.getString("name"))
-					.id(resSet.getInt("id"))
-					.introduced(DateAPI.timestampToLocalDate(resSet.getTimestamp("introduced")))
-					.discontinued(DateAPI.timestampToLocalDate(resSet.getTimestamp("discontinued")))
-					.company(new Company(resSet.getString("comp.name"), resSet.getInt("pc.company_id"))).build();
+					.pcId(resSet.getInt("id"))
+					.introduced(introD.isEmpty() ? null : introD.get())
+					.discontinued(discontD.isEmpty() ? null : discontD.get())
+					.company(new Company.Builder().name(resSet.getString("name")).compId(resSet.getInt("id")).build()).build();
 			return Optional.of(pc);
 		}
 		else {
@@ -92,14 +97,14 @@ public class ComputerDAO {
 	 * Create an ArrayList of Computers corresponding to all the registered Computer in the DB
 	 * @return ArrayList with all the computers in computer-database
 	 */
-	public ArrayList<Computer> getAllComputersRequest() {
-		ArrayList<Computer> res = new ArrayList<Computer>();
-		try(MysqlConnection db = MysqlConnection.getDbConnection();
-			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.getAllComputersQuery);){
+	public List<Computer> getAllComputersRequest() {
+		List<Computer> res = new ArrayList<Computer>();
+		try (MysqlConnection dbConnect = new MysqlConnection();
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.getAllComputersQuery);) {
 			ResultSet res1 = stmt.executeQuery();
 			res = pcdao.storeComputersFromRequest(res1);
-		}catch (SQLException e){
-			e.printStackTrace();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
 		return res;
 	}
@@ -109,39 +114,45 @@ public class ComputerDAO {
 	 * @param id
 	 * @return Optional<Computer>
 	 */
-	public Optional<Computer> getOneComputers(int id) {
-		try(MysqlConnection db = MysqlConnection.getDbConnection();
-			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.getComputerDetailsQuery);){
-			stmt.setInt(1, id);
+	public Optional<Computer> getOneComputers(long id) {
+		try (MysqlConnection dbConnect = new MysqlConnection();
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.getComputerDetailsQuery);) {
+			stmt.setLong(1, id);
 			ResultSet res1 = stmt.executeQuery();
 			return pcdao.storeOneOrNoneComputerFromReq(res1);
-		}catch (SQLException e){
-			e.printStackTrace();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
 		return Optional.empty();
 	}
 	
 	/**
 	 * add a new PC in the db following the given informations
-	 * @param pc
+	 * @param the pc to add in the db
 	 * @return the id associated to the new PC
 	 */
 	public int insertNewComputer(Computer pc) {
-		try(MysqlConnection db = MysqlConnection.getDbConnection();
-			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.addNewComputerDB, PreparedStatement.RETURN_GENERATED_KEYS);){
+		try (MysqlConnection dbConnect = new MysqlConnection();
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.addNewComputerDB, PreparedStatement.RETURN_GENERATED_KEYS);) {
 			stmt.setString(1, pc.getName());
 			LocalDate intro = pc.getIntroduced();
-			stmt.setTimestamp(2, (intro == null ? null : DateAPI.localDateToTimestamp(intro)));
+			stmt.setTimestamp(2, (intro == null ? null : DateAPI.localDateToTimestamp(intro)).get());
 			LocalDate discont = pc.getDiscontinued();
-			stmt.setTimestamp(3, (discont == null ? null : DateAPI.localDateToTimestamp(discont)));
+			stmt.setTimestamp(3, (discont == null ? null : DateAPI.localDateToTimestamp(discont)).get());
 			Company comp = pc.getcompany();
-			if(comp == null) { stmt.setNull(4, java.sql.Types.INTEGER); }
-			else { stmt.setInt(4, comp.getId());}
+			if (comp == null) {
+				stmt.setNull(4, java.sql.Types.INTEGER); 
+			}
+			else {
+				stmt.setLong(4, comp.getCompId());
+			}
 			stmt.executeUpdate();
 			ResultSet resSet = stmt.getGeneratedKeys();
-			if(resSet.next()) {return resSet.getInt(1);}
-		} catch (SQLException e ) {
-			e.printStackTrace();
+			if (resSet.next()) {
+				return resSet.getInt(1);
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
 		return 0;
 	}
@@ -152,20 +163,24 @@ public class ComputerDAO {
 	 * @return 1 if the update were done correctly, 0 otherwise
 	 */
 	public int updateComputer(Computer pc) {
-		try(MysqlConnection db = MysqlConnection.getDbConnection();
-				PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.updateComputerDB);){
-				stmt.setInt(5, pc.getId());
+		try (MysqlConnection dbConnect = new MysqlConnection();
+				PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.updateComputerDB);){
+				stmt.setLong(5, pc.getPcId());
 				stmt.setString(1, pc.getName());
 				LocalDate intro = pc.getIntroduced();
-				stmt.setTimestamp(2, (intro == null ? null : DateAPI.localDateToTimestamp(intro)));
+				stmt.setTimestamp(2, (intro == null ? null : DateAPI.localDateToTimestamp(intro)).get());
 				LocalDate discont = pc.getDiscontinued();
-				stmt.setTimestamp(3, (discont == null ? null : DateAPI.localDateToTimestamp(discont)));
+				stmt.setTimestamp(3, (discont == null ? null : DateAPI.localDateToTimestamp(discont)).get());
 				Company comp = pc.getcompany();
-				if(comp == null) { stmt.setNull(4, java.sql.Types.INTEGER); }
-				else { stmt.setInt(4, comp.getId());}
+				if (comp == null) {
+					stmt.setNull(4, java.sql.Types.INTEGER);
+				}
+				else {
+					stmt.setLong(4, comp.getCompId());
+				}
 				return stmt.executeUpdate();
-			} catch (SQLException e ) {
-				e.printStackTrace();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
 			}
 			return 0;
 	}
@@ -175,13 +190,13 @@ public class ComputerDAO {
 	 * @param id
 	 * @return number of row deleted (should be 1 or 0)
 	 */
-	public int deleteComputer (int id) {
-		try(MysqlConnection db = MysqlConnection.getDbConnection();
-			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.deleteComputerDB);){
-			stmt.setInt(1, id);
+	public int deleteComputer (long id) {
+		try (MysqlConnection dbConnect = new MysqlConnection();
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.deleteComputerDB);) {
+			stmt.setLong(1, id);
 			return stmt.executeUpdate();
-		}catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
 		return 0;
 	}
@@ -191,12 +206,14 @@ public class ComputerDAO {
 	 * @return the number of PC
 	 */
 	public int countAllComputer() {
-		try(MysqlConnection db = MysqlConnection.getDbConnection();
-			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.countAllComputerQuery);){
+		try (MysqlConnection dbConnect = new MysqlConnection();
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.countAllComputerQuery);) {
 			ResultSet res1 = stmt.executeQuery();
-			if(res1.next()) {return res1.getInt("rowcount");}
-		}catch (SQLException e) {
-			e.printStackTrace();
+			if (res1.next()) {
+				return res1.getInt("rowcount");
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
 		return 0;
 	}
@@ -205,16 +222,16 @@ public class ComputerDAO {
 	 * Create an ArrayList of Computers corresponding to the registered Computer in the DB in the page range
 	 * @return ArrayList with the computers in computer-database
 	 */
-	public ArrayList<Computer> getPageComputersRequest(Pagination page) {
-		ArrayList<Computer> res = new ArrayList<Computer>();
-		try(MysqlConnection db = MysqlConnection.getDbConnection();
-			PreparedStatement stmt = db.getConnect().prepareStatement(pcdao.getPageComputersQuery);){
-			stmt.setInt(1, page.getActualPageNb()*page.getPageSize());
+	public List<Computer> getPageComputersRequest(Pagination page) {
+		List<Computer> res = new ArrayList<Computer>();
+		try (MysqlConnection dbConnect = new MysqlConnection();
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.getPageComputersQuery);) {
+			stmt.setInt(1, page.getActualPageNb() * page.getPageSize());
 			stmt.setInt(2, page.getPageSize());
 			ResultSet res1 = stmt.executeQuery();
 			res = pcdao.storeComputersFromRequest(res1);
-		}catch (SQLException e){
-			e.printStackTrace();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
 		return res;
 	}

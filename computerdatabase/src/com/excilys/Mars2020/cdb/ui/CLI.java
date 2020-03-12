@@ -1,15 +1,9 @@
 package com.excilys.Mars2020.cdb.ui;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 
-import com.excilys.Mars2020.cdb.model.Company;
 import com.excilys.Mars2020.cdb.model.Computer;
-import com.excilys.Mars2020.cdb.service.CompanyService;
-import com.excilys.Mars2020.cdb.service.ComputerService;
-
 /**
  * Class managing all the displays and user interactions
  * @author remi
@@ -24,8 +18,8 @@ public class CLI {
 	 * @param <T> the type of the data being displayed (need to have .toString() method)
 	 * @param array
 	 */
-	public static <T> void displayArrayList(ArrayList<T> array) {
-		for(T o : array) {
+	public static <T> void displayList(List<T> array) {
+		for (T o : array) {
 			System.out.println(o.toString());
 		}
 	}
@@ -35,9 +29,13 @@ public class CLI {
 	 * @param pcOpt
 	 * @param idSearched
 	 */
-	public void displayComputerOption(Optional<Computer> pcOpt, int idSearched) {
-		if(pcOpt.isEmpty()) { System.out.format("no PC with id = %d founded \n", idSearched);}
-		else {System.out.println(pcOpt.get().toString());}
+	public void displayComputerOption(Optional<Computer> pcOpt, long idSearched) {
+		if (pcOpt.isEmpty()) {
+			System.out.format("no PC with id = %d founded \n", idSearched);
+		}
+		else {
+			System.out.println(pcOpt.get().toString());
+		}
 	}
 	
 	/**
@@ -60,7 +58,7 @@ public class CLI {
 			System.out.println("Given Company isn't in the Database, please check it");
 			break;
 		default:
-			System.out.println("Un PC à été ajouté a la DB avec l'id : " + result);
+			System.out.println("new Computer added to the database with id : " + result);
 			break;
 		}
 	}
@@ -94,7 +92,7 @@ public class CLI {
 			System.out.println("Given Company isn't in the Database, please check it");
 			break;
 		default:
-			System.out.println("Mise a jour réussie avec succé !");
+			System.out.println("Update Succesfull !");
 			break;
 			
 		}
