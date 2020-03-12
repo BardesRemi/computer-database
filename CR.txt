@@ -1,0 +1,33 @@
+4.1 Layout
+
+Permettre au client de lister / ajouter / suppr / MaJ, la BD des PCs 
+=> Creer un user "client" et lui donner les droits uniquement sur cette table.
+*--------*
+CREATE USER 'customer'@'localhost' IDENTIFIED BY 'cust1234';
+GRANT ALL PRIVILEGES ON `computer-database-db`.`computer` TO 'customer'@'localhost';
+GRANT SELECT ON `computer-database-db`.`company` TO 'customer'@'localhost';
+FLUSH PRIVILEGES;
+*--------*
+
+4.2 CLI client
+
+Couche BDD => Couche Persistance => Couche Metier => Couche Web
+
+4.2.1 Start
+
+Pour le package model :
+	-> Class computer
+		Constructeur via Design Pattern "Builder"
+		? Les setters sont-ils vraiment necessaire ?
+		? Si création d'un pc ac dates invalides, où doit-on mettre la gestion de l'exception ?
+	-> Class Company
+
+Pour le DAO :
+	-> Connection en Singleton (/!\ multi thread /!\)
+	-> créer une classe pour company et une pour computer où se trouveront les requettes en prepared statement (En singleton aussi)
+
+Pour le service :
+	-> sert de "pont" entre l'ui et le DAO.
+	-> c'est ici que je vais faire les tests de conformité des demandes utilisateurs.
+
+Pour l'Ui, juste lancer un main qui testera les chose pour le moment
