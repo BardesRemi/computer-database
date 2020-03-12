@@ -19,27 +19,28 @@ import com.excilys.Mars2020.cdb.model.Pagination;
  *
  */
 public class ComputerDAO {
-	
+
 	private static ComputerDAO pcdao;
-	private final String getAllComputersQuery = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
-											  + "FROM computer AS pc "
-											  + "LEFT JOIN company AS comp ON "
-											  + "comp.id = pc.company_id";
-	private final String getComputerDetailsQuery = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
-			  									 + "FROM computer AS pc "
-			  									 + "LEFT JOIN company AS comp ON "
-			  									 + "comp.id = pc.company_id "
-			  									 + "WHERE pc.id = ?";
-	private final String addNewComputerDB = "INSERT INTO computer (name,introduced,discontinued,company_id) VALUES ( ?, ?, ?, ?)";
-	private final String updateComputerDB = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
-	private final String deleteComputerDB = "DELETE FROM computer WHERE id = ?";
-	private final String countAllComputerQuery = "SELECT COUNT(id) AS rowcount FROM computer";
-	private final String getPageComputersQuery = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
-											   + "FROM computer AS pc "
-											   + "LEFT JOIN company AS comp ON "
-											   + "comp.id = pc.company_id "
-											   + "ORDER BY pc.id "
-											   + "LIMIT ?, ?";
+	
+	private static final String GET_ALL_COMPUTER_DETAILS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
+															   + "FROM computer AS pc "
+															   + "LEFT JOIN company AS comp ON "
+															   + "comp.id = pc.company_id";
+	private static final String GET_COMPUTER_DETAILS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
+			  									 			+ "FROM computer AS pc "
+			  									 			+ "LEFT JOIN company AS comp ON "
+			  									 			+ "comp.id = pc.company_id "
+			  									 			+ "WHERE pc.id = ?";
+	private static final String ADD_NEW_COMPUTER_DB = "INSERT INTO computer (name,introduced,discontinued,company_id) VALUES ( ?, ?, ?, ?)";
+	private static final String UPDATE_COMPUTER_DB = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
+	private static final String DELETE_COMPUTER_DB = "DELETE FROM computer WHERE id = ?";
+	private static final String COUNT_ALL_COMPUTERS_QUERY = "SELECT COUNT(id) AS rowcount FROM computer";
+	private static final String GET_PAGE_COMPUTERS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
+											   		  	 + "FROM computer AS pc "
+											   		  	 + "LEFT JOIN company AS comp ON "
+											   		  	 + "comp.id = pc.company_id "
+											   		  	 + "ORDER BY pc.id "
+											   		  	 + "LIMIT ?, ?";
 	
 	private ComputerDAO() {} //private constructor, singleton
 	
@@ -100,7 +101,7 @@ public class ComputerDAO {
 	public List<Computer> getAllComputersRequest() {
 		List<Computer> res = new ArrayList<Computer>();
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.getAllComputersQuery);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_ALL_COMPUTER_DETAILS_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
 			res = pcdao.storeComputersFromRequest(res1);
 		} catch (SQLException sqle) {
@@ -116,7 +117,7 @@ public class ComputerDAO {
 	 */
 	public Optional<Computer> getOneComputers(long id) {
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.getComputerDetailsQuery);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_COMPUTER_DETAILS_QUERY);) {
 			stmt.setLong(1, id);
 			ResultSet res1 = stmt.executeQuery();
 			return pcdao.storeOneOrNoneComputerFromReq(res1);
@@ -133,7 +134,7 @@ public class ComputerDAO {
 	 */
 	public int insertNewComputer(Computer pc) {
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.addNewComputerDB, PreparedStatement.RETURN_GENERATED_KEYS);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(ADD_NEW_COMPUTER_DB);) {
 			stmt.setString(1, pc.getName());
 			LocalDate intro = pc.getIntroduced();
 			stmt.setTimestamp(2, (intro == null ? null : DateAPI.localDateToTimestamp(intro)).get());
@@ -146,11 +147,7 @@ public class ComputerDAO {
 			else {
 				stmt.setLong(4, comp.getCompId());
 			}
-			stmt.executeUpdate();
-			ResultSet resSet = stmt.getGeneratedKeys();
-			if (resSet.next()) {
-				return resSet.getInt(1);
-			}
+			return stmt.executeUpdate();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -164,7 +161,7 @@ public class ComputerDAO {
 	 */
 	public int updateComputer(Computer pc) {
 		try (MysqlConnection dbConnect = new MysqlConnection();
-				PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.updateComputerDB);){
+				PreparedStatement stmt = dbConnect.getConnect().prepareStatement(UPDATE_COMPUTER_DB);){
 				stmt.setLong(5, pc.getPcId());
 				stmt.setString(1, pc.getName());
 				LocalDate intro = pc.getIntroduced();
@@ -192,7 +189,7 @@ public class ComputerDAO {
 	 */
 	public int deleteComputer (long id) {
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.deleteComputerDB);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(DELETE_COMPUTER_DB);) {
 			stmt.setLong(1, id);
 			return stmt.executeUpdate();
 		} catch (SQLException sqle) {
@@ -207,7 +204,7 @@ public class ComputerDAO {
 	 */
 	public int countAllComputer() {
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.countAllComputerQuery);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(COUNT_ALL_COMPUTERS_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
 			if (res1.next()) {
 				return res1.getInt("rowcount");
@@ -225,7 +222,7 @@ public class ComputerDAO {
 	public List<Computer> getPageComputersRequest(Pagination page) {
 		List<Computer> res = new ArrayList<Computer>();
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(pcdao.getPageComputersQuery);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_PAGE_COMPUTERS_QUERY);) {
 			stmt.setInt(1, page.getActualPageNb() * page.getPageSize());
 			stmt.setInt(2, page.getPageSize());
 			ResultSet res1 = stmt.executeQuery();

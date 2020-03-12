@@ -14,13 +14,19 @@ import com.excilys.Mars2020.cdb.model.Pagination;
  *
  */
 public class CompanyDAO {
+	/*
+	 * GET_ALL_COMPAGNIES_QUERY
+	 * GET_ONE_COMPANY_QUERY
+	 * COUNT_ALL_COMPANIES_QUERY
+	 * GET_PAGE_COMPANIES_QUERY
+	 */
 
 	private static CompanyDAO compdao;
 	
-	private final String getAllCompaniesQuery = "SELECT id, name FROM company";
-	private final String getOneCompaniesQuery = "SELECT id, name FROM company WHERE id = ?";
-	private final String countAllCompaniesQuery = "SELECT COUNT(id) AS rowcount FROM company";
-	private final String getPageCompaniesQuery = "SELECT id, name FROM company ORDER BY id LIMIT ?, ?";
+	private static final String GET_ALL_COMPAGNIES_QUERY = "SELECT id, name FROM company";
+	private static final String GET_ONE_COMPANY_QUERY = "SELECT id, name FROM company WHERE id = ?";
+	private static final String COUNT_ALL_COMPANIES_QUERY = "SELECT COUNT(id) AS rowcount FROM company";
+	private static final String GET_PAGE_COMPANIES_QUERY = "SELECT id, name FROM company ORDER BY id LIMIT ?, ?";
 	
 	private CompanyDAO() {}
 	
@@ -68,7 +74,7 @@ public class CompanyDAO {
 		
 		List<Company> res = new ArrayList<Company>();
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(compdao.getAllCompaniesQuery);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_ALL_COMPAGNIES_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
 			res = compdao.storeCompaniesFromRequest(res1);
 		} catch (SQLException sqle) {
@@ -84,7 +90,7 @@ public class CompanyDAO {
 	 */
 	public Optional<Company> getOneCompanyRequest(long id){
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(compdao.getOneCompaniesQuery);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_ONE_COMPANY_QUERY);) {
 			stmt.setLong(1, id);
 			ResultSet res1 = stmt.executeQuery();
 			return compdao.storeOneCompanyFromRequest(res1);
@@ -100,7 +106,7 @@ public class CompanyDAO {
 	 */
 	public int countAllCompanies() {
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(compdao.countAllCompaniesQuery);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(COUNT_ALL_COMPANIES_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
 			if(res1.next()) {
 				return res1.getInt("rowcount");
@@ -118,7 +124,7 @@ public class CompanyDAO {
 	public List<Company> getPageCompaniesRequest(Pagination page) {
 		List<Company> res = new ArrayList<Company>();
 		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(compdao.getPageCompaniesQuery);) {
+			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_PAGE_COMPANIES_QUERY);) {
 			stmt.setInt(1, page.getActualPageNb()*page.getPageSize());
 			stmt.setInt(2, page.getPageSize());
 			ResultSet res1 = stmt.executeQuery();

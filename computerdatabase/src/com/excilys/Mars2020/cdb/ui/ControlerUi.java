@@ -19,7 +19,7 @@ public class ControlerUi {
 	private CLI view;
 	private final Scanner scanner;
 	
-	private final String startingText = "\n What do you want ? Please choose : \n"
+	private static final String STARTING_TEXT = "\n What do you want ? Please choose : \n"
 											 + " -> 1- See all the companies in the DB \n"
 											 + " -> 2- See all the computers in the DB \n"
 											 + " -> 3- See one specific computer in the DB \n"
@@ -27,7 +27,7 @@ public class ControlerUi {
 											 + " -> 5- Update a specific computer in the DB \n"
 											 + " -> 6- Delete a specific computer in the DB \n"
 											 + " -> 7- Close this program \n \n";
-	private final String endingText = "\n Do you want to make an other action ? (y or n) \n";
+	private static final String ENDING_TEXT = "\n Do you want to make an other action ? (y or n) \n";
 	
 	public ControlerUi () {
 		this.compServ =  new CompanyService();
@@ -41,7 +41,7 @@ public class ControlerUi {
 	 */
 	public void startProgramme (){
 		try{
-			System.out.print(this.startingText);
+			System.out.print(STARTING_TEXT);
 			int action = Integer.parseInt(scanner.nextLine());
 			if (action > 0 && action < 7) {
 				System.out.println("You choose the " + action);
@@ -183,7 +183,7 @@ public class ControlerUi {
 	 * Can recall start if asked
 	 */
 	private void endAction(){
-		System.out.print(this.endingText);
+		System.out.print(ENDING_TEXT);
 		String answer = scanner.nextLine();
 		switch (answer) {
 		case "y":
