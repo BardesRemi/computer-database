@@ -8,7 +8,7 @@ import java.util.Optional;
 public class DateAPI {
 
 	/**
-	 * Convert a Timestamp into the corresponding LocalDate (and conserve null case)
+	 * Convert a Timestamp into the corresponding LocalDate
 	 * @param tmsp a timestamp
 	 * @return optional with a LocalDate inside
 	 */
