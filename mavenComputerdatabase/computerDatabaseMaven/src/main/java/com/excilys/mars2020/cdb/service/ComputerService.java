@@ -1,15 +1,19 @@
 package com.excilys.mars2020.cdb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
+import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
+import com.excilys.mars2020.cdb.validations.LogicalChecker;
 
 /**
  * Class used as intermediate between ComputerDAO and Ui
@@ -60,37 +64,49 @@ public class ComputerService {
 	}
 	
 	
-	public int addNewComputer (ComputerDTO pcDTO) throws ParseExceptions {
-		Computer pcFinal = Mapper.ComputerDTOToComputer(pcDTO);
-		if(pcFinal.getIntroduced() != null && (pcFinal.getDiscontinued()==null || pcFinal.getIntroduced().compareTo(pcFinal.getDiscontinued()) > 0)) {
-			return -1;
-		}
-		if(pcFinal.getcompany() != null && !CompanyService.companyInDb(pcFinal.getcompany())) {
-			return -3;
-		}
-		return pcdao.insertNewComputer(pcFinal);
+	public int addNewComputer (ComputerDTO pcDTO) throws ParseExceptions, LogicalExceptions {
+		Computer computer = Mapper.ComputerDTOToComputer(pcDTO);
+		this.checkAddNewComputer(computer);
+		return pcdao.insertNewComputer(computer);
 	}
 	
-	public int updateComputer(ComputerDTO pcDTO) throws ParseExceptions {
-		Computer pcFinal = Mapper.ComputerDTOToComputer(pcDTO);
-		Optional<Computer> optCheckingPc = pcdao.getOneComputers(pcFinal.getPcId());
-		if(optCheckingPc.isEmpty()) {
-			return -1;
+	private void checkAddNewComputer (Computer computer) throws LogicalExceptions{
+		ArrayList<Optional<LogicalProblem>> problems = new ArrayList<Optional<LogicalProblem>>();
+		problems.add(LogicalChecker.dateValidationChecking(computer.getIntroduced(), computer.getDiscontinued()));
+		if(computer.getcompany() != null) {
+			problems.add(LogicalChecker.companyIsUnknownChecking(computer.getcompany()));
 		}
-		Computer checkingPc = optCheckingPc.get();
-		if(pcFinal.getIntroduced() != null && (pcFinal.getDiscontinued()==null || pcFinal.getIntroduced().compareTo(pcFinal.getDiscontinued()) > 0)) {
-			return -3;
+		LogicalExceptions except = new LogicalExceptions(problems.stream().filter(problem -> problem.isPresent())
+																		  .map(pb -> pb.get())
+																		  .collect(Collectors.toList()));
+		if(!except.getExceptions().isEmpty()) {
+			throw except;
 		}
-		if(checkingPc.getIntroduced() != null && (pcFinal.getDiscontinued()!=null || checkingPc.getIntroduced().compareTo(pcFinal.getDiscontinued()) > 0)) {
-			return -4;
+	}
+	
+	public int updateComputer(ComputerDTO pcDTO) throws ParseExceptions, LogicalExceptions {
+		Computer computer = Mapper.ComputerDTOToComputer(pcDTO);
+		this.checkUpdateComputer(computer);
+		return pcdao.updateComputer(computer);
+	}
+	
+	private void checkUpdateComputer (Computer computer) throws LogicalExceptions {
+		ArrayList<Optional<LogicalProblem>> problems = new ArrayList<Optional<LogicalProblem>>();
+		Optional<Computer> optCheckingPc = pcdao.getOneComputers(computer.getPcId());
+		problems.add(LogicalChecker.idGivenChecking(computer, pcdao));
+		problems.add(LogicalChecker.dateValidationChecking(computer.getIntroduced(), computer.getDiscontinued()));
+		if(problems.isEmpty()) {
+			Computer oldComputer = optCheckingPc.get();
+			problems.add(LogicalChecker.dateValidationChecking(computer.getIntroduced(), oldComputer.getDiscontinued()));
+			problems.add(LogicalChecker.dateValidationChecking(oldComputer.getIntroduced(), computer.getDiscontinued()));
 		}
-		if(pcFinal.getIntroduced() != null && (checkingPc.getDiscontinued()!=null || pcFinal.getIntroduced().compareTo(checkingPc.getDiscontinued()) > 0)) {
-			return -4;
+		problems.add(LogicalChecker.companyIsUnknownChecking(computer.getcompany()));
+		LogicalExceptions except = new LogicalExceptions(problems.stream().filter(problem -> problem.isPresent())
+				  											     .map(pb -> pb.get())
+				  											     .collect(Collectors.toList()));
+		if(!except.getExceptions().isEmpty()) {
+				throw except;
 		}
-		if(!CompanyService.companyInDb(pcFinal.getcompany())) {
-			return -6; 
-		}
-		return pcdao.updateComputer(pcFinal);
 	}
 	
 	/**

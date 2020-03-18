@@ -3,6 +3,7 @@ package com.excilys.mars2020.cdb.ui;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
@@ -82,7 +83,7 @@ public class ControlerUi {
 		case 4:
 			try {
 				this.uiAddNewComputer();
-			} catch (InputMismatchException | ParseExceptions except) {
+			} catch (InputMismatchException | ParseExceptions | LogicalExceptions except) {
 				view.displayProblems(except);
 				this.actionSelecter(action);
 				except.printStackTrace();
@@ -91,7 +92,7 @@ public class ControlerUi {
 		case 5:
 			try {
 				this.uiUpdateComputer();
-			} catch (InputMismatchException | ParseExceptions except) {
+			} catch (InputMismatchException | ParseExceptions | LogicalExceptions except) {
 				view.displayProblems(except);
 				this.actionSelecter(action);
 				except.printStackTrace();
@@ -165,7 +166,7 @@ public class ControlerUi {
 	/**
 	 * Manage user interaction to create a new computer
 	 */
-	private void uiAddNewComputer() throws InputMismatchException, ParseExceptions{
+	private void uiAddNewComputer() throws InputMismatchException, ParseExceptions, LogicalExceptions{
 		System.out.println("You want to add a computer, please enter the caracteristics like the following example : ");
 		System.out.println("name-dd/MM/yyyy-dd/MM/yyyy-compName-compId");
 		String line = this.scanner.nextLine();
@@ -177,7 +178,7 @@ public class ControlerUi {
 	/**
 	 * manage user interaction to update a specific computer
 	 */
-	private void uiUpdateComputer() throws InputMismatchException, ParseExceptions{
+	private void uiUpdateComputer() throws InputMismatchException, ParseExceptions, LogicalExceptions{
 		System.out.println("You want to update a computer, please enter the caracteristics like the following example : ");
 		System.out.println("name-id-dd/MM/yyyy-dd/MM/yyyy-compName-compId");
 		String line = this.scanner.nextLine();
