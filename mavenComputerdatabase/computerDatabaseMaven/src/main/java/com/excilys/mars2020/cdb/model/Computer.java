@@ -12,7 +12,7 @@ public class Computer {
 	//required attribute
 	private String name;
 	//optionnal attributes
-	private long pcId;
+	private Long pcId;
 	private LocalDate introduced;
 	private LocalDate discontinued;
 	private Company company;
@@ -64,7 +64,7 @@ public class Computer {
 	public static class Builder{
 
 		private final String name;
-		private int pcId;
+		private long pcId;
 		private LocalDate introduced;
 		private LocalDate discontinued;
 		private Company company;
@@ -73,8 +73,8 @@ public class Computer {
 			this.name = name;
 		}
 		
-		public Builder pcId(int pcId) {
-			this.pcId = pcId;
+		public Builder pcId(Long l) {
+			this.pcId = l;
 			return this;
 		}
 		

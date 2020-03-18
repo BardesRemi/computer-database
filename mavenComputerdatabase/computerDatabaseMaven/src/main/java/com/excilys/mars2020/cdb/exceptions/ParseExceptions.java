@@ -21,11 +21,23 @@ public class ParseExceptions extends Exception {
 		allProblems.add(except);
 	}
 	
+	public ParseExceptions(List<ParseProblem> excepts) {
+		allProblems = excepts;
+	}
+	
 	public void add(ParseProblem prob) {
 		allProblems.add(prob);
 	}
 	
 	public List<ParseProblem> getExceptions(){
 		return allProblems;
+	}
+	
+	/**
+	 * @return all the different messages of all exceptions
+	 */
+	@Override
+	public String getMessage () {
+		return allProblems.stream().map( except -> except.toString() ).reduce("", (result, except) -> result + " \n" + except);
 	}
 }

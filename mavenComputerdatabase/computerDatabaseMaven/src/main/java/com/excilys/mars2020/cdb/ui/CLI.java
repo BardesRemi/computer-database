@@ -58,7 +58,7 @@ public class CLI {
 			System.out.println("Given Company isn't in the Database, please check it");
 			break;
 		default:
-			System.out.println("new Computer added to the database with id : " + result);
+			System.out.println("new Computer added to the database");
 			break;
 		}
 	}
@@ -112,5 +112,10 @@ public class CLI {
 			break;
 			
 		}
+	}
+	
+	public void displayProblems(Exception except) {
+		System.out.println("A problem occured, reasons are display bellow :");
+		System.out.println(except.getMessage());
 	}
 }

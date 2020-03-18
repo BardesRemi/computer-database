@@ -1,12 +1,13 @@
 package com.excilys.mars2020.cdb.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import com.excilys.mars2020.cdb.mapper.DateAPI;
-import com.excilys.mars2020.cdb.model.Company;
+import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
+import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Computer;
+import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 
@@ -28,8 +29,8 @@ public class ComputerService {
 	 * 
 	 * @return All the computers in the db
 	 */
-	public List<Computer> getAllComputers() {
-		return pcdao.getAllComputersRequest();
+	public List<ComputerDTO> getAllComputers() {
+		return pcdao.getAllComputersRequest().stream().map(computer -> Mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -37,8 +38,8 @@ public class ComputerService {
 	 * @param page
 	 * @return Computers in the page
 	 */
-	public List<Computer> getPageComputers(Pagination page){
-		return pcdao.getPageComputersRequest(page);
+	public List<ComputerDTO> getPageComputers(Pagination page){
+		return pcdao.getPageComputersRequest(page).stream().map(computer -> Mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -58,76 +59,38 @@ public class ComputerService {
 		return pcdao.getOneComputers(idSearched);
 	}
 	
-	/**
-	 * Add a new Computer in the db if given params are valid ones :
-	 * 		-> name shouldn't be empty
-	 * 		-> introducedD <= discontinuedD
-	 * 		-> (compName, compId) should be null or match a compani in the db 
-	 * @param name
-	 * @param introducedD
-	 * @param discontinuedD
-	 * @param compName
-	 * @param compId
-	 * @return the Id associated to the PC automaticaly by the db, or 0<= if a problem occured
-	 */
-	public int addNewComputer (String name, String introducedD, String discontinuedD, String compName, String compId) {
-		if(name.isEmpty()) { return 0;}
-		LocalDate intro = (DateAPI.stringToLocalDate(introducedD).isEmpty() ? null : DateAPI.stringToLocalDate(introducedD).get());
-		LocalDate discont = (DateAPI.stringToLocalDate(discontinuedD).isEmpty() ? null : DateAPI.stringToLocalDate(discontinuedD).get());
-		if(intro != null && (discont==null || intro.compareTo(discont) > 0)) { return -1;}
-		if(!compName.isEmpty() && compId.isEmpty()) { return -2; }
-		if(compName.isEmpty() && compId.isEmpty()) {
-			Computer pc = new Computer.Builder(name).introduced(intro).discontinued(discont).build();
-			return pcdao.insertNewComputer(pc);
+	
+	public int addNewComputer (ComputerDTO pcDTO) throws ParseExceptions {
+		Computer pcFinal = Mapper.ComputerDTOToComputer(pcDTO);
+		if(pcFinal.getIntroduced() != null && (pcFinal.getDiscontinued()==null || pcFinal.getIntroduced().compareTo(pcFinal.getDiscontinued()) > 0)) {
+			return -1;
 		}
-		else {
-			long companyId = Long.valueOf(compId);
-			Company tempComp = new Company.Builder().name(compName).compId(companyId).build();
-			if(!CompanyService.companyInDb(tempComp)) { return -3; }
-			Computer pc = new Computer.Builder(name).introduced(intro).discontinued(discont).company(tempComp).build();
-			return pcdao.insertNewComputer(pc);
+		if(pcFinal.getcompany() != null && !CompanyService.companyInDb(pcFinal.getcompany())) {
+			return -3;
 		}
+		return pcdao.insertNewComputer(pcFinal);
 	}
 	
-	/**
-	 * Update the PC with id=id in the db, only if modifications are valid ones :
-	 * 		-> id Should correspond to 1 PC in the db
-	 * 		-> name shouldn't be empty
-	 * 		-> introducedD <= discontinuedD
-	 * 		-> Old(introducedD) <= discontinuedD
-	 * 		-> introducedD <= Old(discontinuedD)
-	 * 		-> (compName, compId) should be null or match a company in the db 
-	 * @param name
-	 * @param id
-	 * @param introducedD
-	 * @param discontinuedD
-	 * @param compName
-	 * @param compId
-	 */
-	public int updateComputer(String name, String id, String introducedD, String discontinuedD, String compName, String compId) {
-		if(id.isEmpty()) {return 0;}
-		int idInt = Integer.valueOf(id);
-		Optional<Computer> optCheckingPc = pcdao.getOneComputers(idInt);
-		if(optCheckingPc.isEmpty()) {return -1;}
+	public int updateComputer(ComputerDTO pcDTO) throws ParseExceptions {
+		Computer pcFinal = Mapper.ComputerDTOToComputer(pcDTO);
+		Optional<Computer> optCheckingPc = pcdao.getOneComputers(pcFinal.getPcId());
+		if(optCheckingPc.isEmpty()) {
+			return -1;
+		}
 		Computer checkingPc = optCheckingPc.get();
-		if(name.isEmpty()) {return -2;}
-		LocalDate intro = (DateAPI.stringToLocalDate(introducedD).isEmpty() ? null : DateAPI.stringToLocalDate(introducedD).get());
-		LocalDate discont = (DateAPI.stringToLocalDate(discontinuedD).isEmpty() ? null : DateAPI.stringToLocalDate(discontinuedD).get());
-		if(intro != null && (discont!=null || intro.compareTo(discont) > 0)) { return -3;}
-		if(checkingPc.getIntroduced() != null && (discont!=null || checkingPc.getIntroduced().compareTo(discont) > 0)) {return -4;}
-		if(intro != null && (checkingPc.getDiscontinued()!=null || intro.compareTo(checkingPc.getDiscontinued()) > 0)) {return -4;}
-		if(!compName.isEmpty() && compId.isEmpty()) { return -5; }
-		if(compName.isEmpty() && compId.isEmpty()) {
-			Computer pc = new Computer.Builder(name).pcId(idInt).introduced(intro).discontinued(discont).build();
-			return pcdao.insertNewComputer(pc);
+		if(pcFinal.getIntroduced() != null && (pcFinal.getDiscontinued()==null || pcFinal.getIntroduced().compareTo(pcFinal.getDiscontinued()) > 0)) {
+			return -3;
 		}
-		else {
-			long companyId = Long.valueOf(compId);
-			Company tempComp = new Company.Builder().name(compName).compId(companyId).build();
-			if(!CompanyService.companyInDb(tempComp)) { return -6; }
-			Computer pc = new Computer.Builder(name).pcId(idInt).introduced(intro).discontinued(discont).company(tempComp).build();
-			return pcdao.updateComputer(pc);
+		if(checkingPc.getIntroduced() != null && (pcFinal.getDiscontinued()!=null || checkingPc.getIntroduced().compareTo(pcFinal.getDiscontinued()) > 0)) {
+			return -4;
 		}
+		if(pcFinal.getIntroduced() != null && (checkingPc.getDiscontinued()!=null || pcFinal.getIntroduced().compareTo(checkingPc.getDiscontinued()) > 0)) {
+			return -4;
+		}
+		if(!CompanyService.companyInDb(pcFinal.getcompany())) {
+			return -6; 
+		}
+		return pcdao.updateComputer(pcFinal);
 	}
 	
 	/**

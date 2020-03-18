@@ -2,8 +2,11 @@ package com.excilys.mars2020.cdb.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
+import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.persistance.CompanyDAO;
 
@@ -40,8 +43,8 @@ public class CompanyService {
 	 * 
 	 * @return All the companies in the db
 	 */
-	public List<Company> getAllCompanies() {
-		return this.compdao.getAllCompaniesRequest();
+	public List<CompanyDTO> getAllCompanies() {
+		return this.compdao.getAllCompaniesRequest().stream().map(company -> Mapper.companyToCompanyDTO(company)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -49,8 +52,8 @@ public class CompanyService {
 	 * @param page
 	 * @return Computers in the page
 	 */
-	public List<Company> getPageCompanies(Pagination page){
-		return compdao.getPageCompaniesRequest(page);
+	public List<CompanyDTO> getPageCompanies(Pagination page){
+		return compdao.getPageCompaniesRequest(page).stream().map(company -> Mapper.companyToCompanyDTO(company)).collect(Collectors.toList());
 	}
 	
 	/**

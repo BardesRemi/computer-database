@@ -14,12 +14,6 @@ import com.excilys.mars2020.cdb.model.Pagination;
  *
  */
 public class CompanyDAO {
-	/*
-	 * GET_ALL_COMPAGNIES_QUERY
-	 * GET_ONE_COMPANY_QUERY
-	 * COUNT_ALL_COMPANIES_QUERY
-	 * GET_PAGE_COMPANIES_QUERY
-	 */
 
 	private static CompanyDAO compdao;
 	

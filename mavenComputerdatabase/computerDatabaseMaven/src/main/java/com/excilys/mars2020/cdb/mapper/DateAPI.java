@@ -42,7 +42,13 @@ public class DateAPI {
 		if (sdate.isEmpty()) {
 			return Optional.empty();
 		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		return Optional.of(LocalDate.parse(sdate, formatter));
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			return Optional.of(LocalDate.parse(sdate, formatter));
+		}
+		catch(Exception except) {
+			return Optional.empty();
+		}
+		
 	}
 }

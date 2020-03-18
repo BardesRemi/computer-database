@@ -3,9 +3,12 @@ package com.excilys.mars2020.cdb.ui;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
+import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
+import com.excilys.mars2020.cdb.ui.CLI;
 
 /**
  * Class managing all users interactions and running the program
@@ -77,10 +80,22 @@ public class ControlerUi {
 			this.searchAndDisplayOneComputer();
 			break;
 		case 4:
-			this.uiAddNewComputer();
+			try {
+				this.uiAddNewComputer();
+			} catch (InputMismatchException | ParseExceptions except) {
+				view.displayProblems(except);
+				this.actionSelecter(action);
+				except.printStackTrace();
+			}
 			break;
 		case 5:
-			this.uiUpdateComputer();
+			try {
+				this.uiUpdateComputer();
+			} catch (InputMismatchException | ParseExceptions except) {
+				view.displayProblems(except);
+				this.actionSelecter(action);
+				except.printStackTrace();
+			}
 			break;
 		case 6:
 			this.uiDeleteComputer();
@@ -150,23 +165,25 @@ public class ControlerUi {
 	/**
 	 * Manage user interaction to create a new computer
 	 */
-	private void uiAddNewComputer() throws InputMismatchException{
+	private void uiAddNewComputer() throws InputMismatchException, ParseExceptions{
 		System.out.println("You want to add a computer, please enter the caracteristics like the following example : ");
 		System.out.println("name-dd/MM/yyyy-dd/MM/yyyy-compName-compId");
 		String line = this.scanner.nextLine();
 		String[] caracs = line.split("-",5);
-		this.view.displayInsertComputer(this.pcServ.addNewComputer(caracs[0], caracs[1], caracs[2], caracs[3], caracs[4]));
+		ComputerDTO pcDTO = new ComputerDTO.Builder(caracs[0]).pcId("").introduced(caracs[1]).discontinued(caracs[2]).companyName(caracs[3]).companyId(caracs[4]).build();
+		this.view.displayInsertComputer(this.pcServ.addNewComputer(pcDTO));
 	}
 	
 	/**
 	 * manage user interaction to update a specific computer
 	 */
-	private void uiUpdateComputer() throws InputMismatchException{
+	private void uiUpdateComputer() throws InputMismatchException, ParseExceptions{
 		System.out.println("You want to update a computer, please enter the caracteristics like the following example : ");
 		System.out.println("name-id-dd/MM/yyyy-dd/MM/yyyy-compName-compId");
 		String line = this.scanner.nextLine();
 		String[] caracs = line.split("-",6);
-		this.view.displayInsertComputer(this.pcServ.updateComputer(caracs[0], caracs[1], caracs[2], caracs[3], caracs[4], caracs[5]));
+		ComputerDTO pcDTO = new ComputerDTO.Builder(caracs[0]).pcId(caracs[1]).introduced(caracs[2]).discontinued(caracs[3]).companyName(caracs[4]).companyId(caracs[5]).build();
+		this.view.displayInsertComputer(this.pcServ.updateComputer(pcDTO));
 	}
 	
 	/**

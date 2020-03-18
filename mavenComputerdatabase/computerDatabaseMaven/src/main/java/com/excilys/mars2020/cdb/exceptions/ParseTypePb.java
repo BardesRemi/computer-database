@@ -1,5 +1,10 @@
 package com.excilys.mars2020.cdb.exceptions;
 
+/**
+ * 
+ * @author remi
+ *
+ */
 public enum ParseTypePb {
 	NO_NAME ("No Name"),
 	IS_NOT_A_LONG ("Not a valid long"),

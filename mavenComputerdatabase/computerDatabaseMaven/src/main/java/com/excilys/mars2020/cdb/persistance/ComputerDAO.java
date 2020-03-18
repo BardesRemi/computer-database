@@ -63,7 +63,7 @@ public class ComputerDAO {
 			Optional<LocalDate> introD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
 			Optional<LocalDate> discontD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
 			Computer pc = new Computer.Builder(resSet.getString("pc.name"))
-					.pcId(resSet.getInt("pc.id"))
+					.pcId(resSet.getLong("pc.id"))
 					.introduced(introD.isEmpty() ? null : introD.get())
 					.discontinued(discontD.isEmpty() ? null : discontD.get())
 					.company(new Company.Builder().name(resSet.getString("name")).compId(resSet.getInt("id")).build()).build();
@@ -83,7 +83,7 @@ public class ComputerDAO {
 			Optional<LocalDate> introD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
 			Optional<LocalDate> discontD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
 			Computer pc = new Computer.Builder(resSet.getString("name"))
-					.pcId(resSet.getInt("id"))
+					.pcId(resSet.getLong("id"))
 					.introduced(introD.isEmpty() ? null : introD.get())
 					.discontinued(discontD.isEmpty() ? null : discontD.get())
 					.company(new Company.Builder().name(resSet.getString("name")).compId(resSet.getInt("id")).build()).build();
@@ -137,9 +137,19 @@ public class ComputerDAO {
 			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(ADD_NEW_COMPUTER_DB);) {
 			stmt.setString(1, pc.getName());
 			LocalDate intro = pc.getIntroduced();
-			stmt.setTimestamp(2, (intro == null ? null : DateAPI.localDateToTimestamp(intro)).get());
+			if(intro == null) {
+				stmt.setNull(2, java.sql.Types.TIMESTAMP);
+			}
+			else {
+				stmt.setTimestamp(2, DateAPI.localDateToTimestamp(intro).get());
+			}
 			LocalDate discont = pc.getDiscontinued();
-			stmt.setTimestamp(3, (discont == null ? null : DateAPI.localDateToTimestamp(discont)).get());
+			if(discont == null) {
+				stmt.setNull(3, java.sql.Types.TIMESTAMP);
+			}
+			else {
+				stmt.setTimestamp(3, DateAPI.localDateToTimestamp(discont).get());
+			}
 			Company comp = pc.getcompany();
 			if (comp == null) {
 				stmt.setNull(4, java.sql.Types.INTEGER); 
