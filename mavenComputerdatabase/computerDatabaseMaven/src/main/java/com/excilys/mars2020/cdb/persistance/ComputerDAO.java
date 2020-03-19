@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.excilys.mars2020.cdb.mapper.DateAPI;
+import com.excilys.mars2020.cdb.mapper.DateMapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.Pagination;
@@ -60,8 +60,8 @@ public class ComputerDAO {
 	private List<Computer> storeComputersFromRequest(ResultSet resSet) throws SQLException{
 		List<Computer> res = new ArrayList<Computer>();
 		while (resSet.next()) {
-			Optional<LocalDate> introD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
-			Optional<LocalDate> discontD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
+			Optional<LocalDate> introD = DateMapper.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
+			Optional<LocalDate> discontD = DateMapper.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
 			Computer pc = new Computer.Builder(resSet.getString("pc.name"))
 					.pcId(resSet.getLong("pc.id"))
 					.introduced(introD.isEmpty() ? null : introD.get())
@@ -80,8 +80,8 @@ public class ComputerDAO {
 	 */
 	private Optional<Computer> storeOneOrNoneComputerFromReq(ResultSet resSet) throws SQLException{
 		if (resSet.next()) {
-			Optional<LocalDate> introD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
-			Optional<LocalDate> discontD = DateAPI.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
+			Optional<LocalDate> introD = DateMapper.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
+			Optional<LocalDate> discontD = DateMapper.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
 			Computer pc = new Computer.Builder(resSet.getString("name"))
 					.pcId(resSet.getLong("id"))
 					.introduced(introD.isEmpty() ? null : introD.get())
@@ -141,14 +141,14 @@ public class ComputerDAO {
 				stmt.setNull(2, java.sql.Types.TIMESTAMP);
 			}
 			else {
-				stmt.setTimestamp(2, DateAPI.localDateToTimestamp(intro).get());
+				stmt.setTimestamp(2, DateMapper.localDateToTimestamp(intro).get());
 			}
 			LocalDate discont = pc.getDiscontinued();
 			if(discont == null) {
 				stmt.setNull(3, java.sql.Types.TIMESTAMP);
 			}
 			else {
-				stmt.setTimestamp(3, DateAPI.localDateToTimestamp(discont).get());
+				stmt.setTimestamp(3, DateMapper.localDateToTimestamp(discont).get());
 			}
 			Company comp = pc.getcompany();
 			if (comp == null) {
@@ -175,9 +175,9 @@ public class ComputerDAO {
 				stmt.setLong(5, pc.getPcId());
 				stmt.setString(1, pc.getName());
 				LocalDate intro = pc.getIntroduced();
-				stmt.setTimestamp(2, (intro == null ? null : DateAPI.localDateToTimestamp(intro)).get());
+				stmt.setTimestamp(2, (intro == null ? null : DateMapper.localDateToTimestamp(intro)).get());
 				LocalDate discont = pc.getDiscontinued();
-				stmt.setTimestamp(3, (discont == null ? null : DateAPI.localDateToTimestamp(discont)).get());
+				stmt.setTimestamp(3, (discont == null ? null : DateMapper.localDateToTimestamp(discont)).get());
 				Company comp = pc.getcompany();
 				if (comp == null) {
 					stmt.setNull(4, java.sql.Types.INTEGER);

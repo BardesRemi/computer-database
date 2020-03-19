@@ -4,7 +4,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-public class mapperTest {
+public class MapperTest {
 
 	@Test
 	public void test() {

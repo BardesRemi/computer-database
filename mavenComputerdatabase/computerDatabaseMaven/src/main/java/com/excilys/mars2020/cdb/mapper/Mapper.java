@@ -51,8 +51,8 @@ public class Mapper {
 		System.out.println(pcDTO);
 		Optional<Long> pcIdGot = Mapper.stringToLong(pcDTO.getPcId());
 		System.out.println(pcIdGot.orElse(null));
-		Optional<LocalDate> introDateGot = DateAPI.stringToLocalDate(pcDTO.getIntroduced());
-		Optional<LocalDate> discontinuedDateGot = DateAPI.stringToLocalDate(pcDTO.getDiscontinued());
+		Optional<LocalDate> introDateGot = DateMapper.stringToLocalDate(pcDTO.getIntroduced());
+		Optional<LocalDate> discontinuedDateGot = DateMapper.stringToLocalDate(pcDTO.getDiscontinued());
 		CompanyDTO compDTO = new CompanyDTO.Builder().compId(pcDTO.getCompanyId()).name(pcDTO.getCompanyName()).build();
 		Optional<Company> comp = computerDTOToComputerTesting(pcDTO, parseExcept, pcIdGot, introDateGot, discontinuedDateGot, compDTO);
 		if(!parseExcept.getExceptions().isEmpty()) {

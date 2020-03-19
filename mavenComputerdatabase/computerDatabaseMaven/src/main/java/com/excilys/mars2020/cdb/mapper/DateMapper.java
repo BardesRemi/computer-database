@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public class DateAPI {
+public class DateMapper {
 
 	/**
 	 * Convert a Timestamp into the corresponding LocalDate
