@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
+import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.service.CompanyService;
@@ -171,7 +172,8 @@ public class ControlerUi {
 		System.out.println("name-dd/MM/yyyy-dd/MM/yyyy-compName-compId");
 		String line = this.scanner.nextLine();
 		String[] caracs = line.split("-",5);
-		ComputerDTO pcDTO = new ComputerDTO.Builder(caracs[0]).pcId("").introduced(caracs[1]).discontinued(caracs[2]).companyName(caracs[3]).companyId(caracs[4]).build();
+		CompanyDTO compDTO = new CompanyDTO.Builder().name(caracs[3]).compId(caracs[4]).build();
+		ComputerDTO pcDTO = new ComputerDTO.Builder(caracs[0]).pcId("").introduced(caracs[1]).discontinued(caracs[2]).company(compDTO).build();
 		this.view.displayInsertComputer(this.pcServ.addNewComputer(pcDTO));
 	}
 	
@@ -183,7 +185,8 @@ public class ControlerUi {
 		System.out.println("name-id-dd/MM/yyyy-dd/MM/yyyy-compName-compId");
 		String line = this.scanner.nextLine();
 		String[] caracs = line.split("-",6);
-		ComputerDTO pcDTO = new ComputerDTO.Builder(caracs[0]).pcId(caracs[1]).introduced(caracs[2]).discontinued(caracs[3]).companyName(caracs[4]).companyId(caracs[5]).build();
+		CompanyDTO compDTO = new CompanyDTO.Builder().name(caracs[4]).compId(caracs[5]).build();
+		ComputerDTO pcDTO = new ComputerDTO.Builder(caracs[0]).pcId(caracs[1]).introduced(caracs[2]).discontinued(caracs[3]).company(compDTO).build();
 		this.view.displayInsertComputer(this.pcServ.updateComputer(pcDTO));
 	}
 	

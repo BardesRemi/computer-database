@@ -33,7 +33,7 @@ public class Company {
 		if (getClass() != obj.getClass())
 			return false;
 		Company other = (Company) obj;
-		if (compId != other.compId)
+		if (compId != other.getCompId())
 			return false;
 		if (name == null) {
 			if (other.name != null)

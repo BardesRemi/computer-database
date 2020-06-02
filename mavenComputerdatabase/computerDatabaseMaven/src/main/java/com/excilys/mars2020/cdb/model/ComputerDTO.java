@@ -16,8 +16,7 @@ public class ComputerDTO {
 		private String pcId;
 		private String introduced;
 		private String discontinued;
-		private String companyId;
-		private String companyName;
+		private CompanyDTO company;
 		
 		/**
 		 * Constructor using BUILDER design pattern
@@ -28,14 +27,50 @@ public class ComputerDTO {
 			this.pcId = builder.pcId;
 			this.introduced = builder.introduced;
 			this.discontinued = builder.discontinued;
-			this.companyId = builder.companyId;
-			this.companyName = builder.companyName;
+			this.company = builder.company;
 		}
 		
 		@Override
 		public String toString() {
 			return "ComputerDTO [name=" + name + ", pcId=" + pcId + ", introduced=" + introduced + ", discontinued="
-					+ discontinued + ", companyId=" + companyId + ", companyName=" + companyName + "]";
+					+ discontinued + ", "+ company + "]";
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ComputerDTO other = (ComputerDTO) obj;
+			if (company == null) {
+				if (other.company != null)
+					return false;
+			} else if (!company.equals(other.company))
+				return false;
+			if (discontinued == null) {
+				if (other.discontinued != null)
+					return false;
+			} else if (!discontinued.equals(other.discontinued))
+				return false;
+			if (introduced == null) {
+				if (other.introduced != null)
+					return false;
+			} else if (!introduced.equals(other.introduced))
+				return false;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			if (pcId == null) {
+				if (other.pcId != null)
+					return false;
+			} else if (!pcId.equals(other.pcId))
+				return false;
+			return true;
 		}
 
 		public String getName() {
@@ -54,12 +89,8 @@ public class ComputerDTO {
 			return discontinued;
 		}
 
-		public String getCompanyId() {
-			return companyId;
-		}
-
-		public String getCompanyName() {
-			return companyName;
+		public CompanyDTO getCompanyDTO() {
+			return company;
 		}
 
 		/**
@@ -74,8 +105,7 @@ public class ComputerDTO {
 			private String pcId;
 			private String introduced;
 			private String discontinued;
-			private String companyId;
-			private String companyName;
+			private CompanyDTO company;
 			
 			public Builder(String name) {
 				this.name = name;
@@ -96,13 +126,8 @@ public class ComputerDTO {
 				return this;
 			}
 			
-			public Builder companyId(String companyId) {
-				this.companyId = companyId;
-				return this;
-			}
-			
-			public Builder companyName(String companyName) {
-				this.companyName = companyName;
+			public Builder company(CompanyDTO company) {
+				this.company = company;
 				return this;
 			}
 			
@@ -110,4 +135,5 @@ public class ComputerDTO {
 				return new ComputerDTO(this);
 			}
 		}
+		
 }
