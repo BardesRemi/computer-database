@@ -38,8 +38,26 @@ public class LogicalProblem {
 	public String toString () {
 		return this.origin;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LogicalProblem other = (LogicalProblem) obj;
+		if (origin == null) {
+			if (other.origin != null)
+				return false;
+		} else if (!origin.equals(other.origin))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
+	}
+
 	public void toLog() {
 		Logger logger = LoggerFactory.getLogger(ParseProblem.class);
 	    logger.info(this.type.getPbText());

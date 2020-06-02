@@ -20,7 +20,7 @@ public class Mapper {
 
 	
 	public static Optional<Long> stringToLong (String number){
-		if(number.isEmpty()) {
+		if(number == null || number.isEmpty()) {
 			return Optional.of(0l);
 		}
 		try {

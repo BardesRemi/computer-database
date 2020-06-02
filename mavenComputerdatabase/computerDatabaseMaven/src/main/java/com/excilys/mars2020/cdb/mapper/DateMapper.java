@@ -39,7 +39,7 @@ public class DateMapper {
 	 * @return Optional with the corresponding date in LocalDate format
 	 */
 	public static Optional<LocalDate> stringToLocalDate(String sdate) {
-		if (sdate.isEmpty()) {
+		if (sdate == null || sdate.isEmpty()) {
 			return Optional.empty();
 		}
 		try {
