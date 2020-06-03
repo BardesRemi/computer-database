@@ -20,8 +20,8 @@ public class CompanyService {
 		
 	private CompanyDAO compdao;
 	
-	public CompanyService() {
-		this.compdao = CompanyDAO.getCompanyDAO();
+	public CompanyService(CompanyDAO compDAO) {
+		this.compdao = compDAO;
 	}
 	
 	/**
@@ -29,9 +29,9 @@ public class CompanyService {
 	 * @param comp
 	 * @return true if comp E DB, false if not
 	 */
-	public static boolean companyInDb(Company comp) {
-		Optional<Company> checkingComp = CompanyDAO.getCompanyDAO().getOneCompanyRequest(comp.getCompId());
-		if (!checkingComp.isEmpty()) {
+	public boolean companyInDb(Company comp) {
+		Optional<Company> checkingComp = compdao.getOneCompanyRequest(comp.getCompId());
+		if (checkingComp.isEmpty()) {
 			return false; 
 		}
 		else { 
@@ -50,7 +50,7 @@ public class CompanyService {
 	/**
 	 * 
 	 * @param page
-	 * @return Computers in the page
+	 * @return Companies in the page
 	 */
 	public List<CompanyDTO> getPageCompanies(Pagination page){
 		return compdao.getPageCompaniesRequest(page).stream().map(company -> Mapper.companyToCompanyDTO(company)).collect(Collectors.toList());

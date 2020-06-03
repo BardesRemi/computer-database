@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
+import com.excilys.mars2020.cdb.persistance.CompanyDAO;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 
@@ -38,7 +39,9 @@ public class LogicalChecker {
 	}
 	
 	public static Optional<LogicalProblem> companyIsUnknownChecking (Company company){
-		if(CompanyService.companyInDb(company)) {
+		CompanyService compServ = new CompanyService(CompanyDAO.getCompanyDAO());
+		
+		if(compServ.companyInDb(company)) {
 			return Optional.empty();
 		}
 		return Optional.of(LogicalProblem.createUnknownCompanyProblem("given company : " + company.getName() + " isn't in the DB !"));

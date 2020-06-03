@@ -9,7 +9,7 @@ import java.sql.DriverManager;
  */
 public class MysqlConnection implements AutoCloseable{
 	private static Connection connect;
-	private String url= "jdbc:mysql://localhost/computer-database-db";
+	private String url= "jdbc:mysql://localhost/computer-database-db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	private String driver = "com.mysql.cj.jdbc.Driver";
 	private String userName = "customer";
 	private String password = "cust1234";

@@ -8,6 +8,7 @@ import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
+import com.excilys.mars2020.cdb.persistance.CompanyDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
 import com.excilys.mars2020.cdb.ui.CLI;
@@ -35,7 +36,7 @@ public class ControlerUi {
 	private static final String ENDING_TEXT = "\n Do you want to make an other action ? (y or n) \n";
 	
 	public ControlerUi () {
-		this.compServ =  new CompanyService();
+		this.compServ =  new CompanyService(CompanyDAO.getCompanyDAO());
 		this.pcServ = new ComputerService();
 		this.view = new CLI();
 		this.scanner = new Scanner(System.in);
