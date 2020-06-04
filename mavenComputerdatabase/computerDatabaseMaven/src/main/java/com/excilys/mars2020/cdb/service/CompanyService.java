@@ -35,7 +35,7 @@ public class CompanyService {
 			return false; 
 		}
 		else { 
-			return (comp.getName().isEmpty() || checkingComp.get().getName() == comp.getName());
+			return (comp.getName()==null || comp.getName().isEmpty() || checkingComp.get().getName() == comp.getName());
 		}
 	}
 	

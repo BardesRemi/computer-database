@@ -67,6 +67,7 @@ public class CompanyServiceTest {
 		assertTrue(myService.companyInDb(dellId0));
 		assertTrue(myService.companyInDb(lenovoId1));
 		assertFalse(myService.companyInDb(dellId10));
+		assertTrue(myService.companyInDb(id2));
 	}
 	
 	@Test

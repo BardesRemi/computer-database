@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<company id='1' name='dell'/>
+	<company id='2' name='lenovo'/>
+	<company id='3' name='apple'/>
+	<company id='4'/>
+	<computer id='1' name='pc1'/>
+	<computer id='2' name='pc2' company_id='3'/>
+	<computer id='3' name='pc3' introduced='2018-07-24' discontinued='2018-09-14' company_id='2'/>
+	<computer id='4' name='pc4' introduced='2020-01-01' discontinued='2022-06-18'/>
+	<computer id='5' name='pc5' company_id='2'/>
+</dataset>
