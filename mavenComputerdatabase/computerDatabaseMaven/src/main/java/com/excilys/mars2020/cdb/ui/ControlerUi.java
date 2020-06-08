@@ -9,6 +9,7 @@ import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.persistance.CompanyDAO;
+import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
 import com.excilys.mars2020.cdb.ui.CLI;
@@ -37,7 +38,7 @@ public class ControlerUi {
 	
 	public ControlerUi () {
 		this.compServ =  new CompanyService(CompanyDAO.getCompanyDAO());
-		this.pcServ = new ComputerService();
+		this.pcServ = new ComputerService(ComputerDAO.getComputerDAO());
 		this.view = new CLI();
 		this.scanner = new Scanner(System.in);
 	}
@@ -112,7 +113,7 @@ public class ControlerUi {
 	 */
 	private void displayCompanies() {
 		boolean end = false;
-		Pagination currPage = new Pagination(compServ.getCountCompanies());
+		Pagination currPage = new Pagination.Builder(compServ.getCountCompanies()).build();
 		while (!end) {
 			CLI.displayList(this.compServ.getPageCompanies(currPage));
 			end = displayPage(currPage, end);
@@ -124,7 +125,7 @@ public class ControlerUi {
 	 */
 	private void displayComputers() {
 		boolean end = false;
-		Pagination currPage = new Pagination(pcServ.getCountComputers());
+		Pagination currPage = new Pagination.Builder(pcServ.getCountComputers()).build();
 		while (!end) {
 			CLI.displayList(this.pcServ.getPageComputers(currPage));
 			end = displayPage(currPage, end);

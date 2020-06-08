@@ -25,8 +25,8 @@ public class ComputerService {
 	
 	private ComputerDAO pcdao;
 	
-	public ComputerService() {
-		this.pcdao = ComputerDAO.getComputerDAO();
+	public ComputerService(ComputerDAO pcDAO) {
+		this.pcdao = pcDAO;
 	}
 
 	/**

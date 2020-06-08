@@ -7,14 +7,29 @@ package com.excilys.mars2020.cdb.model;
  */
 public class Pagination {
 	
+	private int maxEntities;
 	private int actualPageNb;
 	private int pageSize;
 	private int maxPages;
 	
-	public Pagination(int maxEntities) {
-		this.actualPageNb = 0;
-		this.pageSize = 15;
-		this.maxPages = maxEntities / this.pageSize;
+	private Pagination(Builder builder) {
+		this.maxEntities = builder.maxEntities;
+		this.actualPageNb = builder.actualPageNb;
+		this.pageSize = builder.pageSize;
+		this.maxPages = builder.maxPages;
+		
+		System.out.println(this.maxEntities + " | " + this.maxPages + " | " + this.pageSize);
+		
+		if(this.pageSize == 0 && this.maxPages == 0) {
+			this.pageSize = 15;
+			this.maxPages = this.maxEntities / this.pageSize;
+		}
+		else if(this.maxPages != 0 && this.pageSize * this.maxPages < this.maxEntities) {
+			this.pageSize = this.maxEntities / this.maxPages + 1;
+		}
+		else {
+			this.maxPages = this.maxEntities / this.pageSize;
+		}
 	}
 	
 	/**
@@ -45,6 +60,43 @@ public class Pagination {
 
 	public int getMaxPages() {
 		return maxPages;
+	}
+	
+	public int getMaxEntities() {
+		return maxEntities;
+	}
+	
+	public static class Builder{
+		
+		private final int maxEntities;
+		private int actualPageNb;
+		private int pageSize;
+		private int maxPages;
+		
+		public Builder(int maxEntities) {
+			this.maxEntities = maxEntities;
+		}
+		
+		public Builder actualPangeNb(int actualPageNb) {
+			this.actualPageNb = actualPageNb;
+			return this;
+		}
+		
+		public Builder pageSize(int pageSize) {
+			this.pageSize = pageSize;
+			return this;
+		}
+		
+		public Builder maxPages(int maxPages) {
+			this.maxPages = maxPages;
+			return this;
+		}
+		
+		public Pagination build() {
+			return new Pagination(this);
+		}
+		
+		
 	}
 	
 	

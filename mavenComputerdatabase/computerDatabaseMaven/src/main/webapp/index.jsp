@@ -7,8 +7,8 @@
 </head>
 <body>
 <h2>What do you want to do ?</h2>
-<form method="post" action="DashboardServlet">
-	<button type="submit">Confirm my choice</button>
+<form method="post" action="DashboardServlet?currPage=0">
+	<button type="submit">Go to dashboard</button>
 </form>
 </body>
 </html>

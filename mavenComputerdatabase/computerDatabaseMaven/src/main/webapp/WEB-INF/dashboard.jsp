@@ -33,7 +33,7 @@
                     </form>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-success" id="addComputer" href="addComputer.html">Add Computer</a> 
+                    <a class="btn btn-success" id="addComputer" href="AddComputerServlet">Add Computer</a> 
                     <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
                 </div>
             </div>
@@ -101,7 +101,7 @@
                     </c:when>
                     <c:when test="${ pcList == null}">
                     	<!-- request data "pcList" wasn't initialized -->
-                    	<c:redirect url="DashboardServlet" />
+                    	<c:redirect url="DashboardServlet?currPage=0" />
                     </c:when>
                     <c:otherwise>
                     	<b>No computer found</b>
@@ -116,17 +116,19 @@
         <div class="container text-center">
             <ul class="pagination">
                 <li>
-                    <a href="#" aria-label="Previous">
+                    <a href=<c:url value="DashboardServlet"><c:param name="currPage" value="${currPage > 0 ? currPage - 1 : currPage}"/></c:url> 
+                    	aria-label="Previous">
                       <span aria-hidden="true">&laquo;</span>
                   </a>
               </li>
-              <li><a href="#">1</a></li>
-              <li><a href="#">2</a></li>
-              <li><a href="#">3</a></li>
-              <li><a href="#">4</a></li>
-              <li><a href="#">5</a></li>
+              <li><a href="DashboardServlet?currPage=0">1</a></li>
+              <li><a href="DashboardServlet?currPage=1">2</a></li>
+              <li><a href="DashboardServlet?currPage=2">3</a></li>
+              <li><a href="DashboardServlet?currPage=3">4</a></li>
+              <li><a href="DashboardServlet?currPage=4">5</a></li>
               <li>
-                <a href="#" aria-label="Next">
+                <a href=<c:url value="DashboardServlet"><c:param name="currPage" value="${currPage < 5 ? currPage + 1 : currPage}"/></c:url> 
+                    	aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
