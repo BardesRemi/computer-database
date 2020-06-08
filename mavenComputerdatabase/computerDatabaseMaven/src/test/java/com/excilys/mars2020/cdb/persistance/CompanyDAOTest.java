@@ -44,6 +44,11 @@ public class CompanyDAOTest extends DBTestCase {
 	Company lenovo = new Company.Builder().name("Lenovo").compId(2).build();
 	Company apple = new Company.Builder().name("Apple").compId(3).build();
 	Company fourth = new Company.Builder().compId(4).build();
+	
+	@Test
+	public void test() {
+		assertTrue(true);
+	}
 	/*
 	Computer pc1 = new Computer.Builder("pc1").pcId(1l).build();
 	Computer pc2 = new Computer.Builder("pc2").pcId(2l).company(apple).build();

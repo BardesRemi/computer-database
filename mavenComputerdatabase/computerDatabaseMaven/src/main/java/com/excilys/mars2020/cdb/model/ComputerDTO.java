@@ -89,7 +89,7 @@ public class ComputerDTO {
 			return discontinued;
 		}
 
-		public CompanyDTO getCompanyDTO() {
+		public CompanyDTO getCompany() {
 			return company;
 		}
 

@@ -57,7 +57,7 @@ public class Mapper {
 		Optional<Long> pcIdGot = Mapper.stringToLong(pcDTO.getPcId());
 		Optional<LocalDate> introDateGot = DateMapper.stringToLocalDate(pcDTO.getIntroduced());
 		Optional<LocalDate> discontinuedDateGot = DateMapper.stringToLocalDate(pcDTO.getDiscontinued());
-		CompanyDTO compDTO = pcDTO.getCompanyDTO();
+		CompanyDTO compDTO = pcDTO.getCompany();
 		Optional<Company> comp = companyDTOToCompany(compDTO);
 		return new Computer.Builder(pcDTO.getName())
 				   .pcId(pcIdGot.orElse(null))

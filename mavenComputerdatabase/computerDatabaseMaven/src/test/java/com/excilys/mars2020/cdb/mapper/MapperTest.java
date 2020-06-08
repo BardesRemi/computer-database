@@ -96,8 +96,6 @@ public class MapperTest {
 		ComputerDTO pcDTO1Bis = new ComputerDTO.Builder("pc1").pcId("0").company(compDTO1).build();
 		ComputerDTO pcDTO2 = new ComputerDTO.Builder("pc2").pcId("1").company(compDTO1).build();
 		ComputerDTO pcDTO3 = new ComputerDTO.Builder("pc4").pcId("3").introduced("01/01/2020").discontinued("18/06/2022").build();
-		System.out.println(Mapper.computerToComputerDTO(pc4));
-		System.out.println(pcDTO3);
 		assertEquals(pcDTO1, Mapper.computerToComputerDTO(pc1));
 		assertNotEquals(pcDTO1Bis, Mapper.computerToComputerDTO(pc1));
 		assertEquals(pcDTO2, Mapper.computerToComputerDTO(pc2));
