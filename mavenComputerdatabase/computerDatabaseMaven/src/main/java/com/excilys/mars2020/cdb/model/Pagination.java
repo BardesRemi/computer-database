@@ -18,8 +18,6 @@ public class Pagination {
 		this.pageSize = builder.pageSize;
 		this.maxPages = builder.maxPages;
 		
-		System.out.println(this.maxEntities + " | " + this.maxPages + " | " + this.pageSize);
-		
 		if(this.pageSize == 0 && this.maxPages == 0) {
 			this.pageSize = 15;
 			this.maxPages = this.maxEntities / this.pageSize;

@@ -89,11 +89,11 @@
                         		</td>
                         		<td><c:out value="${pc.introduced}"/></td>
                         		<td><c:out value="${pc.discontinued}"/></td>
-                        		<c:set var="company" value="${pc.company}" />
-                        		<c:if test="${company != null}">
-                        			<td><c:out value="${company.name}"/></td>
+                        		<%-- <c:set var="company" value="${pc.company}" /> --%>
+                        		<c:if test="${pc.company != null}">
+                        			<td><c:out value="${pc.company}"/></td>
                         		</c:if>
-                        		<c:if test="${company == null}">
+                        		<c:if test="${pc.company == null}">
                         			<td>no company</td>
                         		</c:if>
                     		</tr>
@@ -127,7 +127,7 @@
               <li><a href="DashboardServlet?currPage=3">4</a></li>
               <li><a href="DashboardServlet?currPage=4">5</a></li>
               <li>
-                <a href=<c:url value="DashboardServlet"><c:param name="currPage" value="${currPage < 5 ? currPage + 1 : currPage}"/></c:url> 
+                <a href=<c:url value="DashboardServlet"><c:param name="currPage" value="${currPage < 4 ? currPage + 1 : currPage}"/></c:url> 
                     	aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
@@ -140,7 +140,6 @@
             <button type="button" class="btn btn-default">50</button>
             <button type="button" class="btn btn-default">100</button>
         </div>
-
     </footer>
 <script src="./js/jquery.min.js"></script>
 <script src="./js/bootstrap.min.js"></script>

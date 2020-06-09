@@ -66,7 +66,7 @@ public class ComputerDAO {
 					.pcId(resSet.getLong("pc.id"))
 					.introduced(introD.isEmpty() ? null : introD.get())
 					.discontinued(discontD.isEmpty() ? null : discontD.get())
-					.company(new Company.Builder().name(resSet.getString("name")).compId(resSet.getInt("id")).build()).build();
+					.company(new Company.Builder().name(resSet.getString("comp.name")).compId(resSet.getInt("pc.company_id")).build()).build();
 			res.add(pc);
 			}
 		return res;

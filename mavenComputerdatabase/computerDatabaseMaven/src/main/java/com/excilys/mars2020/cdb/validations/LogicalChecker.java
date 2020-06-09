@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
+import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.persistance.CompanyDAO;
@@ -40,8 +41,7 @@ public class LogicalChecker {
 	
 	public static Optional<LogicalProblem> companyIsUnknownChecking (Company company){
 		CompanyService compServ = new CompanyService(CompanyDAO.getCompanyDAO());
-		
-		if(compServ.companyInDb(company)) {
+		if(compServ.companyInDb(Mapper.companyToCompanyDTO(company))) {
 			return Optional.empty();
 		}
 		return Optional.of(LogicalProblem.createUnknownCompanyProblem("given company : " + company.getName() + " isn't in the DB !"));

@@ -30,13 +30,15 @@ public class DateMapperTest {
 	
 	@Test
 	public void stringToLocalDateTest() {
-		String sDate = "01/01/2020";
 		LocalDate localD = LocalDate.of(2020, 01, 01);
+		LocalDate localD2 = LocalDate.of(2020, 06, 25);
 		assertTrue(DateMapper.stringToLocalDate(null).isEmpty());
 		assertTrue(DateMapper.stringToLocalDate("").isEmpty());
-		assertTrue(DateMapper.stringToLocalDate("2020-01-01").isEmpty());
 		assertTrue(DateMapper.stringToLocalDate("2020/01/01").isEmpty());
 		assertTrue(DateMapper.stringToLocalDate("nonsens date").isEmpty());
-		assertEquals(DateMapper.stringToLocalDate(sDate).get(), localD);
+		assertEquals(DateMapper.stringToLocalDate("01/01/2020").get(), localD);
+		assertEquals(DateMapper.stringToLocalDate("2020-01-01").get(), localD);
+		assertEquals(DateMapper.stringToLocalDate("25/06/2020").get(), localD2);
+		assertEquals(DateMapper.stringToLocalDate("2020-06-25").get(), localD2);
 	}
 }

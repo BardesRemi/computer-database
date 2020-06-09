@@ -64,10 +64,10 @@ public class CompanyServiceTest {
 	@Test
 	public void companyInDbTest() {
 		
-		assertTrue(myService.companyInDb(dellId0));
-		assertTrue(myService.companyInDb(lenovoId1));
-		assertFalse(myService.companyInDb(dellId10));
-		assertTrue(myService.companyInDb(id2));
+		assertTrue(myService.companyInDb(Mapper.companyToCompanyDTO(dellId0)));
+		assertTrue(myService.companyInDb(Mapper.companyToCompanyDTO(lenovoId1)));
+		assertFalse(myService.companyInDb(Mapper.companyToCompanyDTO(dellId10)));
+		assertTrue(myService.companyInDb(Mapper.companyToCompanyDTO(id2)));
 	}
 	
 	@Test

@@ -29,14 +29,29 @@ public class CompanyService {
 	 * @param comp
 	 * @return true if comp E DB, false if not
 	 */
-	public boolean companyInDb(Company comp) {
-		Optional<Company> checkingComp = compdao.getOneCompanyRequest(comp.getCompId());
-		if (checkingComp.isEmpty()) {
-			return false; 
+	public boolean companyInDb(CompanyDTO compDTO) {
+		try {
+			Company comp = Mapper.companyDTOToCompany(compDTO).get();
+			Optional<Company> checkingComp = compdao.getOneCompanyRequest(comp.getCompId());
+			if (checkingComp.isEmpty()) {
+				return false;
+			}
+			else { 
+				return (comp.getName()==null || comp.getName().isEmpty() || checkingComp.get().getName().equals(comp.getName()));
+			}
+		} catch (Exception e){
+			e.printStackTrace();
 		}
-		else { 
-			return (comp.getName()==null || comp.getName().isEmpty() || checkingComp.get().getName() == comp.getName());
-		}
+		return false;
+	}
+	
+	/**
+	 * retrieve the company in the db as an optional with id=id
+	 * @param id
+	 * @return optional of the company requested
+	 */
+	public CompanyDTO getCompanyById(long id) {
+		return Mapper.companyToCompanyDTO(this.compdao.getOneCompanyRequest(id).get());
 	}
 	
 	/**
