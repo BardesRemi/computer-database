@@ -194,16 +194,16 @@
         </ul>
         <div class="btn-group btn-group-sm pull-right" role="group" >
         	<form method="post" action= <c:url value="DashboardServlet">
-        				<c:param name="currPage" value="${currPage}"/>
+        				<c:param name="currPage" value="${(pageSize/10)*currPage}"/>
                   		<c:param name="pageSize" value="10"/>
         				</c:url>>
         		<button type="submit" class="btn btn-default" >10</button>
             	<button type="submit" class="btn btn-default" formaction=<c:url value="DashboardServlet">
-        				<c:param name="currPage" value="${currPage}"/>
+        				<c:param name="currPage" value="${(pageSize/50)*currPage}"/>
                   		<c:param name="pageSize" value="50"/>
         				</c:url>>50</button>
             	<button type="submit" class="btn btn-default" formaction=<c:url value="DashboardServlet">
-        				<c:param name="currPage" value="${currPage}"/>
+        				<c:param name="currPage" value="${(pageSize/100)*currPage}"/>
                   		<c:param name="pageSize" value="100"/>
         				</c:url>>100</button>
         	</form>

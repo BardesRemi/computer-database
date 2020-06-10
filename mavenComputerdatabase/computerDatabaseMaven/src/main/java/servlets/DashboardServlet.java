@@ -41,9 +41,11 @@ public class DashboardServlet extends HttpServlet {
 			}
 			
 			String getCurrPage = req.getParameter("currPage");
+			System.out.println(getCurrPage);
 			int currPage = 0;
 			if(getCurrPage != null) {
-				currPage = Integer.parseInt(getCurrPage);
+				currPage = (int) Math.round(Double.parseDouble(getCurrPage));
+				System.out.println(currPage);
 			}
 			
 			String getPageSize = req.getParameter("pageSize");
