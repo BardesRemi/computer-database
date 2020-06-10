@@ -89,11 +89,11 @@
                         		</td>
                         		<td><c:out value="${pc.introduced}"/></td>
                         		<td><c:out value="${pc.discontinued}"/></td>
-                        		<%-- <c:set var="company" value="${pc.company}" /> --%>
-                        		<c:if test="${pc.company != null}">
-                        			<td><c:out value="${pc.company}"/></td>
+                        		<c:set var="company" value="${pc.company}" />
+                        		<c:if test="${company != null}">
+                        			<td><c:out value="${company.name}"/></td>
                         		</c:if>
-                        		<c:if test="${pc.company == null}">
+                        		<c:if test="${company == null}">
                         			<td>no company</td>
                         		</c:if>
                     		</tr>
@@ -113,33 +113,103 @@
     </section>
 
     <footer class="navbar-fixed-bottom">
+    	<c:set var="currPage" value="${page.actualPageNb}" />
+        <c:set var="pageSize" value="${page.pageSize}" />
+        <c:set var="maxPages" value="${page.maxPages}"/>
         <div class="container text-center">
             <ul class="pagination">
-                <li>
-                    <a href=<c:url value="DashboardServlet"><c:param name="currPage" value="${currPage > 0 ? currPage - 1 : currPage}"/></c:url> 
-                    	aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                  </a>
-              </li>
-              <li><a href="DashboardServlet?currPage=0">1</a></li>
-              <li><a href="DashboardServlet?currPage=1">2</a></li>
-              <li><a href="DashboardServlet?currPage=2">3</a></li>
-              <li><a href="DashboardServlet?currPage=3">4</a></li>
-              <li><a href="DashboardServlet?currPage=4">5</a></li>
-              <li>
-                <a href=<c:url value="DashboardServlet"><c:param name="currPage" value="${currPage < 4 ? currPage + 1 : currPage}"/></c:url> 
-                    	aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
+            <li>
+               <a href=
+                 <c:url value="DashboardServlet">
+                  	<c:param name="currPage" value="0"/>
+                  	<c:param name="pageSize" value="${pageSize}"/>
+                 </c:url> 
+                    aria-label="Previous">
+                 <span aria-hidden="true">&laquo;</span>
+               </a>
             </li>
+            <c:if test="${currPage > 1}">
+				<li>
+            		<a href=
+                  		<c:url value="DashboardServlet">
+                  			<c:param name="currPage" value="${currPage - 2}"/>
+                  			<c:param name="pageSize" value="${pageSize}"/>
+                  		</c:url>>
+                  		<c:out value="${currPage - 2}"/>
+                  	</a>
+				</li>
+            </c:if>
+            <c:if test="${currPage > 0}">
+				<li>
+            		<a href=
+                  		<c:url value="DashboardServlet">
+                  			<c:param name="currPage" value="${currPage - 1}"/>
+                  			<c:param name="pageSize" value="${pageSize}"/>
+                  		</c:url>>
+                  		<c:out value="${currPage - 1}"/>
+                  	</a>
+				</li>
+            </c:if>
+            <li>
+            	<a href=
+                  	<c:url value="DashboardServlet">
+                  		<c:param name="currPage" value="${currPage}"/>
+                  		<c:param name="pageSize" value="${pageSize}"/>
+                  	</c:url>>
+                  	<c:out value="${currPage}"/>
+                </a>
+			</li>
+            <c:if test="${currPage < maxPages - 1}">
+				<li>
+            		<a href=
+                  		<c:url value="DashboardServlet">
+                  			<c:param name="currPage" value="${currPage + 1}"/>
+                  			<c:param name="pageSize" value="${pageSize}"/>
+                  		</c:url>>
+                  		<c:out value="${currPage + 1}"/>
+                  	</a>
+				</li>
+            </c:if>
+            <c:if test="${currPage < maxPages - 2}">
+				<li>
+            		<a href=
+                  		<c:url value="DashboardServlet">
+                  			<c:param name="currPage" value="${currPage + 2}"/>
+                  			<c:param name="pageSize" value="${pageSize}"/>
+                  		</c:url>>
+                  		<c:out value="${currPage + 2}"/>
+                  	</a>
+				</li>
+            </c:if>
+            <li>
+            	<a href=
+                  	<c:url value="DashboardServlet">
+                  		<c:param name="currPage" value="${maxPages - 1}"/>
+                  		<c:param name="pageSize" value="${pageSize}"/>
+                  	</c:url> 
+                    	aria-label="Next">
+            		<span aria-hidden="true">&raquo;</span>
+            	</a>
+           	</li>
         </ul>
-        </div>
-
         <div class="btn-group btn-group-sm pull-right" role="group" >
-            <button type="button" class="btn btn-default">10</button>
-            <button type="button" class="btn btn-default">50</button>
-            <button type="button" class="btn btn-default">100</button>
-        </div>
+        	<form method="post" action= <c:url value="DashboardServlet">
+        				<c:param name="currPage" value="${currPage}"/>
+                  		<c:param name="pageSize" value="10"/>
+        				</c:url>>
+        		<button type="submit" class="btn btn-default" >10</button>
+            	<button type="submit" class="btn btn-default" formaction=<c:url value="DashboardServlet">
+        				<c:param name="currPage" value="${currPage}"/>
+                  		<c:param name="pageSize" value="50"/>
+        				</c:url>>50</button>
+            	<button type="submit" class="btn btn-default" formaction=<c:url value="DashboardServlet">
+        				<c:param name="currPage" value="${currPage}"/>
+                  		<c:param name="pageSize" value="100"/>
+        				</c:url>>100</button>
+        	</form>
+            
+      </div> 
+      </div>
     </footer>
 <script src="./js/jquery.min.js"></script>
 <script src="./js/bootstrap.min.js"></script>

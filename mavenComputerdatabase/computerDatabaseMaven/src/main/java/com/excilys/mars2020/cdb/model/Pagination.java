@@ -8,7 +8,7 @@ package com.excilys.mars2020.cdb.model;
 public class Pagination {
 	
 	private int maxEntities;
-	private int actualPageNb;
+	private int actualPageNb = 0;
 	private int pageSize;
 	private int maxPages;
 	
@@ -22,10 +22,7 @@ public class Pagination {
 			this.pageSize = 15;
 			this.maxPages = this.maxEntities / this.pageSize;
 		}
-		else if(this.maxPages != 0 && this.pageSize * this.maxPages < this.maxEntities) {
-			this.pageSize = this.maxEntities / this.maxPages + 1;
-		}
-		else {
+		else if(this.pageSize * this.maxPages < this.maxEntities) {
 			this.maxPages = this.maxEntities / this.pageSize;
 		}
 	}
@@ -95,6 +92,12 @@ public class Pagination {
 		}
 		
 		
+	}
+
+	@Override
+	public String toString() {
+		return "Pagination [maxEntities=" + maxEntities + ", actualPageNb=" + actualPageNb + ", pageSize=" + pageSize
+				+ ", maxPages=" + maxPages + "]";
 	}
 	
 	
