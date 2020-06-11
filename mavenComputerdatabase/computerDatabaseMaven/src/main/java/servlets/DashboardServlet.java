@@ -41,11 +41,9 @@ public class DashboardServlet extends HttpServlet {
 			}
 			
 			String getCurrPage = req.getParameter("currPage");
-			System.out.println(getCurrPage);
 			int currPage = 0;
 			if(getCurrPage != null) {
 				currPage = (int) Math.round(Double.parseDouble(getCurrPage));
-				System.out.println(currPage);
 			}
 			
 			String getPageSize = req.getParameter("pageSize");
@@ -56,7 +54,6 @@ public class DashboardServlet extends HttpServlet {
 			
 			Pagination page = new Pagination.Builder(count).maxPages(5).pageSize(pageSize).actualPangeNb(currPage).build();
 			req.setAttribute("page", page);
-			System.out.println(page.toString());
 			req.setAttribute("pcList", pcService.getPageComputers(page));
 			
 			RequestDispatcher rd = req.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp");

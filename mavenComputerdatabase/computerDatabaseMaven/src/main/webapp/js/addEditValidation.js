@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	
-	$('#addCompForm').submit(function(e){
+	$('#pcInfoForm').submit(function(e){
 		let name = $('#computerName').val()
 		let introduced = $('#introduced').val()
 		let discontinued = $('#discontinued').val()

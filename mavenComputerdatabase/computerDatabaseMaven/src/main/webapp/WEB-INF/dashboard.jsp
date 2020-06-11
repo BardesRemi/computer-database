@@ -14,7 +14,7 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="dashboard.html"> Application - Computer Database </a>
+            <a class="navbar-brand" href="DashboardServlet"> Application - Computer Database </a>
         </div>
     </header>
 
@@ -85,7 +85,10 @@
                             		<input type="checkbox" name="cb" class="cb" value="0">
                         		</td>
                        			<td>
-                            		<a href="editComputer.html" onclick=""><c:out value="${pc.name}"/></a>
+                            		<a href=<c:url value="EditComputerServlet">
+                  								<c:param name="pcId" value="${pc.pcId}"/>
+                  							</c:url> onclick="">
+                  							<c:out value="${pc.name}"/></a>
                         		</td>
                         		<td><c:out value="${pc.introduced}"/></td>
                         		<td><c:out value="${pc.discontinued}"/></td>
@@ -101,7 +104,7 @@
                     </c:when>
                     <c:when test="${ pcList == null}">
                     	<!-- request data "pcList" wasn't initialized -->
-                    	<c:redirect url="DashboardServlet?currPage=0" />
+                    	<c:redirect url="DashboardServlet" />
                     </c:when>
                     <c:otherwise>
                     	<b>No computer found</b>

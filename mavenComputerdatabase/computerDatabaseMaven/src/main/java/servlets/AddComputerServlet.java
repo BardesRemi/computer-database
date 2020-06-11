@@ -37,9 +37,7 @@ public class AddComputerServlet extends HttpServlet {
 		String discontinuedDate = req.getParameter("discontinued");
 		String companyId = req.getParameter("companyId");
 		CompanyDTO company = compService.getCompanyById(Mapper.stringToLong(companyId).get());
-		System.out.println(company);
 		ComputerDTO pcToSave = new ComputerDTO.Builder(pcName).introduced(introducedDate).discontinued(discontinuedDate).company(company).build();
-		System.out.println(pcToSave);
 		int result =-10;
 		try {
 			result = pcService.addNewComputer(pcToSave);
@@ -50,7 +48,6 @@ public class AddComputerServlet extends HttpServlet {
 			//shouldn't happened if front verification are done correctly
 			e.printStackTrace();
 		}
-		System.out.println(result);
 		doGet(req, resp);
 	}
 	

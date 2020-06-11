@@ -3,6 +3,7 @@ package com.excilys.mars2020.cdb.persistance;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,7 @@ public class ComputerDAO {
 					.pcId(resSet.getLong("id"))
 					.introduced(introD.isEmpty() ? null : introD.get())
 					.discontinued(discontD.isEmpty() ? null : discontD.get())
-					.company(new Company.Builder().name(resSet.getString("name")).compId(resSet.getInt("id")).build()).build();
+					.company(new Company.Builder().name(resSet.getString("comp.name")).compId(resSet.getInt("pc.company_id")).build()).build();
 			return Optional.of(pc);
 		}
 		else {
@@ -175,9 +176,17 @@ public class ComputerDAO {
 				stmt.setLong(5, pc.getPcId());
 				stmt.setString(1, pc.getName());
 				LocalDate intro = pc.getIntroduced();
-				stmt.setTimestamp(2, (intro == null ? null : DateMapper.localDateToTimestamp(intro)).get());
+				if(intro == null) {
+					stmt.setNull(2, java.sql.Types.TIMESTAMP);
+				} else {
+					stmt.setTimestamp(2, DateMapper.localDateToTimestamp(intro).get());
+				}
 				LocalDate discont = pc.getDiscontinued();
-				stmt.setTimestamp(3, (discont == null ? null : DateMapper.localDateToTimestamp(discont)).get());
+				if(discont == null) {
+					stmt.setNull(3, java.sql.Types.TIMESTAMP);
+				} else {
+					stmt.setTimestamp(3, DateMapper.localDateToTimestamp(discont).get());
+				}
 				Company comp = pc.getcompany();
 				if (comp == null) {
 					stmt.setNull(4, java.sql.Types.INTEGER);
