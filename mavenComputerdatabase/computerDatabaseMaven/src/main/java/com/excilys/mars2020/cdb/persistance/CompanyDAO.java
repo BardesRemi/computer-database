@@ -67,8 +67,8 @@ public class CompanyDAO {
 	public List<Company> getAllCompaniesRequest() {
 		
 		List<Company> res = new ArrayList<Company>();
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_ALL_COMPAGNIES_QUERY);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(GET_ALL_COMPAGNIES_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
 			res = compdao.storeCompaniesFromRequest(res1);
 		} catch (SQLException sqle) {
@@ -83,8 +83,8 @@ public class CompanyDAO {
 	 * @return Optional with the company, empty if doesn't exist
 	 */
 	public Optional<Company> getOneCompanyRequest(long id){
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_ONE_COMPANY_QUERY);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(GET_ONE_COMPANY_QUERY);) {
 			stmt.setLong(1, id);
 			ResultSet res1 = stmt.executeQuery();
 			return compdao.storeOneCompanyFromRequest(res1);
@@ -99,8 +99,8 @@ public class CompanyDAO {
 	 * @return the number of companies
 	 */
 	public int countAllCompanies() {
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(COUNT_ALL_COMPANIES_QUERY);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(COUNT_ALL_COMPANIES_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
 			if(res1.next()) {
 				return res1.getInt("rowcount");
@@ -117,8 +117,8 @@ public class CompanyDAO {
 	 */
 	public List<Company> getPageCompaniesRequest(Pagination page) {
 		List<Company> res = new ArrayList<Company>();
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_PAGE_COMPANIES_QUERY);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(GET_PAGE_COMPANIES_QUERY);) {
 			stmt.setInt(1, page.getActualPageNb()*page.getPageSize());
 			stmt.setInt(2, page.getPageSize());
 			ResultSet res1 = stmt.executeQuery();

@@ -1,5 +1,6 @@
 package com.excilys.mars2020.cdb.persistance;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -101,8 +102,8 @@ public class ComputerDAO {
 	 */
 	public List<Computer> getAllComputersRequest() {
 		List<Computer> res = new ArrayList<Computer>();
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_ALL_COMPUTER_DETAILS_QUERY);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+			PreparedStatement stmt = dbConnect.prepareStatement(GET_ALL_COMPUTER_DETAILS_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
 			res = pcdao.storeComputersFromRequest(res1);
 		} catch (SQLException sqle) {
@@ -117,8 +118,8 @@ public class ComputerDAO {
 	 * @return Optional<Computer>
 	 */
 	public Optional<Computer> getOneComputers(long id) {
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_COMPUTER_DETAILS_QUERY);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+			PreparedStatement stmt = dbConnect.prepareStatement(GET_COMPUTER_DETAILS_QUERY);) {
 			stmt.setLong(1, id);
 			ResultSet res1 = stmt.executeQuery();
 			return pcdao.storeOneOrNoneComputerFromReq(res1);
@@ -134,8 +135,8 @@ public class ComputerDAO {
 	 * @return the id associated to the new PC
 	 */
 	public int insertNewComputer(Computer pc) {
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(ADD_NEW_COMPUTER_DB);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+			PreparedStatement stmt = dbConnect.prepareStatement(ADD_NEW_COMPUTER_DB);) {
 			stmt.setString(1, pc.getName());
 			LocalDate intro = pc.getIntroduced();
 			if(intro == null) {
@@ -171,8 +172,8 @@ public class ComputerDAO {
 	 * @return 1 if the update were done correctly, 0 otherwise
 	 */
 	public int updateComputer(Computer pc) {
-		try (MysqlConnection dbConnect = new MysqlConnection();
-				PreparedStatement stmt = dbConnect.getConnect().prepareStatement(UPDATE_COMPUTER_DB);){
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(UPDATE_COMPUTER_DB);){
 				stmt.setLong(5, pc.getPcId());
 				stmt.setString(1, pc.getName());
 				LocalDate intro = pc.getIntroduced();
@@ -207,8 +208,8 @@ public class ComputerDAO {
 	 * @return number of row deleted (should be 1 or 0)
 	 */
 	public int deleteComputer (long id) {
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(DELETE_COMPUTER_DB);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(DELETE_COMPUTER_DB);) {
 			stmt.setLong(1, id);
 			return stmt.executeUpdate();
 		} catch (SQLException sqle) {
@@ -222,8 +223,8 @@ public class ComputerDAO {
 	 * @return the number of PC
 	 */
 	public int countAllComputer() {
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(COUNT_ALL_COMPUTERS_QUERY);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(COUNT_ALL_COMPUTERS_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
 			if (res1.next()) {
 				return res1.getInt("rowcount");
@@ -240,8 +241,8 @@ public class ComputerDAO {
 	 */
 	public List<Computer> getPageComputersRequest(Pagination page) {
 		List<Computer> res = new ArrayList<Computer>();
-		try (MysqlConnection dbConnect = new MysqlConnection();
-			PreparedStatement stmt = dbConnect.getConnect().prepareStatement(GET_PAGE_COMPUTERS_QUERY);) {
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(GET_PAGE_COMPUTERS_QUERY);) {
 			stmt.setInt(1, page.getActualPageNb() * page.getPageSize());
 			stmt.setInt(2, page.getPageSize());
 			ResultSet res1 = stmt.executeQuery();

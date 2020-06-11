@@ -1,4 +1,4 @@
-package servlets;
+package com.excilys.mars2020.cdb.servlets;
 
 import java.io.IOException;
 import java.util.List;
