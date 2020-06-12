@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
+import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
 import com.excilys.mars2020.cdb.service.ComputerService;
 
 @WebServlet("/DashboardServlet")
@@ -31,15 +32,6 @@ public class DashboardServlet extends HttpServlet {
 			ComputerService pcService = new ComputerService(ComputerDAO.getComputerDAO());
 			
 			//getting back datas if some already exists, if not setting those datas
-			Object countObject = req.getAttribute("pcCount");
-			int count = 0;
-			if(countObject == null) {
-				count = pcService.getCountComputers();
-				req.setAttribute("pcCount", count);
-			} else {
-				count = (int)countObject;
-			}
-			
 			String getCurrPage = req.getParameter("currPage");
 			int currPage = 0;
 			if(getCurrPage != null) {
@@ -52,10 +44,45 @@ public class DashboardServlet extends HttpServlet {
 				pageSize = Integer.parseInt(getPageSize);
 			}
 			
-			Pagination page = new Pagination.Builder(count).maxPages(5).pageSize(pageSize).actualPangeNb(currPage).build();
-			System.out.println(page);
+			Pagination page;
+			List<ComputerDTO> pcList;
+			
+			String searchName = (String) req.getParameter("search");
+			int count = 0;
+			//All the PCs
+			if(searchName == null) {
+				count = pcService.getCountComputers();
+				page = new Pagination.Builder(count).pageSize(pageSize).actualPangeNb(currPage).build();
+				System.out.println(page.toString());
+				String orderBy = (String) req.getParameter("sort");
+				req.setAttribute("sort", orderBy);
+				System.out.println(orderBy);
+				if (orderBy == null) {
+					pcList = pcService.getPageComputers(page, OrderByPossibilities.ID_UP);
+				} else {
+					switch (orderBy) {
+					case "companyUp":
+						pcList = pcService.getPageComputers(page, OrderByPossibilities.COMPANY_UP);
+						break;
+					case "pcUp":
+						pcList = pcService.getPageComputers(page, OrderByPossibilities.PC_UP);
+						break;
+					default:
+						pcList = pcService.getPageComputers(page, OrderByPossibilities.ID_UP);
+						break;
+					}
+				}
+			}
+			// Searching with a specified name
+			else {
+				pcList = pcService.getComputersByName(searchName);
+				count = pcList.size();
+				page = new Pagination.Builder(count).maxPages(1).pageSize(count).actualPangeNb(0).build();
+			}
+			
+			req.setAttribute("pcCount", count);
 			req.setAttribute("page", page);
-			req.setAttribute("pcList", pcService.getPageComputers(page));
+			req.setAttribute("pcList", pcList);
 			
 			RequestDispatcher rd = req.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp");
 			rd.forward(req, resp);

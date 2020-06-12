@@ -1,11 +1,7 @@
 package com.excilys.mars2020.cdb.servlets;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,12 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.mars2020.cdb.model.Computer;
-import com.excilys.mars2020.cdb.persistance.CompanyDAO;
+
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
-import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
-import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 
 @WebServlet("/DeleteComputerServlet")
 public class DeleteComputerServlet extends HttpServlet {

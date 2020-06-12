@@ -28,6 +28,12 @@ public class ComputerDAO {
 															   + "FROM computer AS pc "
 															   + "LEFT JOIN company AS comp ON "
 															   + "comp.id = pc.company_id";
+	private static final String GET_COMPUTER_BY_NAME_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
+			   												+ "FROM computer AS pc "
+			   												+ "LEFT JOIN company AS comp ON "
+			   												+ "comp.id = pc.company_id "
+															+ "WHERE pc.name LIKE ? "
+			   												+ "OR comp.name LIKE ?";
 	private static final String GET_COMPUTER_DETAILS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
 			  									 			+ "FROM computer AS pc "
 			  									 			+ "LEFT JOIN company AS comp ON "
@@ -37,12 +43,12 @@ public class ComputerDAO {
 	private static final String UPDATE_COMPUTER_DB = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
 	private static final String DELETE_COMPUTER_DB = "DELETE FROM computer WHERE id = ?";
 	private static final String COUNT_ALL_COMPUTERS_QUERY = "SELECT COUNT(id) AS rowcount FROM computer";
-	private static final String GET_PAGE_COMPUTERS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
+	/*private static final String GET_PAGE_COMPUTERS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
 											   		  	 + "FROM computer AS pc "
 											   		  	 + "LEFT JOIN company AS comp ON "
 											   		  	 + "comp.id = pc.company_id "
 											   		  	 + "ORDER BY pc.id "
-											   		  	 + "LIMIT ?, ?";
+											   		  	 + "LIMIT ?, ?";*/
 	
 	private ComputerDAO() {} //private constructor, singleton
 	
@@ -97,8 +103,8 @@ public class ComputerDAO {
 	}
 	
 	/**
-	 * Create an ArrayList of Computers corresponding to all the registered Computer in the DB
-	 * @return ArrayList with all the computers in computer-database
+	 * Create an List of Computers corresponding to all the registered Computer in the DB
+	 * @return List with all the computers in computer-database
 	 */
 	public List<Computer> getAllComputersRequest() {
 		List<Computer> res = new ArrayList<Computer>();
@@ -237,14 +243,30 @@ public class ComputerDAO {
 	
 	/**
 	 * Create an ArrayList of Computers corresponding to the registered Computer in the DB in the page range
+	 * @param the page
 	 * @return ArrayList with the computers in computer-database
 	 */
-	public List<Computer> getPageComputersRequest(Pagination page) {
+	public List<Computer> getPageComputersRequest(Pagination page,OrderByPossibilities order) {
 		List<Computer> res = new ArrayList<Computer>();
 		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(GET_PAGE_COMPUTERS_QUERY);) {
+				PreparedStatement stmt = dbConnect.prepareStatement(GET_ALL_COMPUTER_DETAILS_QUERY + order.getOrderBy());) {
 			stmt.setInt(1, page.getActualPageNb() * page.getPageSize());
 			stmt.setInt(2, page.getPageSize());
+			System.out.println(stmt.toString());
+			ResultSet res1 = stmt.executeQuery();
+			res = pcdao.storeComputersFromRequest(res1);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return res;
+	}
+	
+	public List<Computer> searchComputersByName(String name){
+		List<Computer> res = new ArrayList<Computer>();
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(GET_COMPUTER_BY_NAME_QUERY);) {
+			stmt.setString(1, "%"+name+"%");
+			stmt.setString(2, "%"+name+"%");
 			ResultSet res1 = stmt.executeQuery();
 			res = pcdao.storeComputersFromRequest(res1);
 		} catch (SQLException sqle) {

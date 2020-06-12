@@ -13,6 +13,7 @@ import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
+import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
 import com.excilys.mars2020.cdb.validations.LogicalChecker;
 
 /**
@@ -42,8 +43,8 @@ public class ComputerService {
 	 * @param page
 	 * @return Computers in the page
 	 */
-	public List<ComputerDTO> getPageComputers(Pagination page){
-		return pcdao.getPageComputersRequest(page).stream().map(computer -> Mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
+	public List<ComputerDTO> getPageComputers(Pagination page, OrderByPossibilities order){
+		return pcdao.getPageComputersRequest(page, order).stream().map(computer -> Mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -61,6 +62,15 @@ public class ComputerService {
 	 */
 	public Optional<Computer> getOneComputer(int idSearched) {
 		return pcdao.getOneComputers(idSearched);
+	}
+	
+	/**
+	 * Search and retrieve all the PC with name or CompanyName = givenName 
+	 * @param name
+	 * @return the list containing the requested PCs as DTO
+	 */
+	public List<ComputerDTO> getComputersByName(String name){
+		return pcdao.searchComputersByName(name).stream().map(computer -> Mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
 	}
 	
 	
