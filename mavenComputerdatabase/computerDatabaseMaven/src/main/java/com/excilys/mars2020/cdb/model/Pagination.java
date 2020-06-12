@@ -25,6 +25,12 @@ public class Pagination {
 		else if(this.pageSize * this.maxPages < this.maxEntities) {
 			this.maxPages = this.maxEntities / this.pageSize;
 		}
+		if(this.actualPageNb > this.maxPages) {
+			this.actualPageNb = this.maxPages;
+		}
+		else if(this.actualPageNb < 0) {
+			this.actualPageNb = 0;
+		}
 	}
 	
 	/**

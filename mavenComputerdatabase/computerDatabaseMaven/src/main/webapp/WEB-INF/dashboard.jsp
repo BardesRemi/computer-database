@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        <form id="deleteForm" action="#" method="POST">
+        <form id="deleteForm" action="DeleteComputerServlet" method="POST">
             <input type="hidden" name="selection" value="">
         </form>
 
@@ -82,7 +82,7 @@
                 		<c:forEach var="pc" items="${pcList}">
                 			<tr>
                         		<td class="editMode">
-                            		<input type="checkbox" name="cb" class="cb" value="0">
+                            		<input type="checkbox" name="cb" class="cb" value="${pc.pcId}">
                         		</td>
                        			<td>
                             		<a href=<c:url value="EditComputerServlet">
@@ -162,7 +162,7 @@
                   	<c:out value="${currPage}"/>
                 </a>
 			</li>
-            <c:if test="${currPage < maxPages - 1}">
+            <c:if test="${currPage < maxPages}">
 				<li>
             		<a href=
                   		<c:url value="DashboardServlet">
@@ -173,7 +173,7 @@
                   	</a>
 				</li>
             </c:if>
-            <c:if test="${currPage < maxPages - 2}">
+            <c:if test="${currPage < maxPages - 1}">
 				<li>
             		<a href=
                   		<c:url value="DashboardServlet">
@@ -187,7 +187,7 @@
             <li>
             	<a href=
                   	<c:url value="DashboardServlet">
-                  		<c:param name="currPage" value="${maxPages - 1}"/>
+                  		<c:param name="currPage" value="${maxPages}"/>
                   		<c:param name="pageSize" value="${pageSize}"/>
                   	</c:url> 
                     	aria-label="Next">

@@ -53,6 +53,7 @@ public class DashboardServlet extends HttpServlet {
 			}
 			
 			Pagination page = new Pagination.Builder(count).maxPages(5).pageSize(pageSize).actualPangeNb(currPage).build();
+			System.out.println(page);
 			req.setAttribute("page", page);
 			req.setAttribute("pcList", pcService.getPageComputers(page));
 			
