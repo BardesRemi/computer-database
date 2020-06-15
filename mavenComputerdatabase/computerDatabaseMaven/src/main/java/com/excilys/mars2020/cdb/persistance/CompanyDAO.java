@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.excilys.mars2020.cdb.model.Company;
+import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.Pagination;
+import com.excilys.mars2020.cdb.service.ComputerService;
 
 /**
  * Class gathering companies query methods from database
@@ -127,5 +129,38 @@ public class CompanyDAO {
 			sqle.printStackTrace();
 		}
 		return res;
+	}
+	
+	public int deleteCompany(long id) {
+		ComputerService pcServ = new ComputerService(ComputerDAO.getComputerDAO());
+		List<Computer> pcToDeleteList = pcServ.getComputerByCompanyId(id);
+		//delete all pc in pcToDeleteList then the given company with transactions to keep the ACID idea
+		PreparedStatement stmt = null;
+		try(Connection dbConnect = DbConnection.getConnect();){
+			dbConnect.setAutoCommit(false);
+			String request = "";
+			for(Computer pc : pcToDeleteList) {
+				request = "DELETE FROM computer WHERE id = " + pc.getPcId() + ";";
+				stmt = dbConnect.prepareStatement(request);
+				stmt.executeUpdate();
+			}
+			request = "DELETE FROM company WHERE id = " + id + ";";
+			stmt = dbConnect.prepareStatement(request);
+			stmt.executeUpdate();
+			dbConnect.commit();
+			dbConnect.setAutoCommit(true);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			return 0;
+		} finally {
+			if(stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sqle) {
+					sqle.printStackTrace();
+				}
+			}
+		}
+		return 1;
 	}
 }

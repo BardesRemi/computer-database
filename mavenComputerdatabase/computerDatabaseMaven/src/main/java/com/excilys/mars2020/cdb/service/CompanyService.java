@@ -78,4 +78,8 @@ public class CompanyService {
 	public int getCountCompanies() {
 		return compdao.countAllCompanies();
 	}
+	
+	public int deleteCompany(long id) {
+		return compdao.deleteCompany(id);
+	}
 }

@@ -34,6 +34,11 @@ public class ComputerDAO {
 			   												+ "comp.id = pc.company_id "
 															+ "WHERE pc.name LIKE ? "
 			   												+ "OR comp.name LIKE ?";
+	private static final String GET_COMPUTER_BY_COMPANY_ID_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
+																	+ "FROM computer AS pc "
+																	+ "LEFT JOIN company AS comp ON "
+																	+ "comp.id = pc.company_id "
+																	+ "WHERE comp.id = ? ";
 	private static final String GET_COMPUTER_DETAILS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
 			  									 			+ "FROM computer AS pc "
 			  									 			+ "LEFT JOIN company AS comp ON "
@@ -242,9 +247,9 @@ public class ComputerDAO {
 	}
 	
 	/**
-	 * Create an ArrayList of Computers corresponding to the registered Computer in the DB in the page range
+	 * Create an List of Computers corresponding to the registered Computer in the DB in the page range
 	 * @param the page
-	 * @return ArrayList with the computers in computer-database
+	 * @return List with the computers in computer-database
 	 */
 	public List<Computer> getPageComputersRequest(Pagination page,OrderByPossibilities order) {
 		List<Computer> res = new ArrayList<Computer>();
@@ -252,7 +257,6 @@ public class ComputerDAO {
 				PreparedStatement stmt = dbConnect.prepareStatement(GET_ALL_COMPUTER_DETAILS_QUERY + order.getOrderBy());) {
 			stmt.setInt(1, page.getActualPageNb() * page.getPageSize());
 			stmt.setInt(2, page.getPageSize());
-			System.out.println(stmt.toString());
 			ResultSet res1 = stmt.executeQuery();
 			res = pcdao.storeComputersFromRequest(res1);
 		} catch (SQLException sqle) {
@@ -261,6 +265,11 @@ public class ComputerDAO {
 		return res;
 	}
 	
+	/**
+	 * Create a List of all the computer with a name or company name containing the given name
+	 * @param name
+	 * @return
+	 */
 	public List<Computer> searchComputersByName(String name){
 		List<Computer> res = new ArrayList<Computer>();
 		try (Connection dbConnect = DbConnection.getConnect();
@@ -275,4 +284,22 @@ public class ComputerDAO {
 		return res;
 	}
 
+	/**
+	 * Create a list of all the computer with with the given company name
+	 * @param name
+	 * @return
+	 */
+	public List<Computer> getComputerByCompanyId(long id){
+		List<Computer> res = new ArrayList<Computer>();
+		try (Connection dbConnect = DbConnection.getConnect();
+				PreparedStatement stmt = dbConnect.prepareStatement(GET_COMPUTER_BY_COMPANY_ID_QUERY);) {
+			stmt.setLong(1, id);
+			ResultSet res1 = stmt.executeQuery();
+			res = pcdao.storeComputersFromRequest(res1);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return res;
+	}
+	
 }

@@ -73,6 +73,9 @@ public class ComputerService {
 		return pcdao.searchComputersByName(name).stream().map(computer -> Mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
 	}
 	
+	public List<Computer> getComputerByCompanyId(long id){
+		return pcdao.getComputerByCompanyId(id);
+	}
 	
 	public int addNewComputer (ComputerDTO pcDTO) throws ParseExceptions, LogicalExceptions {
 		Computer computer = Mapper.ComputerDTOToComputer(pcDTO);

@@ -47,8 +47,11 @@
                                 <c:choose>
 	                                <c:when test="${compList != null}">
 	                                <select class="form-control" id="companyId" name="companyId">
+	                                	<c:if test="${pc.company == null}">
+	                                		<option selected value="noCompName">--</option>
+	                                	</c:if>
 	                                	<c:forEach var="comp" items="${compList}">
-	                                		<c:if test="${comp.compId == pc.company.compId}">
+	                                		<c:if test="${not empty pc.company && comp.compId == pc.company.compId}">
 	                                    		<option selected value="${comp.compId}"><c:out value="${comp.name}"/></option>
 	                                    	</c:if>
 	                                    	<c:if test="${comp.compId != pc.company.compId}">

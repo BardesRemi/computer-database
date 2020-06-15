@@ -43,7 +43,7 @@
                                 <c:choose>
 	                                <c:when test="${compList != null}">
 	                                <select class="form-control" id="companyId" name="companyId">
-	                                	<option selected value="0">--</option>
+	                                	<option selected value="noCompName">--</option>
 	                                	<c:forEach var="comp" items="${compList}">
 	                                		<option value="${comp.compId}"><c:out value="${comp.name}"/></option>
 	                                    </c:forEach>

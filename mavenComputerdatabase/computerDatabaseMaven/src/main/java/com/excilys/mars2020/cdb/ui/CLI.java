@@ -99,7 +99,7 @@ public class CLI {
 	}
 	
 	/**
-	 * Display the result of a delete
+	 * Display the result of a delete computer
 	 * @param result
 	 */
 	public void displayDeleteComputer(int result) {
@@ -111,6 +111,21 @@ public class CLI {
 			System.out.println("Delete done correctly");
 			break;
 			
+		}
+	}
+	
+	/**
+	 * Display the result of a delete company
+	 * @param result
+	 */
+	public void displayDeleteCompany(int result) {
+		switch(result) {
+		case 0:
+			System.out.println("No Company corresponding to the specified ID, nothing deleted");
+			break;
+		default:
+			System.out.println("delete done correctly");
+			break;
 		}
 	}
 	

@@ -37,7 +37,10 @@ public class EditComputerServlet extends HttpServlet {
 		String introducedDate = req.getParameter("introduced");
 		String discontinuedDate = req.getParameter("discontinued");
 		String companyId = req.getParameter("companyId");
-		CompanyDTO company = compService.getCompanyById(Mapper.stringToLong(companyId).get());
+		CompanyDTO company = null;
+		if(companyId != null && !companyId.equals("noCompName")) {
+			company = compService.getCompanyById(Mapper.stringToLong(companyId).get());
+		}
 		ComputerDTO pcToEdit = new ComputerDTO.Builder(pcName).pcId(pcId).introduced(introducedDate).discontinued(discontinuedDate)
 				.company(company).build();
 		try {

@@ -12,6 +12,7 @@ import com.excilys.mars2020.cdb.persistance.CompanyDAO;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
+import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
 import com.excilys.mars2020.cdb.ui.CLI;
 
 /**
@@ -33,7 +34,8 @@ public class ControlerUi {
 											 + " -> 4- Add a new computer in the DB \n"
 											 + " -> 5- Update a specific computer in the DB \n"
 											 + " -> 6- Delete a specific computer in the DB \n"
-											 + " -> 7- Close this program \n \n";
+											 + " -> 7- Delete a specific company and all linked computers in the DB \n"
+											 + " -> 8- Close this program \n \n";
 	private static final String ENDING_TEXT = "\n Do you want to make an other action ? (y or n) \n";
 	
 	public ControlerUi () {
@@ -50,12 +52,12 @@ public class ControlerUi {
 		try{
 			System.out.print(STARTING_TEXT);
 			int action = Integer.parseInt(scanner.nextLine());
-			if (action > 0 && action < 7) {
+			if (action > 0 && action < 8) {
 				System.out.println("You choose the " + action);
 				this.actionSelecter(action);
 				this.endAction();
 			}
-			else if (action == 7) {
+			else if (action == 8) {
 				this.closeProgram();
 			}
 			else {
@@ -104,6 +106,9 @@ public class ControlerUi {
 		case 6:
 			this.uiDeleteComputer();
 			break;
+		case 7:
+			this.uiDeleteCompany();
+			break;
 		default:
 			//shouldn't happened
 		}
@@ -127,7 +132,7 @@ public class ControlerUi {
 		boolean end = false;
 		Pagination currPage = new Pagination.Builder(pcServ.getCountComputers()).build();
 		while (!end) {
-			CLI.displayList(this.pcServ.getPageComputers(currPage));
+			CLI.displayList(this.pcServ.getPageComputers(currPage, OrderByPossibilities.ID_UP));
 			end = displayPage(currPage, end);
 		}
 	}
@@ -199,6 +204,12 @@ public class ControlerUi {
 		System.out.println("You want to delete a specific computer, please enter a non decimal number as identifier for it : ");
 		int id = Integer.valueOf(scanner.nextLine());
 		this.view.displayDeleteComputer(this.pcServ.deleteComputer(id));
+	}
+	
+	private void uiDeleteCompany() throws InputMismatchException{
+		System.out.println("You want to delete a specific company and all the computer linked with it, please enter a non deciman number as identifier for it : ");
+		int id = Integer.valueOf(scanner.nextLine());
+		this.view.displayDeleteCompany(this.compServ.deleteCompany(id));
 	}
 	
 	/**
