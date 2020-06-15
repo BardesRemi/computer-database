@@ -44,7 +44,7 @@ public class EditComputerServlet extends HttpServlet {
 		ComputerDTO pcToEdit = new ComputerDTO.Builder(pcName).pcId(pcId).introduced(introducedDate).discontinued(discontinuedDate)
 				.company(company).build();
 		try {
-			int result = pcService.updateComputer(pcToEdit);
+			pcService.updateComputer(pcToEdit);
 		} catch (ParseExceptions e) {
 			// shouldn't happened if front verification are done correctly
 			e.printStackTrace();

@@ -23,7 +23,6 @@ public class HikariConnection implements AutoCloseable{
 	    config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
 	}
 	private HikariDataSource ds = new HikariDataSource(config);
-	private String driver = "com.mysql.cj.jdbc.Driver";
 	
 	private static Connection connect;
 	

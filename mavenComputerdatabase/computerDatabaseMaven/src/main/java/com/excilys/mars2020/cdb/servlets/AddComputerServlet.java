@@ -38,13 +38,11 @@ public class AddComputerServlet extends HttpServlet {
 		String companyId = req.getParameter("companyId");
 		CompanyDTO company = null;
 		if(companyId != null && !companyId.equals("noCompName")) {
-			System.out.println(companyId);
 			company = compService.getCompanyById(Mapper.stringToLong(companyId).get());
 		}
 		ComputerDTO pcToSave = new ComputerDTO.Builder(pcName).introduced(introducedDate).discontinued(discontinuedDate).company(company).build();
-		int result =-10;
 		try {
-			result = pcService.addNewComputer(pcToSave);
+			pcService.addNewComputer(pcToSave);
 		} catch (ParseExceptions e) {
 			//shouldn't happened if front verification are done correctly
 			e.printStackTrace();

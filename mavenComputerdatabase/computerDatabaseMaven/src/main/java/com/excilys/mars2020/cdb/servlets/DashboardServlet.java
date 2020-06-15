@@ -53,10 +53,8 @@ public class DashboardServlet extends HttpServlet {
 			if(searchName == null) {
 				count = pcService.getCountComputers();
 				page = new Pagination.Builder(count).pageSize(pageSize).actualPangeNb(currPage).build();
-				System.out.println(page.toString());
 				String orderBy = (String) req.getParameter("sort");
 				req.setAttribute("sort", orderBy);
-				System.out.println(orderBy);
 				if (orderBy == null) {
 					pcList = pcService.getPageComputers(page, OrderByPossibilities.ID_UP);
 				} else {
