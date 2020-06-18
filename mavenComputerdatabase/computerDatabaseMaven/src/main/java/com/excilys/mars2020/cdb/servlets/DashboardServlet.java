@@ -73,7 +73,7 @@ public class DashboardServlet extends HttpServlet {
 			}
 			// Searching with a specified name
 			else {
-				pcList = pcService.getComputersByName(searchName);
+				pcList = pcService.getComputersByName(searchName.replace("%", "\\%"));
 				count = pcList.size();
 				page = new Pagination.Builder(count).maxPages(1).pageSize(count).actualPangeNb(0).build();
 			}

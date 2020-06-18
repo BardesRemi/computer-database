@@ -10,21 +10,12 @@ public class HikariConnection implements AutoCloseable{
 	
 	private static HikariConnection hikConnect;
 	
-	//private String configFile = "src/main/resources/db.properties";
+	private String configFile = "/db.properties";
 	
-	private static HikariConfig config = new HikariConfig();
-	static {
-		config.setJdbcUrl( "jdbc:mysql://localhost/computer-database-db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC" );
-	    config.setUsername( "admincdb" );
-	    config.setPassword( "qwerty1234" );
-	    config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-	    config.addDataSourceProperty( "cachePrepStmts" , "true" );
-	    config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
-	    config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
-	}
+	private HikariConfig config = new HikariConfig(configFile);
 	private HikariDataSource ds = new HikariDataSource(config);
 	
-	private static Connection connect;
+	private Connection connect;
 	
 	public HikariConnection() {
 		try {
