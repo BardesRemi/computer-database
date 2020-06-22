@@ -1,0 +1,16 @@
+Code review Sprint 1 : 12/03/2020
+
+*&* Nom de package => pas de majuscule
+*&* Rester coherent dans la gestion des modèles (1 builder a Computer => 1 builder a company)
+*&* Rester coherent dans ma façon de coder en terme de visuel.
+*&* Pour les id => BigInt en base => format long coté java pour eviter des soucis de conversion.
+*&* Eviter les "if(){}" en 1 seule lignes.
+*&* Meme si ça rajoute 4 lignes de code, les types optionnals seront toujours mieux a un return null. Car garanti de gestion correcte du "null 	   pointer exception" par de futurs utilisateurs.
+*&* Nom de variable => Au minimum 3 caracteres
+*&* List<> mieux que ArrayList car si jamais besoin d'une nouvelle collection, facile de modifier le code.
+?   PreparedStatement => privilegier les "hasNext()" au "next()" ?
+*&* javadoc => indiquer a quoi servent les paramètres.
+*&* Gerer un moyen de récupérer les IDs en requetant la base => les selects all. Mais pk pas add un select by Name ou truc du genre.
+*&* Pas spécialement de remonter l'id au moment de création du PC
+Creer des exception associé a mes "codes" d'erreur, et renvoyer l'ensemble d'entre elles.
+
