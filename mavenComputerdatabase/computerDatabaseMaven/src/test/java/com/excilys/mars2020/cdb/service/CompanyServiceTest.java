@@ -9,20 +9,25 @@ import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.persistance.CompanyDAO;
 
+@RunWith (MockitoJUnitRunner.class)
 public class CompanyServiceTest {
 	@Mock 
-	CompanyDAO MockDAO = Mockito.mock(CompanyDAO.class);
+	CompanyDAO MockDAO;
+	
 	@InjectMocks 
-	CompanyService myService = new CompanyService(MockDAO);
+	CompanyService myService;
+	
 	ArrayList<Company> compList;
 	Company dellId0 = new Company.Builder().name("Dell").compId(0).build();
 	Company dellId10 = new Company.Builder().name("Dell").compId(10).build();

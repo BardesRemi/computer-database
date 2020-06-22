@@ -3,6 +3,9 @@ package com.excilys.mars2020.cdb.validations;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
@@ -10,6 +13,8 @@ import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.persistance.CompanyDAO;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
+import com.excilys.mars2020.cdb.service.ComputerService;
+import com.excilys.mars2020.cdb.spring.SpringConfig;
 
 /**
  * 
@@ -40,7 +45,9 @@ public class LogicalChecker {
 	}
 	
 	public static Optional<LogicalProblem> companyIsUnknownChecking (Company company){
-		CompanyService compServ = new CompanyService(CompanyDAO.getCompanyDAO());
+		AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
+		
+		CompanyService compServ = appContext.getBean(CompanyService.class);
 		if(compServ.companyInDb(Mapper.companyToCompanyDTO(company))) {
 			return Optional.empty();
 		}

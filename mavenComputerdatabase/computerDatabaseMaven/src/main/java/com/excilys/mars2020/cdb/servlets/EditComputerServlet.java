@@ -10,6 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Controller;
+
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.mapper.Mapper;
@@ -20,16 +24,19 @@ import com.excilys.mars2020.cdb.persistance.CompanyDAO;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
+import com.excilys.mars2020.cdb.spring.SpringConfig;
 
 @WebServlet("/EditComputerServlet")
 public class EditComputerServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1212121212L;
 	
+	private AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
+	
+	private ComputerService pcService = appContext.getBean(ComputerService.class);
+	private CompanyService compService = appContext.getBean(CompanyService.class);
+	
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NumberFormatException{
-		// getting my service interact with the DB
-		ComputerService pcService = new ComputerService(ComputerDAO.getComputerDAO());
-		CompanyService compService = new CompanyService(CompanyDAO.getCompanyDAO());
 
 		// no verification need to be done, done before in front
 		String pcId = req.getParameter("pcId");
@@ -58,10 +65,6 @@ public class EditComputerServlet extends HttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NumberFormatException{
-		
-		//getting my service interact with the DB
-		ComputerService pcService = new ComputerService(ComputerDAO.getComputerDAO());
-		CompanyService compService = new CompanyService(CompanyDAO.getCompanyDAO());
 		
 		String getPcId = req.getParameter("pcId");
 		if(getPcId == null || getPcId.isEmpty()) {

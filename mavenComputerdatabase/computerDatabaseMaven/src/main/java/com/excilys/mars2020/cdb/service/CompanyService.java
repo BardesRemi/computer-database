@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
@@ -16,13 +19,13 @@ import com.excilys.mars2020.cdb.persistance.CompanyDAO;
  * @author remi
  *
  */
+@Service
 public class CompanyService {
-		
+
+	@Autowired
 	private CompanyDAO compdao;
 	
-	public CompanyService(CompanyDAO compDAO) {
-		this.compdao = compDAO;
-	}
+	public CompanyService() {}
 	
 	/**
 	 * check if the given company is in the DB

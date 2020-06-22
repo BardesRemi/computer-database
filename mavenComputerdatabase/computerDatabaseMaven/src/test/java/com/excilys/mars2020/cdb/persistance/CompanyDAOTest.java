@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
+import com.excilys.mars2020.cdb.spring.SpringConfig;
 
 public class CompanyDAOTest extends DBTestCase {
 	
@@ -39,7 +40,7 @@ public class CompanyDAOTest extends DBTestCase {
         return DatabaseOperation.DELETE_ALL;
     }
     
-	CompanyDAO myDAO = CompanyDAO.getCompanyDAO();
+	CompanyDAO myDAO = SpringConfig.getContext().getBean(CompanyDAO.class);
 	Company dell = new Company.Builder().name("Dell").compId(1).build();
 	Company lenovo = new Company.Builder().name("Lenovo").compId(2).build();
 	Company apple = new Company.Builder().name("Apple").compId(3).build();

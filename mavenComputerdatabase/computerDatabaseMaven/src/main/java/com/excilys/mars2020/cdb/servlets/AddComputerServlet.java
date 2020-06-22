@@ -10,6 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Controller;
+
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.mapper.DateMapper;
@@ -20,16 +24,19 @@ import com.excilys.mars2020.cdb.persistance.CompanyDAO;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
+import com.excilys.mars2020.cdb.spring.SpringConfig;
 
 @WebServlet("/AddComputerServlet")
 public class AddComputerServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 987654321L;
 	
+	private static AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
+	
+	private ComputerService pcService = appContext.getBean(ComputerService.class);
+	private CompanyService compService = appContext.getBean(CompanyService.class);
+	
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		//getting my service interact with the DB
-		ComputerService pcService = new ComputerService(ComputerDAO.getComputerDAO());
-		CompanyService compService = new CompanyService(CompanyDAO.getCompanyDAO());
 		
 		//no verification need to be done, done before in front
 		String pcName = req.getParameter("computerName");
@@ -55,8 +62,6 @@ public class AddComputerServlet extends HttpServlet {
 	
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		//getting my service to interact with the DB
-		CompanyService compService = new CompanyService(CompanyDAO.getCompanyDAO());
 		
 		List<CompanyDTO> compList = compService.getAllCompanies();
 		req.setAttribute("compList", compList);

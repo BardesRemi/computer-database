@@ -10,14 +10,19 @@ import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.service.ComputerService;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 /**
  * Class gathering companies query methods from database
  * @author remi
  *
  */
+@Repository
 public class CompanyDAO {
-
-	private static CompanyDAO compdao;
+	
+	@Autowired
+	private static ComputerDAO pcdao;
 	
 	private static final String GET_ALL_COMPAGNIES_QUERY = "SELECT id, name FROM company";
 	private static final String GET_ONE_COMPANY_QUERY = "SELECT id, name FROM company WHERE id = ?";
@@ -25,14 +30,6 @@ public class CompanyDAO {
 	private static final String GET_PAGE_COMPANIES_QUERY = "SELECT id, name FROM company ORDER BY id LIMIT ?, ?";
 	
 	private CompanyDAO() {}
-	
-	public static synchronized CompanyDAO getCompanyDAO() {
-		if (compdao == null) {
-			compdao = new CompanyDAO();
-		}
-		return compdao;
-	}
-	
 	/**
 	 * Create an ArrayList of companies corresponding to the ResultSet argument
 	 * @param resSet
@@ -72,7 +69,7 @@ public class CompanyDAO {
 		try (Connection dbConnect = DbConnection.getConnect();
 				PreparedStatement stmt = dbConnect.prepareStatement(GET_ALL_COMPAGNIES_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
-			res = compdao.storeCompaniesFromRequest(res1);
+			res = this.storeCompaniesFromRequest(res1);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -89,7 +86,7 @@ public class CompanyDAO {
 				PreparedStatement stmt = dbConnect.prepareStatement(GET_ONE_COMPANY_QUERY);) {
 			stmt.setLong(1, id);
 			ResultSet res1 = stmt.executeQuery();
-			return compdao.storeOneCompanyFromRequest(res1);
+			return this.storeOneCompanyFromRequest(res1);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -124,7 +121,7 @@ public class CompanyDAO {
 			stmt.setInt(1, page.getActualPageNb()*page.getPageSize());
 			stmt.setInt(2, page.getPageSize());
 			ResultSet res1 = stmt.executeQuery();
-			res = compdao.storeCompaniesFromRequest(res1);
+			res = this.storeCompaniesFromRequest(res1);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -132,8 +129,7 @@ public class CompanyDAO {
 	}
 	
 	public int deleteCompany(long id) {
-		ComputerService pcServ = new ComputerService(ComputerDAO.getComputerDAO());
-		List<Computer> pcToDeleteList = pcServ.getComputerByCompanyId(id);
+		List<Computer> pcToDeleteList = pcdao.getComputerByCompanyId(id);
 		//delete all pc in pcToDeleteList then the given company with transactions to keep the ACID idea
 		PreparedStatement stmt = null;
 		try(Connection dbConnect = DbConnection.getConnect();){
@@ -143,6 +139,7 @@ public class CompanyDAO {
 				request = "DELETE FROM computer WHERE id = " + pc.getPcId() + ";";
 				stmt = dbConnect.prepareStatement(request);
 				stmt.executeUpdate();
+				stmt.close();
 			}
 			request = "DELETE FROM company WHERE id = " + id + ";";
 			stmt = dbConnect.prepareStatement(request);

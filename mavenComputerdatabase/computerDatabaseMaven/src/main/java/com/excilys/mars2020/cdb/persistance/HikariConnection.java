@@ -3,6 +3,10 @@ package com.excilys.mars2020.cdb.persistance;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.excilys.mars2020.cdb.spring.SpringConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -10,16 +14,13 @@ public class HikariConnection implements AutoCloseable{
 	
 	private static HikariConnection hikConnect;
 	
-	private String configFile = "/db.properties";
-	
-	private HikariConfig config = new HikariConfig(configFile);
-	private HikariDataSource ds = new HikariDataSource(config);
+	private HikariDataSource ds;
 	
 	private Connection connect;
 	
 	public HikariConnection() {
 		try {
-			//Class.forName(driver);
+			ds = SpringConfig.getContext().getBean(HikariDataSource.class);
 			connect = ds.getConnection();
 		}
 		catch (Exception sqle) {
@@ -40,7 +41,6 @@ public class HikariConnection implements AutoCloseable{
 	
 	@Override
 	public synchronized void close() throws SQLException {
-		// TODO Auto-generated method stub
 		if (connect != null) {
 			connect.close();
 		}

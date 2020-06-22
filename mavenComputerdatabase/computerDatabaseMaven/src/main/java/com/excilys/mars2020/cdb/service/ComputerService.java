@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
@@ -22,13 +25,14 @@ import com.excilys.mars2020.cdb.validations.LogicalChecker;
  * @author remi
  *
  */
+@Service
 public class ComputerService {
 	
+	@Autowired
 	private ComputerDAO pcdao;
 	
-	public ComputerService(ComputerDAO pcDAO) {
-		this.pcdao = pcDAO;
-	}
+	
+	public ComputerService(ComputerDAO pcDAO) { }
 
 	/**
 	 * 

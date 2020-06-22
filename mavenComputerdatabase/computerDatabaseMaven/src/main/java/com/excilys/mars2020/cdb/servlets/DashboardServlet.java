@@ -10,16 +10,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Controller;
+
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
-import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
 import com.excilys.mars2020.cdb.service.ComputerService;
+import com.excilys.mars2020.cdb.spring.SpringConfig;
 
 @WebServlet("/DashboardServlet")
 public class DashboardServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 123456789L;
+	
+	private static AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
+	
+	private ComputerService pcService = appContext.getBean(ComputerService.class);
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NumberFormatException{
 		doGet(req, resp);
@@ -27,10 +34,6 @@ public class DashboardServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NumberFormatException{
 		try {
-			
-			//getting my service to interact with the DB
-			ComputerService pcService = new ComputerService(ComputerDAO.getComputerDAO());
-			
 			//getting back datas if some already exists, if not setting those datas
 			String getCurrPage = req.getParameter("currPage");
 			int currPage = 0;

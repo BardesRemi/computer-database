@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.excilys.mars2020.cdb.mapper.DateMapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
@@ -19,9 +22,8 @@ import com.excilys.mars2020.cdb.model.Pagination;
  * @author remi
  *
  */
+@Repository
 public class ComputerDAO {
-
-	private static ComputerDAO pcdao;
 	
 	private static final String GET_ALL_COMPUTER_DETAILS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
 															   + "FROM computer AS pc "
@@ -47,21 +49,8 @@ public class ComputerDAO {
 	private static final String UPDATE_COMPUTER_DB = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
 	private static final String DELETE_COMPUTER_DB = "DELETE FROM computer WHERE id = ?";
 	private static final String COUNT_ALL_COMPUTERS_QUERY = "SELECT COUNT(id) AS rowcount FROM computer";
-	/*private static final String GET_PAGE_COMPUTERS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
-											   		  	 + "FROM computer AS pc "
-											   		  	 + "LEFT JOIN company AS comp ON "
-											   		  	 + "comp.id = pc.company_id "
-											   		  	 + "ORDER BY pc.id "
-											   		  	 + "LIMIT ?, ?";*/
 	
 	private ComputerDAO() {} //private constructor, singleton
-	
-	public static synchronized ComputerDAO getComputerDAO() {
-		if (pcdao == null) {
-			pcdao = new ComputerDAO();
-		}
-		return pcdao;
-	}
 	
 	/**
 	 * Create an ArrayList of computers corresponding to the ResultSet argument
@@ -115,7 +104,7 @@ public class ComputerDAO {
 		try (Connection dbConnect = DbConnection.getConnect();
 			PreparedStatement stmt = dbConnect.prepareStatement(GET_ALL_COMPUTER_DETAILS_QUERY);) {
 			ResultSet res1 = stmt.executeQuery();
-			res = pcdao.storeComputersFromRequest(res1);
+			res = this.storeComputersFromRequest(res1);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -132,7 +121,7 @@ public class ComputerDAO {
 			PreparedStatement stmt = dbConnect.prepareStatement(GET_COMPUTER_DETAILS_QUERY);) {
 			stmt.setLong(1, id);
 			ResultSet res1 = stmt.executeQuery();
-			return pcdao.storeOneOrNoneComputerFromReq(res1);
+			return this.storeOneOrNoneComputerFromReq(res1);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -257,7 +246,7 @@ public class ComputerDAO {
 			stmt.setInt(1, page.getActualPageNb() * page.getPageSize());
 			stmt.setInt(2, page.getPageSize());
 			ResultSet res1 = stmt.executeQuery();
-			res = pcdao.storeComputersFromRequest(res1);
+			res = this.storeComputersFromRequest(res1);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -276,7 +265,7 @@ public class ComputerDAO {
 			stmt.setString(1, "%"+name+"%");
 			stmt.setString(2, "%"+name+"%");
 			ResultSet res1 = stmt.executeQuery();
-			res = pcdao.storeComputersFromRequest(res1);
+			res = this.storeComputersFromRequest(res1);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -294,7 +283,7 @@ public class ComputerDAO {
 				PreparedStatement stmt = dbConnect.prepareStatement(GET_COMPUTER_BY_COMPANY_ID_QUERY);) {
 			stmt.setLong(1, id);
 			ResultSet res1 = stmt.executeQuery();
-			res = pcdao.storeComputersFromRequest(res1);
+			res = this.storeComputersFromRequest(res1);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}

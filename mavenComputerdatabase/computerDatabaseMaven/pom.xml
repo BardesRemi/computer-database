@@ -27,6 +27,7 @@
     <servelt.version>4.0.1</servelt.version>
     <jstl.version>1.2</jstl.version>
     <HikariCP.version>3.4.5</HikariCP.version>
+    <spring.version>5.2.7.RELEASE</spring.version>
   </properties>
 
   <dependencies>
@@ -91,7 +92,22 @@
 		<artifactId>HikariCP</artifactId>
 		<version>${HikariCP.version}</version>
 	</dependency>
-	
+	<dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-test</artifactId>
+	    <version>${spring.version}</version>
+	    <scope>test</scope>
+	</dependency>	
 	
   </dependencies>
 
