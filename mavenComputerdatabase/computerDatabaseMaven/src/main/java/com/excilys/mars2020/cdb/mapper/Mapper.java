@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseProblem;
 import com.excilys.mars2020.cdb.exceptions.ParseTypePb;
@@ -11,16 +15,21 @@ import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
+import com.excilys.mars2020.cdb.spring.SpringConfig;
 
 /**
  * 
  * @author remi
  *
  */
-public class Mapper {
 
+@Component
+public class Mapper {
 	
-	public static Optional<Long> stringToLong (String number){
+	@Autowired
+	private DateMapper dateMapper;
+	
+	public Optional<Long> stringToLong (String number){
 		if(number == null || number.isEmpty()) {
 			return Optional.of(0l);
 		}
@@ -32,31 +41,31 @@ public class Mapper {
 		}
 	}
 	
-	public static Optional<Company> companyDTOToCompany (CompanyDTO compDTO) throws ParseExceptions{
+	public Optional<Company> companyDTOToCompany (CompanyDTO compDTO) throws ParseExceptions{
 		if(compDTO == null) {
 			return Optional.empty();
 		}
 		if(compDTO.getCompId() == null) {
 			return Optional.empty();
 		}
-		Optional<Long> idGot = Mapper.stringToLong(compDTO.getCompId());
+		Optional<Long> idGot = this.stringToLong(compDTO.getCompId());
 		if(idGot.isEmpty()) {
 			throw new ParseExceptions(ParseProblem.createNotALongProblem("Given company id isn't a long !"));
 		}
 		return Optional.of(new Company.Builder().compId(idGot.get()).name(compDTO.getName()).build());
 	}
 	
-	public static CompanyDTO companyToCompanyDTO (Company company) {
+	public CompanyDTO companyToCompanyDTO (Company company) {
 		if(company == null) {
 			return null;
 		}
 		return new CompanyDTO.Builder().compId(String.valueOf(company.getCompId())).name(company.getName()).build();
 	}
 	
-	public static Computer ComputerDTOToComputer (ComputerDTO pcDTO) throws ParseExceptions{
-		Optional<Long> pcIdGot = Mapper.stringToLong(pcDTO.getPcId());
-		Optional<LocalDate> introDateGot = DateMapper.stringToLocalDate(pcDTO.getIntroduced());
-		Optional<LocalDate> discontinuedDateGot = DateMapper.stringToLocalDate(pcDTO.getDiscontinued());
+	public Computer ComputerDTOToComputer (ComputerDTO pcDTO) throws ParseExceptions{
+		Optional<Long> pcIdGot = this.stringToLong(pcDTO.getPcId());
+		Optional<LocalDate> introDateGot = dateMapper.stringToLocalDate(pcDTO.getIntroduced());
+		Optional<LocalDate> discontinuedDateGot = dateMapper.stringToLocalDate(pcDTO.getDiscontinued());
 		CompanyDTO compDTO = pcDTO.getCompany();
 		Optional<Company> comp = companyDTOToCompany(compDTO);
 		return new Computer.Builder(pcDTO.getName())
@@ -67,12 +76,12 @@ public class Mapper {
 				   .build();
 	}
 	
-	public static ComputerDTO computerToComputerDTO (Computer computer) {
+	public ComputerDTO computerToComputerDTO (Computer computer) {
 		return new ComputerDTO.Builder(computer.getName())
 							  .pcId(String.valueOf(computer.getPcId()))
 							  .introduced(computer.getIntroduced()==null ? null : computer.getIntroduced().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
 							  .discontinued(computer.getDiscontinued()==null ? null : computer.getDiscontinued().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-							  .company(Mapper.companyToCompanyDTO(computer.getcompany()))
+							  .company(this.companyToCompanyDTO(computer.getcompany()))
 							  .build();
 	}
 }

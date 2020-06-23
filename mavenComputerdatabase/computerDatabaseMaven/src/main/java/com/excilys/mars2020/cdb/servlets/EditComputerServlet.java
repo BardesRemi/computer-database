@@ -35,6 +35,7 @@ public class EditComputerServlet extends HttpServlet {
 	
 	private ComputerService pcService = appContext.getBean(ComputerService.class);
 	private CompanyService compService = appContext.getBean(CompanyService.class);
+	private Mapper mapper = appContext.getBean(Mapper.class);
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NumberFormatException{
 
@@ -46,7 +47,7 @@ public class EditComputerServlet extends HttpServlet {
 		String companyId = req.getParameter("companyId");
 		CompanyDTO company = null;
 		if(companyId != null && !companyId.equals("noCompName")) {
-			company = compService.getCompanyById(Mapper.stringToLong(companyId).get());
+			company = compService.getCompanyById(mapper.stringToLong(companyId).get());
 		}
 		ComputerDTO pcToEdit = new ComputerDTO.Builder(pcName).pcId(pcId).introduced(introducedDate).discontinued(discontinuedDate)
 				.company(company).build();

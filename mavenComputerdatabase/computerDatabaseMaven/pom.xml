@@ -6,7 +6,7 @@
 
   <groupId>com.excilys.Mars2020.cdb</groupId>
   <artifactId>computerDatabaseMaven</artifactId>
-  <version>4.0.0</version>
+  <version>4.1.0</version>
   <packaging>war</packaging>
 
   <name>computerDatabaseMaven excilys Webapp</name>

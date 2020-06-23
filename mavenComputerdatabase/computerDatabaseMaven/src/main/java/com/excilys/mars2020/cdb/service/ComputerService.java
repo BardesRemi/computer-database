@@ -6,17 +6,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
+import com.excilys.mars2020.cdb.mapper.DateMapper;
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
+import com.excilys.mars2020.cdb.spring.SpringConfig;
 import com.excilys.mars2020.cdb.validations.LogicalChecker;
 
 /**
@@ -31,6 +34,12 @@ public class ComputerService {
 	@Autowired
 	private ComputerDAO pcdao;
 	
+	@Autowired
+	private Mapper mapper;
+	
+	@Autowired
+	private LogicalChecker logicCheck;
+	
 	
 	public ComputerService(ComputerDAO pcDAO) { }
 
@@ -39,7 +48,7 @@ public class ComputerService {
 	 * @return All the computers in the db
 	 */
 	public List<ComputerDTO> getAllComputers() {
-		return pcdao.getAllComputersRequest().stream().map(computer -> Mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
+		return pcdao.getAllComputersRequest().stream().map(computer -> mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -48,7 +57,7 @@ public class ComputerService {
 	 * @return Computers in the page
 	 */
 	public List<ComputerDTO> getPageComputers(Pagination page, OrderByPossibilities order){
-		return pcdao.getPageComputersRequest(page, order).stream().map(computer -> Mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
+		return pcdao.getPageComputersRequest(page, order).stream().map(computer -> mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -74,7 +83,7 @@ public class ComputerService {
 	 * @return the list containing the requested PCs as DTO
 	 */
 	public List<ComputerDTO> getComputersByName(String name){
-		return pcdao.searchComputersByName(name).stream().map(computer -> Mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
+		return pcdao.searchComputersByName(name).stream().map(computer -> mapper.computerToComputerDTO(computer)).collect(Collectors.toList());
 	}
 	
 	public List<Computer> getComputerByCompanyId(long id){
@@ -82,16 +91,16 @@ public class ComputerService {
 	}
 	
 	public int addNewComputer (ComputerDTO pcDTO) throws ParseExceptions, LogicalExceptions {
-		Computer computer = Mapper.ComputerDTOToComputer(pcDTO);
+		Computer computer = mapper.ComputerDTOToComputer(pcDTO);
 		this.checkAddNewComputer(computer);
 		return pcdao.insertNewComputer(computer);
 	}
 	
 	private void checkAddNewComputer (Computer computer) throws LogicalExceptions{
 		ArrayList<Optional<LogicalProblem>> problems = new ArrayList<Optional<LogicalProblem>>();
-		problems.add(LogicalChecker.dateValidationChecking(computer.getIntroduced(), computer.getDiscontinued()));
+		problems.add(logicCheck.dateValidationChecking(computer.getIntroduced(), computer.getDiscontinued()));
 		if(computer.getcompany() != null) {
-			problems.add(LogicalChecker.companyIsUnknownChecking(computer.getcompany()));
+			problems.add(logicCheck.companyIsUnknownChecking(computer.getcompany()));
 		}
 		LogicalExceptions except = new LogicalExceptions(problems.stream().filter(problem -> problem.isPresent())
 																		  .map(pb -> pb.get())
@@ -102,7 +111,7 @@ public class ComputerService {
 	}
 	
 	public int updateComputer(ComputerDTO pcDTO) throws ParseExceptions, LogicalExceptions {
-		Computer computer = Mapper.ComputerDTOToComputer(pcDTO);
+		Computer computer = mapper.ComputerDTOToComputer(pcDTO);
 		this.checkUpdateComputer(computer);
 		return pcdao.updateComputer(computer);
 	}
@@ -110,14 +119,14 @@ public class ComputerService {
 	private void checkUpdateComputer (Computer computer) throws LogicalExceptions {
 		ArrayList<Optional<LogicalProblem>> problems = new ArrayList<Optional<LogicalProblem>>();
 		Optional<Computer> optCheckingPc = pcdao.getOneComputers(computer.getPcId());
-		problems.add(LogicalChecker.idGivenChecking(computer, pcdao));
-		problems.add(LogicalChecker.dateValidationChecking(computer.getIntroduced(), computer.getDiscontinued()));
+		problems.add(logicCheck.idGivenChecking(computer, pcdao));
+		problems.add(logicCheck.dateValidationChecking(computer.getIntroduced(), computer.getDiscontinued()));
 		if(problems.isEmpty()) {
 			Computer oldComputer = optCheckingPc.get();
-			problems.add(LogicalChecker.dateValidationChecking(computer.getIntroduced(), oldComputer.getDiscontinued()));
-			problems.add(LogicalChecker.dateValidationChecking(oldComputer.getIntroduced(), computer.getDiscontinued()));
+			problems.add(logicCheck.dateValidationChecking(computer.getIntroduced(), oldComputer.getDiscontinued()));
+			problems.add(logicCheck.dateValidationChecking(oldComputer.getIntroduced(), computer.getDiscontinued()));
 		}
-		problems.add(LogicalChecker.companyIsUnknownChecking(computer.getcompany()));
+		problems.add(logicCheck.companyIsUnknownChecking(computer.getcompany()));
 		LogicalExceptions except = new LogicalExceptions(problems.stream().filter(problem -> problem.isPresent())
 				  											     .map(pb -> pb.get())
 				  											     .collect(Collectors.toList()));

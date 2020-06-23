@@ -14,11 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.persistance.CompanyDAO;
+import com.excilys.mars2020.cdb.spring.SpringConfig;
 
 @RunWith (MockitoJUnitRunner.class)
 public class CompanyServiceTest {
@@ -27,6 +30,10 @@ public class CompanyServiceTest {
 	
 	@InjectMocks 
 	CompanyService myService;
+	
+	private static AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
+
+	private Mapper mapper = appContext.getBean(Mapper.class);
 	
 	ArrayList<Company> compList;
 	Company dellId0 = new Company.Builder().name("Dell").compId(0).build();
@@ -69,19 +76,19 @@ public class CompanyServiceTest {
 	@Test
 	public void companyInDbTest() {
 		
-		assertTrue(myService.companyInDb(Mapper.companyToCompanyDTO(dellId0)));
-		assertTrue(myService.companyInDb(Mapper.companyToCompanyDTO(lenovoId1)));
-		assertFalse(myService.companyInDb(Mapper.companyToCompanyDTO(dellId10)));
-		assertTrue(myService.companyInDb(Mapper.companyToCompanyDTO(id2)));
+		assertTrue(myService.companyInDb(mapper.companyToCompanyDTO(dellId0)));
+		assertTrue(myService.companyInDb(mapper.companyToCompanyDTO(lenovoId1)));
+		assertFalse(myService.companyInDb(mapper.companyToCompanyDTO(dellId10)));
+		assertTrue(myService.companyInDb(mapper.companyToCompanyDTO(id2)));
 	}
 	
 	@Test
 	public void getAllCompaniesTest() {
 		List<CompanyDTO> testResult = myService.getAllCompanies();
 		
-		assertTrue(testResult.contains(Mapper.companyToCompanyDTO(dellId0)));
-		assertTrue(testResult.contains(Mapper.companyToCompanyDTO(lenovoId1)));
-		assertTrue(testResult.contains(Mapper.companyToCompanyDTO(id2)));
+		assertTrue(testResult.contains(mapper.companyToCompanyDTO(dellId0)));
+		assertTrue(testResult.contains(mapper.companyToCompanyDTO(lenovoId1)));
+		assertTrue(testResult.contains(mapper.companyToCompanyDTO(id2)));
 		assertTrue(testResult.size()==3);
 	}
 	

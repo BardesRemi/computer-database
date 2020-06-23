@@ -8,9 +8,9 @@ import java.util.Optional;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.Pagination;
-import com.excilys.mars2020.cdb.service.ComputerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -20,6 +20,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class CompanyDAO {
+	
+
 	
 	@Autowired
 	private static ComputerDAO pcdao;
