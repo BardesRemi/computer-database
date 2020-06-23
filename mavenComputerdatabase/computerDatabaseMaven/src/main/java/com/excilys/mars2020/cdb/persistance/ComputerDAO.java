@@ -6,11 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.mars2020.cdb.mapper.DateMapper;
@@ -46,7 +50,7 @@ public class ComputerDAO {
 			  									 			+ "FROM computer AS pc "
 			  									 			+ "LEFT JOIN company AS comp ON "
 			  									 			+ "comp.id = pc.company_id "
-			  									 			+ "WHERE pc.id = ?";
+			  									 			+ "WHERE pc.id = :pcId";
 	private static final String ADD_NEW_COMPUTER_DB = "INSERT INTO computer (name,introduced,discontinued,company_id) VALUES ( ?, ?, ?, ?)";
 	private static final String UPDATE_COMPUTER_DB = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
 	private static final String DELETE_COMPUTER_DB = "DELETE FROM computer WHERE id = ?";
@@ -54,6 +58,11 @@ public class ComputerDAO {
 	
 	@Autowired
 	private DateMapper dateMapper;
+	@Autowired
+	private NamedParameterJdbcTemplate jdbcTemplate;
+	@Autowired
+	private ComputerRawMapper pcRawMapper;
+	
 	
 	private ComputerDAO() {} //private constructor, singleton
 	
@@ -105,15 +114,12 @@ public class ComputerDAO {
 	 * @return List with all the computers in computer-database
 	 */
 	public List<Computer> getAllComputersRequest() {
-		List<Computer> res = new ArrayList<Computer>();
-		try (Connection dbConnect = DbConnection.getConnect();
-			PreparedStatement stmt = dbConnect.prepareStatement(GET_ALL_COMPUTER_DETAILS_QUERY);) {
-			ResultSet res1 = stmt.executeQuery();
-			res = this.storeComputersFromRequest(res1);
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
+		try {
+			return jdbcTemplate.query(GET_ALL_COMPUTER_DETAILS_QUERY, pcRawMapper);
+		} catch (DataAccessException dataE) {
+			dataE.printStackTrace();
+			return Collections.emptyList();
 		}
-		return res;
 	}
 	
 	/**
@@ -122,15 +128,18 @@ public class ComputerDAO {
 	 * @return Optional<Computer>
 	 */
 	public Optional<Computer> getOneComputers(long id) {
-		try (Connection dbConnect = DbConnection.getConnect();
-			PreparedStatement stmt = dbConnect.prepareStatement(GET_COMPUTER_DETAILS_QUERY);) {
-			stmt.setLong(1, id);
-			ResultSet res1 = stmt.executeQuery();
-			return this.storeOneOrNoneComputerFromReq(res1);
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("pcId", id);
+			List<Computer> res = jdbcTemplate.query(GET_COMPUTER_DETAILS_QUERY, paramMap, pcRawMapper);
+			if(res.isEmpty()) {
+				return Optional.empty();
+			} else {
+				return Optional.of(res.get(0));
+			}
+		} catch (DataAccessException dataE) {
+			dataE.printStackTrace();
+			return Optional.empty();
 		}
-		return Optional.empty();
 	}
 	
 	/**

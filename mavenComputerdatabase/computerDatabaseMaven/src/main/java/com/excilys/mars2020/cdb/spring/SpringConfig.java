@@ -3,6 +3,7 @@ package com.excilys.mars2020.cdb.spring;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -29,5 +30,10 @@ public class SpringConfig {
 	@Scope("singleton")
 	public HikariDataSource getHikariDataSource() {
 		return new HikariDataSource(hikariConfig());
+	}
+	
+	@Bean
+	NamedParameterJdbcTemplate namedParameterJdbcTemplate(HikariDataSource datasource) {
+		return new NamedParameterJdbcTemplate(datasource);
 	}
 }
