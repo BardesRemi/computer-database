@@ -7,26 +7,34 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.model.*;
+import com.excilys.mars2020.cdb.spring.SpringConfig;
+import com.excilys.mars2020.cdb.validations.LogicalChecker;
 
 public class MapperTest {
+	
+	private static AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
+
+	private Mapper mapper = appContext.getBean(Mapper.class);
 
 	@Test
 	public void stringToLongTest() {
 		Long nb3l = 3l, nb0l = 0l;
-		assertEquals(nb0l, Mapper.stringToLong("").get());
-		assertEquals(nb0l, Mapper.stringToLong(null).get());
-		assertTrue(Mapper.stringToLong("10,45").isEmpty());
-		assertTrue(Mapper.stringToLong("12.6543").isEmpty());
-		assertEquals(nb3l, Mapper.stringToLong("3").get());
+		assertEquals(nb0l, mapper.stringToLong("").get());
+		assertEquals(nb0l, mapper.stringToLong(null).get());
+		assertTrue(mapper.stringToLong("10,45").isEmpty());
+		assertTrue(mapper.stringToLong("12.6543").isEmpty());
+		assertEquals(nb3l, mapper.stringToLong("3").get());
 	}
 	
 	@Test(expected = ParseExceptions.class)
 	public void companyDTOToCompanyExceptionTest() throws ParseExceptions {
 		CompanyDTO compDTO1 = new CompanyDTO.Builder().compId("Aloa").name("aaa").build();
-		Company comp = Mapper.companyDTOToCompany(compDTO1).get();
+		Company comp = mapper.companyDTOToCompany(compDTO1).get();
 	}
 	
 	@Test
@@ -38,11 +46,11 @@ public class MapperTest {
 		Company comp2 = new Company.Builder().compId(11).name("bbb").build();
 		CompanyDTO compDTO1 = new CompanyDTO.Builder().compId("10").name("aaa").build();
 		try {
-			assertTrue(Mapper.companyDTOToCompany(compDTONoId).isEmpty());
-			assertTrue(Mapper.companyDTOToCompany(compDTONoName).isPresent());
-			assertEquals(compNoName, Mapper.companyDTOToCompany(compDTONoName).get());
-			assertEquals(comp1, Mapper.companyDTOToCompany(compDTO1).get());
-			assertNotEquals(comp2, Mapper.companyDTOToCompany(compDTO1).get());
+			assertTrue(mapper.companyDTOToCompany(compDTONoId).isEmpty());
+			assertTrue(mapper.companyDTOToCompany(compDTONoName).isPresent());
+			assertEquals(compNoName, mapper.companyDTOToCompany(compDTONoName).get());
+			assertEquals(comp1, mapper.companyDTOToCompany(compDTO1).get());
+			assertNotEquals(comp2, mapper.companyDTOToCompany(compDTO1).get());
 		} catch (ParseExceptions e) {
 			System.out.println("Exception in companyDTOToCompanyTest, shouldn't happen");
 			e.getMessage();
@@ -54,8 +62,8 @@ public class MapperTest {
 		Company comp1 = new Company.Builder().compId(10l).name("aaa").build();
 		Company comp2 = new Company.Builder().compId(11l).name("bbb").build();
 		CompanyDTO compDTO1 = new CompanyDTO.Builder().compId("10").name("aaa").build();
-		assertEquals(compDTO1, Mapper.companyToCompanyDTO(comp1));
-		assertNotEquals(compDTO1, Mapper.companyToCompanyDTO(comp2));
+		assertEquals(compDTO1, mapper.companyToCompanyDTO(comp1));
+		assertNotEquals(compDTO1, mapper.companyToCompanyDTO(comp2));
 	}
 	
 	@Test
@@ -74,11 +82,11 @@ public class MapperTest {
 		ComputerDTO pcDTO3 = new ComputerDTO.Builder("pc4").pcId("3").introduced("01/01/2020").discontinued("18/06/2022").build();
 		
 		try {
-			assertEquals(pc1, Mapper.ComputerDTOToComputer(pcDTO1));
-			assertEquals(pc2, Mapper.ComputerDTOToComputer(pcDTO2));
-			assertNotEquals(pc1, Mapper.ComputerDTOToComputer(pcDTO1Bis));
-			assertNotEquals(pc3, Mapper.ComputerDTOToComputer(pcDTO2));
-			assertEquals(pc4, Mapper.ComputerDTOToComputer(pcDTO3));
+			assertEquals(pc1, mapper.ComputerDTOToComputer(pcDTO1));
+			assertEquals(pc2, mapper.ComputerDTOToComputer(pcDTO2));
+			assertNotEquals(pc1, mapper.ComputerDTOToComputer(pcDTO1Bis));
+			assertNotEquals(pc3, mapper.ComputerDTOToComputer(pcDTO2));
+			assertEquals(pc4, mapper.ComputerDTOToComputer(pcDTO3));
 		} catch (ParseExceptions e) {
 			System.out.println("Exception in computerDTOToComputerTest , shouldn't happen");
 			e.printStackTrace();
@@ -96,10 +104,10 @@ public class MapperTest {
 		ComputerDTO pcDTO1Bis = new ComputerDTO.Builder("pc1").pcId("0").company(compDTO1).build();
 		ComputerDTO pcDTO2 = new ComputerDTO.Builder("pc2").pcId("1").company(compDTO1).build();
 		ComputerDTO pcDTO3 = new ComputerDTO.Builder("pc4").pcId("3").introduced("01/01/2020").discontinued("18/06/2022").build();
-		assertEquals(pcDTO1, Mapper.computerToComputerDTO(pc1));
-		assertNotEquals(pcDTO1Bis, Mapper.computerToComputerDTO(pc1));
-		assertEquals(pcDTO2, Mapper.computerToComputerDTO(pc2));
-		assertEquals(pcDTO3, Mapper.computerToComputerDTO(pc4));
+		assertEquals(pcDTO1, mapper.computerToComputerDTO(pc1));
+		assertNotEquals(pcDTO1Bis, mapper.computerToComputerDTO(pc1));
+		assertEquals(pcDTO2, mapper.computerToComputerDTO(pc2));
+		assertEquals(pcDTO3, mapper.computerToComputerDTO(pc4));
 	}
 
 }

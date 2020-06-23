@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class DateMapper {
 
 	/**
@@ -14,7 +17,7 @@ public class DateMapper {
 	 * @param tmsp a timestamp
 	 * @return optional with a LocalDate inside
 	 */
-	public static Optional<LocalDate> timestampToLocalDate(Timestamp tmsp) {
+	public Optional<LocalDate> timestampToLocalDate(Timestamp tmsp) {
 		if (tmsp == null) {
 			return Optional.empty();
 		}
@@ -28,7 +31,7 @@ public class DateMapper {
 	 * @param ldate a LocalDate
 	 * @return Optional with a timestamp inside
 	 */
-	public static Optional<Timestamp> localDateToTimestamp (LocalDate ldate) {
+	public Optional<Timestamp> localDateToTimestamp (LocalDate ldate) {
 		if(ldate == null) {
 			return Optional.empty();
 		}
@@ -40,7 +43,7 @@ public class DateMapper {
 	 * @param sdate a string in form "dd/MM/yyyy" or "yyyy-mm-dd"
 	 * @return Optional with the corresponding date in LocalDate format
 	 */
-	public static Optional<LocalDate> stringToLocalDate(String sdate) {
+	public Optional<LocalDate> stringToLocalDate(String sdate) {
 		List<DateTimeFormatter> knownPatterns = new ArrayList<DateTimeFormatter>();
 		knownPatterns.add(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		knownPatterns.add(DateTimeFormatter.ofPattern("yyyy-MM-dd"));

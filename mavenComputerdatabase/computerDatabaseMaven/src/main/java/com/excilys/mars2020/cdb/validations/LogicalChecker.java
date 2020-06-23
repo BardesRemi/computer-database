@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
 import com.excilys.mars2020.cdb.mapper.Mapper;
@@ -21,9 +22,13 @@ import com.excilys.mars2020.cdb.spring.SpringConfig;
  * @author remi
  *
  */
+@Component
 public class LogicalChecker {
 	
-	public static Optional<LogicalProblem> idGivenChecking (Computer computer, ComputerDAO pcdao){
+	@Autowired
+	private Mapper mapper;
+	
+	public Optional<LogicalProblem> idGivenChecking (Computer computer, ComputerDAO pcdao){
 		if(computer.getPcId() == 0l) {
 			return Optional.of(LogicalProblem.createNoIdGivenProblem("No Id given for this computer : " + computer.toString()));
 		}
@@ -34,7 +39,7 @@ public class LogicalChecker {
 		return Optional.empty();
 	}
 
-	public static Optional<LogicalProblem> dateValidationChecking (LocalDate intro, LocalDate discont){
+	public Optional<LogicalProblem> dateValidationChecking (LocalDate intro, LocalDate discont){
 		if(intro == null || discont == null) {
 			return Optional.empty();
 		}
@@ -44,11 +49,11 @@ public class LogicalChecker {
 		return Optional.empty();
 	}
 	
-	public static Optional<LogicalProblem> companyIsUnknownChecking (Company company){
+	public Optional<LogicalProblem> companyIsUnknownChecking (Company company){
 		AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
 		
 		CompanyService compServ = appContext.getBean(CompanyService.class);
-		if(compServ.companyInDb(Mapper.companyToCompanyDTO(company))) {
+		if(compServ.companyInDb(mapper.companyToCompanyDTO(company))) {
 			return Optional.empty();
 		}
 		return Optional.of(LogicalProblem.createUnknownCompanyProblem("given company : " + company.getName() + " isn't in the DB !"));
