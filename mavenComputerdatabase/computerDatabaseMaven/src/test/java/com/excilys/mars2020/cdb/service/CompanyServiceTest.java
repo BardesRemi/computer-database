@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
@@ -28,23 +29,29 @@ public class CompanyServiceTest {
 	@Mock 
 	CompanyDAO MockDAO;
 	
+	@Mock
+	Mapper mapper;
+	
 	@InjectMocks 
 	CompanyService myService;
 	
-	private static AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
-
-	private Mapper mapper = appContext.getBean(Mapper.class);
-	
-	ArrayList<Company> compList;
+	private static ArrayList<Company> compList;
 	Company dellId0 = new Company.Builder().name("Dell").compId(0).build();
 	Company dellId10 = new Company.Builder().name("Dell").compId(10).build();
 	Company lenovoId1 = new Company.Builder().name("Lenovo").compId(1).build();
 	Company id2 = new Company.Builder().compId(2).build();
 	
+	CompanyDTO dellId0DTO = new CompanyDTO.Builder().name("Dell").compId("0").build();
+	CompanyDTO dellId10DTO = new CompanyDTO.Builder().name("Dell").compId("10").build();
+	CompanyDTO lenovoId1DTO = new CompanyDTO.Builder().name("Lenovo").compId("1").build();
+	CompanyDTO id2DTO = new CompanyDTO.Builder().compId("2").build();
+	
 	private void refreshMocks() {
 		mockGetOneCompanyRequest();
 		mockGetCountCompanies();
 		mockGetAllCompanies();
+		mockCompanyDTOToCompany();
+		mockCompanyToCompanyDTO();
 	}
 	
 	private void mockGetOneCompanyRequest () {
@@ -62,6 +69,22 @@ public class CompanyServiceTest {
 		Mockito.when(MockDAO.getAllCompaniesRequest()).thenReturn(compList);
 	}
 	
+	private void mockCompanyDTOToCompany() {
+		try {
+			Mockito.when(mapper.companyDTOToCompany(dellId0DTO)).thenReturn(Optional.of(dellId0));
+			Mockito.when(mapper.companyDTOToCompany(lenovoId1DTO)).thenReturn(Optional.of(lenovoId1));
+			Mockito.when(mapper.companyDTOToCompany(id2DTO)).thenReturn(Optional.of(id2));
+			Mockito.when(mapper.companyDTOToCompany(dellId10DTO)).thenReturn(Optional.of(dellId10));
+		} catch (ParseExceptions e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void mockCompanyToCompanyDTO() {
+		Mockito.when(mapper.companyToCompanyDTO(dellId0)).thenReturn(dellId0DTO);
+		Mockito.when(mapper.companyToCompanyDTO(lenovoId1)).thenReturn(lenovoId1DTO);
+		Mockito.when(mapper.companyToCompanyDTO(id2)).thenReturn(id2DTO);
+	}
 	
 	@Before
 	public void initialize() {
@@ -69,31 +92,32 @@ public class CompanyServiceTest {
 		compList.add(dellId0);
 		compList.add(lenovoId1);
 		compList.add(id2);
-		
 		this.refreshMocks();
 	}
 	
 	@Test
 	public void companyInDbTest() {
 		
-		assertTrue(myService.companyInDb(mapper.companyToCompanyDTO(dellId0)));
-		assertTrue(myService.companyInDb(mapper.companyToCompanyDTO(lenovoId1)));
-		assertFalse(myService.companyInDb(mapper.companyToCompanyDTO(dellId10)));
-		assertTrue(myService.companyInDb(mapper.companyToCompanyDTO(id2)));
+		assertTrue(myService.companyInDb(dellId0DTO));
+		assertTrue(myService.companyInDb(lenovoId1DTO));
+		assertFalse(myService.companyInDb(dellId10DTO));
+		assertTrue(myService.companyInDb(id2DTO));
 	}
 	
 	@Test
 	public void getAllCompaniesTest() {
+		
 		List<CompanyDTO> testResult = myService.getAllCompanies();
 		
-		assertTrue(testResult.contains(mapper.companyToCompanyDTO(dellId0)));
-		assertTrue(testResult.contains(mapper.companyToCompanyDTO(lenovoId1)));
-		assertTrue(testResult.contains(mapper.companyToCompanyDTO(id2)));
+		assertTrue(testResult.contains(dellId0DTO));
+		assertTrue(testResult.contains(lenovoId1DTO));
+		assertTrue(testResult.contains(id2DTO));
 		assertTrue(testResult.size()==3);
 	}
 	
 	@Test
 	public void getCountCompanies() {
+		Mockito.when(MockDAO.countAllCompanies()).thenReturn(compList.size());
 		assertTrue(myService.getCountCompanies()==3);
 	}
 }

@@ -15,6 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Class gathering companies query methods from database
@@ -82,8 +83,8 @@ public class CompanyDAO {
 	public int countAllCompanies() {
 		try {
 			return jdbcTemplate.queryForObject(COUNT_ALL_COMPANIES_QUERY, new MapSqlParameterSource(), Integer.class);
-		} catch (DataAccessException sqle) {
-			sqle.printStackTrace();
+		} catch (DataAccessException dataE) {
+			dataE.printStackTrace();
 			return 0;
 		}
 	}
@@ -98,42 +99,23 @@ public class CompanyDAO {
 											.addValue("start", page.getActualPageNb() * page.getPageSize())
 											.addValue("qty", page.getPageSize());
 			return jdbcTemplate.query(GET_PAGE_COMPANIES_QUERY, paramMap, compRawMapper);
-		} catch(DataAccessException sqle) {
-			sqle.printStackTrace();
+		} catch(DataAccessException dataE) {
+			dataE.printStackTrace();
 			return Collections.emptyList();
 		}
 	}
 	
+	@Transactional
 	public int deleteCompany(long id) {
 		List<Computer> pcToDeleteList = pcdao.getComputerByCompanyId(id);
 		//delete all pc in pcToDeleteList then the given company with transactions to keep the ACID idea
-		PreparedStatement stmt = null;
-		try(Connection dbConnect = DbConnection.getConnect();){
-			dbConnect.setAutoCommit(false);
-			String request = "";
-			for(Computer pc : pcToDeleteList) {
-				request = "DELETE FROM computer WHERE id = " + pc.getPcId() + ";";
-				stmt = dbConnect.prepareStatement(request);
-				stmt.executeUpdate();
-				stmt.close();
-			}
-			request = "DELETE FROM company WHERE id = " + id + ";";
-			stmt = dbConnect.prepareStatement(request);
-			stmt.executeUpdate();
-			dbConnect.commit();
-			dbConnect.setAutoCommit(true);
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
+		try {
+			for(Computer pc : pcToDeleteList) { pcdao.deleteComputer(pc.getPcId());}
+			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("company_id", id);
+			return jdbcTemplate.update("DELETE FROM company WHERE id = :company_id", paramMap);
+		} catch (DataAccessException dataE) {
+			dataE.printStackTrace();
 			return 0;
-		} finally {
-			if(stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException sqle) {
-					sqle.printStackTrace();
-				}
-			}
 		}
-		return 1;
 	}
 }
