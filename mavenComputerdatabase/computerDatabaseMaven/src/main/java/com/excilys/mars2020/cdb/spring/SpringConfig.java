@@ -21,15 +21,9 @@ public class SpringConfig {
 		return appContext;
 	}
 	
-	@Bean
-	public HikariConfig hikariConfig() {
-		return new HikariConfig("/db.properties");
-	}
-	
-	@Bean
-	@Scope("singleton")
-	public HikariDataSource getHikariDataSource() {
-		return new HikariDataSource(hikariConfig());
+	@Bean(destroyMethod = "close")
+	public HikariDataSource HikariDataSource() {
+		return new HikariDataSource(new HikariConfig("/db.properties"));
 	}
 	
 	@Bean

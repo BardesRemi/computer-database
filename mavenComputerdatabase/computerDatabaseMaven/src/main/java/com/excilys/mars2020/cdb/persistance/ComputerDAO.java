@@ -39,25 +39,23 @@ public class ComputerDAO {
 			   												+ "FROM computer AS pc "
 			   												+ "LEFT JOIN company AS comp ON "
 			   												+ "comp.id = pc.company_id "
-															+ "WHERE pc.name LIKE ? "
-			   												+ "OR comp.name LIKE ?";
+															+ "WHERE pc.name LIKE :name "
+			   												+ "OR comp.name LIKE :name";
 	private static final String GET_COMPUTER_BY_COMPANY_ID_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
 																	+ "FROM computer AS pc "
 																	+ "LEFT JOIN company AS comp ON "
 																	+ "comp.id = pc.company_id "
-																	+ "WHERE comp.id = ? ";
+																	+ "WHERE comp.id = :company_id ";
 	private static final String GET_COMPUTER_DETAILS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
 			  									 			+ "FROM computer AS pc "
 			  									 			+ "LEFT JOIN company AS comp ON "
 			  									 			+ "comp.id = pc.company_id "
 			  									 			+ "WHERE pc.id = :pcId";
-	private static final String ADD_NEW_COMPUTER_DB = "INSERT INTO computer (name,introduced,discontinued,company_id) VALUES ( ?, ?, ?, ?)";
-	private static final String UPDATE_COMPUTER_DB = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
-	private static final String DELETE_COMPUTER_DB = "DELETE FROM computer WHERE id = ?";
+	private static final String ADD_NEW_COMPUTER_DB = "INSERT INTO computer (name,introduced,discontinued,company_id) VALUES ( :name, :introduced, :discontinued, :company_id)";
+	private static final String UPDATE_COMPUTER_DB = "UPDATE computer SET name = :name, introduced = :introduced, discontinued = :discontinued, company_id = :company_id WHERE id = :pc_id";
+	private static final String DELETE_COMPUTER_DB = "DELETE FROM computer WHERE id = :pc_id";
 	private static final String COUNT_ALL_COMPUTERS_QUERY = "SELECT COUNT(id) AS rowcount FROM computer";
 	
-	@Autowired
-	private DateMapper dateMapper;
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired
@@ -65,49 +63,6 @@ public class ComputerDAO {
 	
 	
 	private ComputerDAO() {} //private constructor, singleton
-	
-	/**
-	 * Create an ArrayList of computers corresponding to the ResultSet argument
-	 * @param resSet
-	 * @return ArrayList with all the computers in resSet
-	 * @throws SQLException
-	 */
-	private List<Computer> storeComputersFromRequest(ResultSet resSet) throws SQLException{
-		List<Computer> res = new ArrayList<Computer>();
-		while (resSet.next()) {
-			Optional<LocalDate> introD = dateMapper.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
-			Optional<LocalDate> discontD = dateMapper.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
-			Computer pc = new Computer.Builder(resSet.getString("pc.name"))
-					.pcId(resSet.getLong("pc.id"))
-					.introduced(introD.isEmpty() ? null : introD.get())
-					.discontinued(discontD.isEmpty() ? null : discontD.get())
-					.company(new Company.Builder().name(resSet.getString("comp.name")).compId(resSet.getInt("pc.company_id")).build()).build();
-			res.add(pc);
-			}
-		return res;
-	}
-	
-	/**
-	 * Compute the request result for 1 computer (or none)
-	 * @param resSet
-	 * @return Optional with the request computer inside if it exist, empty if not
-	 * @throws SQLException
-	 */
-	private Optional<Computer> storeOneOrNoneComputerFromReq(ResultSet resSet) throws SQLException{
-		if (resSet.next()) {
-			Optional<LocalDate> introD = dateMapper.timestampToLocalDate(resSet.getTimestamp("pc.introduced"));
-			Optional<LocalDate> discontD = dateMapper.timestampToLocalDate(resSet.getTimestamp("pc.discontinued"));
-			Computer pc = new Computer.Builder(resSet.getString("name"))
-					.pcId(resSet.getLong("id"))
-					.introduced(introD.isEmpty() ? null : introD.get())
-					.discontinued(discontD.isEmpty() ? null : discontD.get())
-					.company(new Company.Builder().name(resSet.getString("comp.name")).compId(resSet.getInt("pc.company_id")).build()).build();
-			return Optional.of(pc);
-		}
-		else {
-			return Optional.empty();
-		}
-	}
 	
 	/**
 	 * Create an List of Computers corresponding to all the registered Computer in the DB
@@ -148,35 +103,23 @@ public class ComputerDAO {
 	 * @return the id associated to the new PC
 	 */
 	public int insertNewComputer(Computer pc) {
-		try (Connection dbConnect = DbConnection.getConnect();
-			PreparedStatement stmt = dbConnect.prepareStatement(ADD_NEW_COMPUTER_DB);) {
-			stmt.setString(1, pc.getName());
-			LocalDate intro = pc.getIntroduced();
-			if(intro == null) {
-				stmt.setNull(2, java.sql.Types.TIMESTAMP);
-			}
-			else {
-				stmt.setTimestamp(2, dateMapper.localDateToTimestamp(intro).get());
-			}
-			LocalDate discont = pc.getDiscontinued();
-			if(discont == null) {
-				stmt.setNull(3, java.sql.Types.TIMESTAMP);
-			}
-			else {
-				stmt.setTimestamp(3, dateMapper.localDateToTimestamp(discont).get());
-			}
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource()
+												.addValue("name", pc.getName())
+												.addValue("introduced", pc.getIntroduced())
+												.addValue("discontinued", pc.getDiscontinued());
 			Company comp = pc.getcompany();
 			if (comp == null) {
-				stmt.setNull(4, java.sql.Types.INTEGER); 
+				paramMap.addValue("company_id", null);
 			}
 			else {
-				stmt.setLong(4, comp.getCompId());
+				paramMap.addValue("company_id", pc.getcompany().getCompId());
 			}
-			return stmt.executeUpdate();
-		} catch (SQLException sqle) {
+			return jdbcTemplate.update(ADD_NEW_COMPUTER_DB, paramMap);
+		} catch (DataAccessException sqle) {
 			sqle.printStackTrace();
+			return 0;
 		}
-		return 0;
 	}
 	
 	/**
@@ -185,34 +128,24 @@ public class ComputerDAO {
 	 * @return 1 if the update were done correctly, 0 otherwise
 	 */
 	public int updateComputer(Computer pc) {
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(UPDATE_COMPUTER_DB);){
-				stmt.setLong(5, pc.getPcId());
-				stmt.setString(1, pc.getName());
-				LocalDate intro = pc.getIntroduced();
-				if(intro == null) {
-					stmt.setNull(2, java.sql.Types.TIMESTAMP);
-				} else {
-					stmt.setTimestamp(2, dateMapper.localDateToTimestamp(intro).get());
-				}
-				LocalDate discont = pc.getDiscontinued();
-				if(discont == null) {
-					stmt.setNull(3, java.sql.Types.TIMESTAMP);
-				} else {
-					stmt.setTimestamp(3, dateMapper.localDateToTimestamp(discont).get());
-				}
-				Company comp = pc.getcompany();
-				if (comp == null) {
-					stmt.setNull(4, java.sql.Types.INTEGER);
-				}
-				else {
-					stmt.setLong(4, comp.getCompId());
-				}
-				return stmt.executeUpdate();
-			} catch (SQLException sqle) {
-				sqle.printStackTrace();
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource()
+												.addValue("name", pc.getName())
+												.addValue("introduced", pc.getIntroduced())
+												.addValue("discontinued", pc.getDiscontinued())
+												.addValue("pc_id", pc.getPcId());
+			Company comp = pc.getcompany();
+			if (comp == null) {
+				paramMap.addValue("company_id", null);
 			}
+			else {
+				paramMap.addValue("company_id", pc.getcompany().getCompId());
+			}
+			return jdbcTemplate.update(UPDATE_COMPUTER_DB, paramMap);
+		} catch (DataAccessException sqle) {
+			sqle.printStackTrace();
 			return 0;
+		}
 	}
 	
 	/**
@@ -221,14 +154,13 @@ public class ComputerDAO {
 	 * @return number of row deleted (should be 1 or 0)
 	 */
 	public int deleteComputer (long id) {
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(DELETE_COMPUTER_DB);) {
-			stmt.setLong(1, id);
-			return stmt.executeUpdate();
-		} catch (SQLException sqle) {
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("pc_id", id);
+			return jdbcTemplate.update(DELETE_COMPUTER_DB, paramMap);
+		} catch (DataAccessException sqle) {
 			sqle.printStackTrace();
+			return 0;
 		}
-		return 0;
 	}
 	
 	/**
@@ -236,16 +168,12 @@ public class ComputerDAO {
 	 * @return the number of PC
 	 */
 	public int countAllComputer() {
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(COUNT_ALL_COMPUTERS_QUERY);) {
-			ResultSet res1 = stmt.executeQuery();
-			if (res1.next()) {
-				return res1.getInt("rowcount");
-			}
-		} catch (SQLException sqle) {
+		try {
+			return jdbcTemplate.queryForObject(COUNT_ALL_COMPUTERS_QUERY, new MapSqlParameterSource(), Integer.class);
+		} catch (DataAccessException sqle) {
 			sqle.printStackTrace();
+			return 0;
 		}
-		return 0;
 	}
 	
 	/**
@@ -253,18 +181,16 @@ public class ComputerDAO {
 	 * @param the page
 	 * @return List with the computers in computer-database
 	 */
-	public List<Computer> getPageComputersRequest(Pagination page,OrderByPossibilities order) {
-		List<Computer> res = new ArrayList<Computer>();
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(GET_ALL_COMPUTER_DETAILS_QUERY + order.getOrderBy());) {
-			stmt.setInt(1, page.getActualPageNb() * page.getPageSize());
-			stmt.setInt(2, page.getPageSize());
-			ResultSet res1 = stmt.executeQuery();
-			res = this.storeComputersFromRequest(res1);
-		} catch (SQLException sqle) {
+	public List<Computer> getPageComputersRequest(Pagination page, OrderByPossibilities order) {
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource()
+											.addValue("start", page.getActualPageNb() * page.getPageSize())
+											.addValue("qty", page.getPageSize());
+			return jdbcTemplate.query(GET_ALL_COMPUTER_DETAILS_QUERY + order.getOrderBy(), paramMap, pcRawMapper);
+		} catch(DataAccessException sqle) {
 			sqle.printStackTrace();
+			return Collections.emptyList();
 		}
-		return res;
 	}
 	
 	/**
@@ -273,17 +199,14 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> searchComputersByName(String name){
-		List<Computer> res = new ArrayList<Computer>();
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(GET_COMPUTER_BY_NAME_QUERY);) {
-			stmt.setString(1, "%"+name+"%");
-			stmt.setString(2, "%"+name+"%");
-			ResultSet res1 = stmt.executeQuery();
-			res = this.storeComputersFromRequest(res1);
-		} catch (SQLException sqle) {
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource()
+											.addValue("name", "%" + name + "%");
+			return jdbcTemplate.query(GET_COMPUTER_BY_NAME_QUERY, paramMap, pcRawMapper);
+		} catch(DataAccessException sqle) {
 			sqle.printStackTrace();
+			return Collections.emptyList();
 		}
-		return res;
 	}
 
 	/**
@@ -292,16 +215,14 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> getComputerByCompanyId(long id){
-		List<Computer> res = new ArrayList<Computer>();
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(GET_COMPUTER_BY_COMPANY_ID_QUERY);) {
-			stmt.setLong(1, id);
-			ResultSet res1 = stmt.executeQuery();
-			res = this.storeComputersFromRequest(res1);
-		} catch (SQLException sqle) {
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource()
+											.addValue("company_id", id);
+			return jdbcTemplate.query(GET_COMPUTER_BY_COMPANY_ID_QUERY, paramMap, pcRawMapper);
+		} catch(DataAccessException sqle) {
 			sqle.printStackTrace();
+			return Collections.emptyList();
 		}
-		return res;
 	}
 	
 }

@@ -2,6 +2,7 @@ package com.excilys.mars2020.cdb.persistance;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,8 @@ import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.Pagination;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -27,39 +30,16 @@ public class CompanyDAO {
 	private static ComputerDAO pcdao;
 	
 	private static final String GET_ALL_COMPAGNIES_QUERY = "SELECT id, name FROM company";
-	private static final String GET_ONE_COMPANY_QUERY = "SELECT id, name FROM company WHERE id = ?";
+	private static final String GET_ONE_COMPANY_QUERY = "SELECT id, name FROM company WHERE id = :compId";
 	private static final String COUNT_ALL_COMPANIES_QUERY = "SELECT COUNT(id) AS rowcount FROM company";
-	private static final String GET_PAGE_COMPANIES_QUERY = "SELECT id, name FROM company ORDER BY id LIMIT ?, ?";
+	private static final String GET_PAGE_COMPANIES_QUERY = "SELECT id, name FROM company ORDER BY id LIMIT :start, :qty";
+	
+	@Autowired
+	private NamedParameterJdbcTemplate jdbcTemplate;
+	@Autowired
+	private CompanyRawMapper compRawMapper;
 	
 	private CompanyDAO() {}
-	/**
-	 * Create an ArrayList of companies corresponding to the ResultSet argument
-	 * @param resSet
-	 * @return ArrayList with all the companies
-	 * @throws SQLException
-	 */
-	private List<Company> storeCompaniesFromRequest(ResultSet resSet) throws SQLException{
-		List<Company> res = new ArrayList<Company>();
-		while (resSet.next()) {
-			res.add( new Company.Builder().name(resSet.getString("name")).compId(resSet.getInt("id")).build());
-		}
-		return res;
-	}
-	
-	/**
-	 * Create an Optional with the company searched by the request
-	 * @param resSet
-	 * @return The company or empty if no result
-	 * @throws SQLException
-	 */
-	private Optional<Company> storeOneCompanyFromRequest(ResultSet resSet) throws SQLException{
-		if (resSet.next()) {
-			return Optional.of(new Company.Builder().name(resSet.getString("name")).compId(resSet.getInt("id")).build());
-		}
-		else {
-			return Optional.empty();
-		}
-	}
 	
 	/**
 	 * fetch all Companies from db and return them as an ArrayList
@@ -67,15 +47,12 @@ public class CompanyDAO {
 	 */
 	public List<Company> getAllCompaniesRequest() {
 		
-		List<Company> res = new ArrayList<Company>();
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(GET_ALL_COMPAGNIES_QUERY);) {
-			ResultSet res1 = stmt.executeQuery();
-			res = this.storeCompaniesFromRequest(res1);
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
+		try {
+			return jdbcTemplate.query(GET_ALL_COMPAGNIES_QUERY, compRawMapper);
+		} catch (DataAccessException dataE) {
+			dataE.printStackTrace();
+			return Collections.emptyList();
 		}
-		return res;
 	}
 	
 	/**
@@ -84,15 +61,18 @@ public class CompanyDAO {
 	 * @return Optional with the company, empty if doesn't exist
 	 */
 	public Optional<Company> getOneCompanyRequest(long id){
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(GET_ONE_COMPANY_QUERY);) {
-			stmt.setLong(1, id);
-			ResultSet res1 = stmt.executeQuery();
-			return this.storeOneCompanyFromRequest(res1);
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("compId", id);
+			List<Company> res = jdbcTemplate.query(GET_ONE_COMPANY_QUERY, paramMap, compRawMapper);
+			if(res.isEmpty()) {
+				return Optional.empty();
+			} else {
+				return Optional.of(res.get(0));
+			}
+		} catch (DataAccessException dataE) {
+			dataE.printStackTrace();
+			return Optional.empty();
 		}
-		return Optional.empty();
 	}
 	
 	/**
@@ -100,16 +80,12 @@ public class CompanyDAO {
 	 * @return the number of companies
 	 */
 	public int countAllCompanies() {
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(COUNT_ALL_COMPANIES_QUERY);) {
-			ResultSet res1 = stmt.executeQuery();
-			if(res1.next()) {
-				return res1.getInt("rowcount");
-			}
-		} catch (SQLException sqle) {
+		try {
+			return jdbcTemplate.queryForObject(COUNT_ALL_COMPANIES_QUERY, new MapSqlParameterSource(), Integer.class);
+		} catch (DataAccessException sqle) {
 			sqle.printStackTrace();
+			return 0;
 		}
-		return 0;
 	}
 	
 	/**
@@ -117,17 +93,15 @@ public class CompanyDAO {
 	 * @return ArrayList with the Companies in computer-database
 	 */
 	public List<Company> getPageCompaniesRequest(Pagination page) {
-		List<Company> res = new ArrayList<Company>();
-		try (Connection dbConnect = DbConnection.getConnect();
-				PreparedStatement stmt = dbConnect.prepareStatement(GET_PAGE_COMPANIES_QUERY);) {
-			stmt.setInt(1, page.getActualPageNb()*page.getPageSize());
-			stmt.setInt(2, page.getPageSize());
-			ResultSet res1 = stmt.executeQuery();
-			res = this.storeCompaniesFromRequest(res1);
-		} catch (SQLException sqle) {
+		try {
+			MapSqlParameterSource paramMap = new MapSqlParameterSource()
+											.addValue("start", page.getActualPageNb() * page.getPageSize())
+											.addValue("qty", page.getPageSize());
+			return jdbcTemplate.query(GET_PAGE_COMPANIES_QUERY, paramMap, compRawMapper);
+		} catch(DataAccessException sqle) {
 			sqle.printStackTrace();
+			return Collections.emptyList();
 		}
-		return res;
 	}
 	
 	public int deleteCompany(long id) {
