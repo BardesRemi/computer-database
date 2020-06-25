@@ -14,11 +14,8 @@ import org.springframework.context.annotation.Bean;
 @ComponentScan(basePackages = {"com.excilys.mars2020.cdb.mapper", "com.excilys.mars2020.cdb.persistance" 
 								, "com.excilys.mars2020.cdb.service", "com.excilys.mars2020.cdb.validations"} )
 public class SpringConfig {
-		
-	private static AnnotationConfigApplicationContext appContext = new AnnotationConfigApplicationContext (SpringConfig.class);
-	
 	public static AnnotationConfigApplicationContext getContext() {
-		return appContext;
+		return null;
 	}
 	
 	@Bean(destroyMethod = "close")
