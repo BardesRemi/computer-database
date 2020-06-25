@@ -10,18 +10,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Controller;
 
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
-import com.excilys.mars2020.cdb.mapper.DateMapper;
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
-import com.excilys.mars2020.cdb.persistance.CompanyDAO;
-import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
 import com.excilys.mars2020.cdb.spring.SpringConfig;
@@ -67,7 +62,7 @@ public class AddComputerServlet extends HttpServlet {
 		List<CompanyDTO> compList = compService.getAllCompanies();
 		req.setAttribute("compList", compList);
 		
-		RequestDispatcher rd = req.getServletContext().getRequestDispatcher("/WEB-INF/addComputer.jsp");
+		RequestDispatcher rd = req.getServletContext().getRequestDispatcher("/WEB-INF/view/addComputer.jsp");
 		rd.forward(req, resp);
 	}
 }

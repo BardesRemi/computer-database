@@ -1,8 +1,5 @@
 package com.excilys.mars2020.cdb.model;
 
-import java.time.LocalDate;
-
-import com.excilys.mars2020.cdb.model.Computer.Builder;
 
 /**
  * DTO class for Computer Objects

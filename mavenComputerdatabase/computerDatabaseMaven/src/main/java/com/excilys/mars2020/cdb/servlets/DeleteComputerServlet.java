@@ -10,12 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Controller;
 
-import com.excilys.mars2020.cdb.persistance.ComputerDAO;
-import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
 import com.excilys.mars2020.cdb.spring.SpringConfig;
 
@@ -39,7 +35,7 @@ public class DeleteComputerServlet extends HttpServlet {
 		
 		Arrays.asList(listToDelete.split(",")).stream().map(id -> pcService.deleteComputer(Integer.parseInt(id))).forEach(System.out::println);
 		
-		RequestDispatcher rd = req.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp");
+		RequestDispatcher rd = req.getServletContext().getRequestDispatcher("/WEB-INF/view/dashboard.jsp");
 		rd.forward(req, resp);
 		
 	}
