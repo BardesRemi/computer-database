@@ -1,16 +1,12 @@
 package com.excilys.mars2020.cdb.servlets;
 
-import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
@@ -19,26 +15,23 @@ import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
-import com.excilys.mars2020.cdb.spring.SpringConfig;
 
-@WebServlet("/AddComputerServlet")
-public class AddComputerServlet extends HttpServlet {
+@Controller
+public class AddComputerServlet {
 	
-	private static final long serialVersionUID = 987654321L;
+
+	@Autowired
+	private ComputerService pcService;
+	@Autowired
+	private CompanyService compService;
+	@Autowired
+	private Mapper mapper;
 	
-	private static AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
-	
-	private ComputerService pcService = appContext.getBean(ComputerService.class);
-	private CompanyService compService = appContext.getBean(CompanyService.class);
-	private Mapper mapper = appContext.getBean(Mapper.class);
-	
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		
-		//no verification need to be done, done before in front
-		String pcName = req.getParameter("computerName");
-		String introducedDate = req.getParameter("introduced");
-		String discontinuedDate = req.getParameter("discontinued");
-		String companyId = req.getParameter("companyId");
+	@GetMapping("/addComputer")
+	public ModelAndView initPage(@RequestParam(name="computerName", required=false, defaultValue= "") String pcName,
+								 @RequestParam(name="introduced", required=false, defaultValue="") String introducedDate,
+								 @RequestParam(name="discontinued", required=false, defaultValue="") String discontinuedDate,
+								 @RequestParam(name="companyId", required=false, defaultValue="noCompName") String companyId){
 		CompanyDTO company = null;
 		if(companyId != null && !companyId.equals("noCompName")) {
 			company = compService.getCompanyById(mapper.stringToLong(companyId).get());
@@ -53,16 +46,9 @@ public class AddComputerServlet extends HttpServlet {
 			//shouldn't happened if front verification are done correctly
 			e.printStackTrace();
 		}
-		doGet(req, resp);
-	}
-	
-	
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		
 		List<CompanyDTO> compList = compService.getAllCompanies();
-		req.setAttribute("compList", compList);
+		return new ModelAndView("editComputer").addObject("compList", compList);
 		
-		RequestDispatcher rd = req.getServletContext().getRequestDispatcher("/WEB-INF/view/addComputer.jsp");
-		rd.forward(req, resp);
 	}
 }

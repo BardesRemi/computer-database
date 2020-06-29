@@ -14,7 +14,7 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="DashboardServlet"> Application - Computer Database </a>
+            <a class="navbar-brand" href="dashboard"> Application - Computer Database </a>
         </div>
     </header>
 
@@ -25,19 +25,19 @@
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
-                    <form id="searchForm" action="DashboardServlet" method="GET" class="form-inline">
+                    <form id="searchForm" action="dashboard" method="GET" class="form-inline">
                         <input type="search" id="searchbox" name="search" class="form-control" value="${search}" placeholder="Search name" />
                         <input type="submit" id="searchsubmit" value="Filter by name" class="btn btn-primary" />
                     </form>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-success" id="addComputer" href="AddComputerServlet">Add Computer</a> 
+                    <a class="btn btn-success" id="addComputer" href="addComputer">Add Computer</a> 
                     <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
                 </div>
             </div>
         </div>
 
-        <form id="deleteForm" action="DeleteComputerServlet" method="POST">
+        <form id="deleteForm" action="deleteComputer" method="GET">
             <input type="hidden" name="selection" value="">
         </form>
 
@@ -58,7 +58,7 @@
                             </span>
                         </th>
                         <th>
-                            <a href=<c:url value="DashboardServlet">
+                            <a href=<c:url value="dashboard">
                   				<c:param name="currPage" value="${currPage}"/>
                   				<c:param name="pageSize" value="${pageSize}"/>
                   				<c:param name="sort" value="pcUp"/>
@@ -73,7 +73,7 @@
                         </th>
                         <!-- Table header for Company -->
                         <th>
-                            <a href=<c:url value="DashboardServlet">
+                            <a href=<c:url value="dashboard">
                   				<c:param name="currPage" value="${currPage}"/>
                   				<c:param name="pageSize" value="${pageSize}"/>
                   				<c:param name="sort" value="companyUp"/>
@@ -92,8 +92,9 @@
                             		<input type="checkbox" name="cb" class="cb" value="${pc.pcId}">
                         		</td>
                        			<td>
-                            		<a href=<c:url value="EditComputerServlet">
+                            		<a href=<c:url value="editComputer">
                   								<c:param name="pcId" value="${pc.pcId}"/>
+                  								<c:param name="needEdit" value="false"/>
                   							</c:url> onclick="">
                   							<c:out value="${pc.name}"/></a>
                         		</td>
@@ -111,7 +112,7 @@
                     </c:when>
                     <c:when test="${ pcList == null}">
                     	<!-- request data "pcList" wasn't initialized -->
-                    	<c:redirect url="DashboardServlet" />
+                    	<c:redirect url="dashboard" />
                     </c:when>
                     <c:otherwise>
                     	<b>No computer found</b>
@@ -130,7 +131,7 @@
             <ul class="pagination">
             <li>
                <a href=
-                 <c:url value="DashboardServlet">
+                 <c:url value="dashboard">
                   	<c:param name="currPage" value="0"/>
                   	<c:param name="pageSize" value="${pageSize}"/>
                   	<c:param name="sort" value="${sort}"/>
@@ -142,7 +143,7 @@
             <c:if test="${currPage > 1}">
 				<li>
             		<a href=
-                  		<c:url value="DashboardServlet">
+                  		<c:url value="dashboard">
                   			<c:param name="currPage" value="${currPage - 2}"/>
                   			<c:param name="pageSize" value="${pageSize}"/>
                   			<c:param name="sort" value="${sort}"/>
@@ -154,7 +155,7 @@
             <c:if test="${currPage > 0}">
 				<li>
             		<a href=
-                  		<c:url value="DashboardServlet">
+                  		<c:url value="dashboard">
                   			<c:param name="currPage" value="${currPage - 1}"/>
                   			<c:param name="pageSize" value="${pageSize}"/>
                   			<c:param name="sort" value="${sort}"/>
@@ -165,7 +166,7 @@
             </c:if>
             <li>
             	<a href=
-                  	<c:url value="DashboardServlet">
+                  	<c:url value="dashboard">
                   		<c:param name="currPage" value="${currPage}"/>
                   		<c:param name="pageSize" value="${pageSize}"/>
                   		<c:param name="sort" value="${sort}"/>
@@ -176,7 +177,7 @@
             <c:if test="${currPage < maxPages}">
 				<li>
             		<a href=
-                  		<c:url value="DashboardServlet">
+                  		<c:url value="dashboard">
                   			<c:param name="currPage" value="${currPage + 1}"/>
                   			<c:param name="pageSize" value="${pageSize}"/>
                   			<c:param name="sort" value="${sort}"/>
@@ -188,7 +189,7 @@
             <c:if test="${currPage < maxPages - 1}">
 				<li>
             		<a href=
-                  		<c:url value="DashboardServlet">
+                  		<c:url value="dashboard">
                   			<c:param name="currPage" value="${currPage + 2}"/>
                   			<c:param name="pageSize" value="${pageSize}"/>
                   			<c:param name="sort" value="${sort}"/>
@@ -199,7 +200,7 @@
             </c:if>
             <li>
             	<a href=
-                  	<c:url value="DashboardServlet">
+                  	<c:url value="dashboard">
                   		<c:param name="currPage" value="${maxPages}"/>
                   		<c:param name="pageSize" value="${pageSize}"/>
                   		<c:param name="sort" value="${sort}"/>
@@ -210,18 +211,18 @@
            	</li>
         </ul>
         <div class="btn-group btn-group-sm pull-right" role="group" >
-        	<form method="post" action= <c:url value="DashboardServlet">
+        	<form method="post" action= <c:url value="dashboard">
         				<c:param name="currPage" value="${(pageSize/10)*currPage}"/>
                   		<c:param name="pageSize" value="10"/>
                   		<c:param name="sort" value="${sort}"/>
         				</c:url>>
         		<button type="submit" class="btn btn-default" >10</button>
-            	<button type="submit" class="btn btn-default" formaction=<c:url value="DashboardServlet">
+            	<button type="submit" class="btn btn-default" formaction=<c:url value="dashboard">
         				<c:param name="currPage" value="${(pageSize/50)*currPage}"/>
                   		<c:param name="pageSize" value="50"/>
                   		<c:param name="sort" value="${sort}"/>
         				</c:url>>50</button>
-            	<button type="submit" class="btn btn-default" formaction=<c:url value="DashboardServlet">
+            	<button type="submit" class="btn btn-default" formaction=<c:url value="dashboard">
         				<c:param name="currPage" value="${(pageSize/100)*currPage}"/>
                   		<c:param name="pageSize" value="100"/>
                   		<c:param name="sort" value="${sort}"/>

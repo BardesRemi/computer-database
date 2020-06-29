@@ -15,7 +15,7 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="DashboardServlet"> Application - Computer Database </a>
+            <a class="navbar-brand" href="dashboard"> Application - Computer Database </a>
         </div>
     </header>
     <section id="main">
@@ -27,7 +27,7 @@
                     </div>
                     <h1>Edit Computer</h1>
 
-                    <form id="pcInfoForm" action="EditComputerServlet" method="POST">
+                    <form id="pcInfoForm" action="editComputer" method="GET">
                         <input type="hidden" name="pcId" value="${pc.pcId}" id="pcId"/> <!-- TODO: Change this value with the computer id -->
                         <fieldset>
                             <div class="form-group">
@@ -61,7 +61,7 @@
 	                                </select>
 	                                </c:when>
 	                                <c:otherwise>
-	                                	<c:redirect url="EditComputerServlet" />
+	                                	<c:redirect url="editComputer" />
 	                                </c:otherwise>
                                 </c:choose>
                             </div>            
@@ -69,7 +69,7 @@
                         <div class="actions pull-right">
                             <input type="submit" value="Edit" class="btn btn-primary">
                             or
-                            <a href="DashboardServlet" class="btn btn-default">Cancel</a>
+                            <a href="dashboard" class="btn btn-default">Cancel</a>
                         </div>
                     </form>
                 </div>

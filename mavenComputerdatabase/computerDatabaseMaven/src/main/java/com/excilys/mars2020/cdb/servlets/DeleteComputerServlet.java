@@ -1,43 +1,27 @@
 package com.excilys.mars2020.cdb.servlets;
 
-import java.io.IOException;
 import java.util.Arrays;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.excilys.mars2020.cdb.service.ComputerService;
-import com.excilys.mars2020.cdb.spring.SpringConfig;
 
-@WebServlet("/DeleteComputerServlet")
-public class DeleteComputerServlet extends HttpServlet {
-
-	private static final long serialVersionUID = 9191954545L;
+@Controller
+public class DeleteComputerServlet {
 	
-	private AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
+	@Autowired
+	private ComputerService pcService;
 	
-	private ComputerService pcService = appContext.getBean(ComputerService.class);
 	
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NumberFormatException{
-		doGet(req, resp);
-	}
-	
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NumberFormatException{
-		
-		//getting datas
-		String listToDelete = req.getParameter("selection");
+	@GetMapping("/deleteComputer")
+	public ModelAndView initPage(@RequestParam(name="selection", required=true) String listToDelete) {
 		
 		Arrays.asList(listToDelete.split(",")).stream().map(id -> pcService.deleteComputer(Integer.parseInt(id))).forEach(System.out::println);
-		
-		RequestDispatcher rd = req.getServletContext().getRequestDispatcher("/WEB-INF/view/dashboard.jsp");
-		rd.forward(req, resp);
-		
+		return new ModelAndView("dashboard");
 	}
 	
 }
