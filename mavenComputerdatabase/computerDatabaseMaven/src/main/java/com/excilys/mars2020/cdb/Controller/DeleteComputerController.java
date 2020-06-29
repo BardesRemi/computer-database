@@ -1,4 +1,4 @@
-package com.excilys.mars2020.cdb.servlets;
+package com.excilys.mars2020.cdb.Controller;
 
 import java.util.Arrays;
 
@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.excilys.mars2020.cdb.service.ComputerService;
 
 @Controller
-public class DeleteComputerServlet {
+public class DeleteComputerController {
 	
 	@Autowired
 	private ComputerService pcService;

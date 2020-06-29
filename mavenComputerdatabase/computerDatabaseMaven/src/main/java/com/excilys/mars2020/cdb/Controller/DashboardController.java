@@ -1,4 +1,4 @@
-package com.excilys.mars2020.cdb.servlets;
+package com.excilys.mars2020.cdb.Controller;
 
 import java.util.List;
 
@@ -16,12 +16,12 @@ import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
 import com.excilys.mars2020.cdb.service.ComputerService;
 
 @Controller
-public class DashboardServlet {
+public class DashboardController {
 	
 	@Autowired
 	ComputerService pcService;
 	
-	private static final Logger logger = LoggerFactory.getLogger(DashboardServlet.class);
+	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 	
 	@GetMapping("/dashboard")
 	public ModelAndView initPage(@RequestParam(name="currPage", required=false, defaultValue="0") String currPage,
@@ -67,7 +67,7 @@ public class DashboardServlet {
 			
 			return model;
 		} catch(NumberFormatException e) {
-			logger.info("Number Format exception from {}", DashboardServlet.class.getSimpleName());
+			logger.info("Number Format exception from {}", DashboardController.class.getSimpleName());
 			return model;
 		}
 	}

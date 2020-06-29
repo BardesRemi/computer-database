@@ -1,4 +1,4 @@
-package com.excilys.mars2020.cdb.servlets;
+package com.excilys.mars2020.cdb.Controller;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
 
 @Controller
-public class AddComputerServlet {
+public class AddComputerController {
 	
 
 	@Autowired
