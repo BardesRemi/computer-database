@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ page isELIgnored="false"%>
 <!DOCTYPE html>
 <html>
@@ -21,18 +22,18 @@
     <section id="main">
         <div class="container">
             <h1 id="homeTitle">
-            <c:out value="${pcCount}" /> Computers found
+            <c:out value="${pcCount}" /> <spring:message code="dashboard.pcFound"/>
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
                     <form id="searchForm" action="dashboard" method="GET" class="form-inline">
-                        <input type="search" id="searchbox" name="search" class="form-control" value="${search}" placeholder="Search name" />
-                        <input type="submit" id="searchsubmit" value="Filter by name" class="btn btn-primary" />
+                        <input type="search" id="searchbox" name="search" class="form-control" value="${search}" placeholder=<spring:message code="dashboard.search"/> />
+                        <input type="submit" id="searchsubmit" value=<spring:message code="dashboard.filter"/> class="btn btn-primary" />
                     </form>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-success" id="addComputer" href="addComputer">Add Computer</a> 
-                    <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
+                    <a class="btn btn-success" id="addComputer" href="addComputer"><spring:message code="dashboard.add"/></a> 
+                    <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message code="dashboard.edit"/></a>
                 </div>
             </div>
         </div>
@@ -62,14 +63,14 @@
                   				<c:param name="currPage" value="${currPage}"/>
                   				<c:param name="pageSize" value="${pageSize}"/>
                   				<c:param name="sort" value="pcUp"/>
-                  			</c:url>>Computer name</a>
+                  			</c:url>><spring:message code="dashboard.pcName"/></a>
                         </th>
                         <th>
-                            Introduced date
+                            <spring:message code="dashboard.introD"/>
                         </th>
                         <!-- Table header for Discontinued Date -->
                         <th>
-                            Discontinued date
+                            <spring:message code="dashboard.discoD"/>
                         </th>
                         <!-- Table header for Company -->
                         <th>
@@ -77,7 +78,7 @@
                   				<c:param name="currPage" value="${currPage}"/>
                   				<c:param name="pageSize" value="${pageSize}"/>
                   				<c:param name="sort" value="companyUp"/>
-                  			</c:url>>Company</a>
+                  			</c:url>><spring:message code="dashboard.company"/></a>
                         </th>
 
                     </tr>

@@ -1,4 +1,4 @@
-package com.excilys.mars2020.cdb.Controller;
+package com.excilys.mars2020.cdb.controller;
 
 import java.util.List;
 
