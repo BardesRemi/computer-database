@@ -28,6 +28,9 @@ public class LogicalChecker {
 	@Autowired
 	private Mapper mapper;
 	
+	@Autowired 
+	CompanyService compServ;
+	
 	public Optional<LogicalProblem> idGivenChecking (Computer computer, ComputerDAO pcdao){
 		if(computer.getPcId() == 0l) {
 			return Optional.of(LogicalProblem.createNoIdGivenProblem("No Id given for this computer : " + computer.toString()));
@@ -50,9 +53,6 @@ public class LogicalChecker {
 	}
 	
 	public Optional<LogicalProblem> companyIsUnknownChecking (Company company){
-		AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
-		
-		CompanyService compServ = appContext.getBean(CompanyService.class);
 		if(compServ.companyInDb(mapper.companyToCompanyDTO(company))) {
 			return Optional.empty();
 		}

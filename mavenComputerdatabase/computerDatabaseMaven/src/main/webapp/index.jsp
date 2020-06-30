@@ -7,7 +7,7 @@
 </head>
 <body>
 <h2>What do you want to do ?</h2>
-<form method="post" action="DashboardServlet?currPage=0">
+<form method="get" action="dashboard">
 	<button type="submit">Go to dashboard</button>
 </form>
 </body>

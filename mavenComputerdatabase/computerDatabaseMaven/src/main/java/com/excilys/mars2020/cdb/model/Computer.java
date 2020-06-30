@@ -1,7 +1,6 @@
 package com.excilys.mars2020.cdb.model;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 /**
  * Computer representation
