@@ -1,4 +1,4 @@
-package com.excilys.mars2020.cdb.Controller;
+package com.excilys.mars2020.cdb.controller;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class AddComputerController {
 		}
 		
 		List<CompanyDTO> compList = compService.getAllCompanies();
-		return new ModelAndView("editComputer").addObject("compList", compList);
+		return new ModelAndView("addComputer").addObject("compList", compList);
 		
 	}
 }
