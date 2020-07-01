@@ -7,21 +7,14 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.excilys.mars2020.cdb.config.SpringConfig;
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
-import com.excilys.mars2020.cdb.mapper.DateMapper;
-import com.excilys.mars2020.cdb.mapper.Mapper;
-import com.excilys.mars2020.cdb.service.CompanyService;
-import com.excilys.mars2020.cdb.service.ComputerService;
-import com.excilys.mars2020.cdb.spring.SpringConfig;
 
 public class LogicalCheckerTest {
 	
-	private static AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
-	
-	private LogicalChecker logicCheck = appContext.getBean(LogicalChecker.class);
+	private LogicalChecker logicCheck = new LogicalChecker();
 	
 	@Test
 	public void idGivenChecking () {
