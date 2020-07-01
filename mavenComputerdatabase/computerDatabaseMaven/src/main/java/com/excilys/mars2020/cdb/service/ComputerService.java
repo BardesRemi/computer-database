@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.excilys.mars2020.cdb.config.SpringConfig;
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
@@ -19,7 +20,6 @@ import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.persistance.ComputerDAO;
 import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
-import com.excilys.mars2020.cdb.spring.SpringConfig;
 import com.excilys.mars2020.cdb.validations.LogicalChecker;
 
 /**

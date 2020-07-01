@@ -3,7 +3,7 @@ package com.excilys.mars2020.cdb.persistance;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.excilys.mars2020.cdb.spring.SpringConfig;
+import com.excilys.mars2020.cdb.config.SpringConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class HikariConnection implements AutoCloseable{

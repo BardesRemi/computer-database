@@ -1,4 +1,4 @@
-package com.excilys.mars2020.cdb.spring;
+package com.excilys.mars2020.cdb.config;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -15,7 +15,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
 	public void onStartup(final ServletContext sc) throws ServletException {
 		
 		AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
-		root.register(SpringConfig.class, WebConfig.class);
+		root.register(SpringConfig.class);
 		root.setServletContext(sc);
 		
 		sc.addListener(new ContextLoaderListener(root));

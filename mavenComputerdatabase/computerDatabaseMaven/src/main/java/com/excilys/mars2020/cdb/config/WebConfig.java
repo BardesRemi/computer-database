@@ -1,4 +1,4 @@
-package com.excilys.mars2020.cdb.spring;
+package com.excilys.mars2020.cdb.config;
 
 import java.util.Locale;
 
