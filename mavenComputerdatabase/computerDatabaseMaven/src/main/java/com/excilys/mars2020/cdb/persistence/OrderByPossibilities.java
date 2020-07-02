@@ -1,4 +1,4 @@
-package com.excilys.mars2020.cdb.persistance;
+package com.excilys.mars2020.cdb.persistence;
 
 public enum OrderByPossibilities {
 	ID_UP(" ORDER BY pc.id "),

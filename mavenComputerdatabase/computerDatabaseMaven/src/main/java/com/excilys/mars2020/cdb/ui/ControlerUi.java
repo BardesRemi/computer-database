@@ -12,11 +12,11 @@ import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
-import com.excilys.mars2020.cdb.persistance.CompanyDAO;
-import com.excilys.mars2020.cdb.persistance.ComputerDAO;
+import com.excilys.mars2020.cdb.persistence.CompanyDAO;
+import com.excilys.mars2020.cdb.persistence.ComputerDAO;
+import com.excilys.mars2020.cdb.persistence.OrderByPossibilities;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
-import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
 import com.excilys.mars2020.cdb.ui.CLI;
 
 /**

@@ -10,7 +10,7 @@ import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
 import com.excilys.mars2020.cdb.mapper.CompanyMapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
-import com.excilys.mars2020.cdb.persistance.ComputerDAO;
+import com.excilys.mars2020.cdb.persistence.ComputerDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 
 /**

@@ -19,8 +19,8 @@ import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
-import com.excilys.mars2020.cdb.persistance.ComputerDAO;
-import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
+import com.excilys.mars2020.cdb.persistence.ComputerDAO;
+import com.excilys.mars2020.cdb.persistence.OrderByPossibilities;
 import com.excilys.mars2020.cdb.validations.LogicalChecker;
 
 /**

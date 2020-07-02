@@ -30,6 +30,7 @@
     <spring.version>5.2.7.RELEASE</spring.version>
     <logback.version>1.2.3</logback.version>
     <hibernate.version>1.0.1.Final</hibernate.version>
+    <criteria.version>7.4.0</criteria.version>
   </properties>
 
   <dependencies>
@@ -125,6 +126,11 @@
 	    <groupId>org.hibernate.javax.persistence</groupId>
 	    <artifactId>hibernate-jpa-2.0-api</artifactId>
 	    <version>${hibernate.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>net.n2oapp.criteria</groupId>
+	    <artifactId>criteria-api</artifactId>
+	    <version>${criteria.version}</version>
 	</dependency>
 	
   </dependencies>

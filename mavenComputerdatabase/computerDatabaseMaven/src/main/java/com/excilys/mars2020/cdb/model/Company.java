@@ -1,12 +1,17 @@
 package com.excilys.mars2020.cdb.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 /**
  * Company representation
  * @author remi
  *
  */
+@Entity
 public class Company {
 	
+	@Id
 	private long compId;
 	private String name;
 	

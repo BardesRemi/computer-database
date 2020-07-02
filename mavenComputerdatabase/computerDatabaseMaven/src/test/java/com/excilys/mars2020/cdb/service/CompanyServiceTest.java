@@ -20,7 +20,7 @@ import com.excilys.mars2020.cdb.mapper.CompanyMapper;
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
-import com.excilys.mars2020.cdb.persistance.CompanyDAO;
+import com.excilys.mars2020.cdb.persistence.CompanyDAO;
 
 @RunWith (MockitoJUnitRunner.class)
 public class CompanyServiceTest {

@@ -2,16 +2,21 @@ package com.excilys.mars2020.cdb.model;
 
 import java.time.LocalDate;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 /**
  * Computer representation
  * @author remi
  *
  */
+@Entity
 public class Computer {
 	
 	//required attribute
 	private String name;
 	//optionnal attributes
+	@Id
 	private Long pcId;
 	private LocalDate introduced;
 	private LocalDate discontinued;

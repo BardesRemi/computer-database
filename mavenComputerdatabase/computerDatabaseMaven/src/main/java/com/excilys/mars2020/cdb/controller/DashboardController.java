@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
-import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
+import com.excilys.mars2020.cdb.persistence.OrderByPossibilities;
 import com.excilys.mars2020.cdb.service.ComputerService;
 
 @Controller
