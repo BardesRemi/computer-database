@@ -10,7 +10,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 
 @Configuration
-@ComponentScan(basePackages = {"com.excilys.mars2020.cdb.persistance" } )
+@ComponentScan(basePackages = {"com.excilys.mars2020.cdb.persistence" } )
 public class DaoConfig {
 	
 	@Bean(destroyMethod = "close")
@@ -19,7 +19,8 @@ public class DaoConfig {
 	}
 	
 	@Bean
-	NamedParameterJdbcTemplate namedParameterJdbcTemplate(HikariDataSource datasource) {
+	public NamedParameterJdbcTemplate namedParameterJdbcTemplate(HikariDataSource datasource) {
 		return new NamedParameterJdbcTemplate(datasource);
 	}
+	
 }

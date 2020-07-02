@@ -16,6 +16,7 @@ import com.excilys.mars2020.cdb.config.DaoConfig;
 import com.excilys.mars2020.cdb.config.ServiceConfig;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.model.*;
+import com.excilys.mars2020.cdb.persistence.CompanyDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ServiceConfig.class, DaoConfig.class})

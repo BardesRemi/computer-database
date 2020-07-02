@@ -23,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class CompanyDAO {
 	
-
-	
 	@Autowired
 	private static ComputerDAO pcdao;
 	
