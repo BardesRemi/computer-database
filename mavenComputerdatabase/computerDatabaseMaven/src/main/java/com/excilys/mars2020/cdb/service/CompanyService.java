@@ -81,7 +81,7 @@ public class CompanyService {
 	 * 
 	 * @return the number of company in the database
 	 */
-	public int getCountCompanies() {
+	public long getCountCompanies() {
 		return compdao.countAllCompanies();
 	}
 	

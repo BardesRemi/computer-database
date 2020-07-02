@@ -23,6 +23,10 @@ public class Company {
 	@Column(name="name")
 	private String name;
 	
+	public Company() {
+		super();
+	}
+	
 	public Company(Builder builder) {
 		this.name = builder.name;
 		this.compId = builder.compId;

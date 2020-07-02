@@ -63,7 +63,7 @@ public class CompanyServiceTest {
 	}
 	
 	private void mockGetCountCompanies() {
-		Mockito.when(MockDAO.countAllCompanies()).thenReturn(compList.size());
+		Mockito.when(MockDAO.countAllCompanies()).thenReturn((long)compList.size());
 	}
 	
 	private void mockGetAllCompanies() {
@@ -118,7 +118,7 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void getCountCompanies() {
-		Mockito.when(MockDAO.countAllCompanies()).thenReturn(compList.size());
+		Mockito.when(MockDAO.countAllCompanies()).thenReturn((long)compList.size());
 		assertTrue(myService.getCountCompanies()==3);
 	}
 }

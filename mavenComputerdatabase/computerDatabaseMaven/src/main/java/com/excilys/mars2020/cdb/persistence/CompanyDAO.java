@@ -4,6 +4,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
 import com.excilys.mars2020.cdb.model.Pagination;
@@ -23,18 +31,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class CompanyDAO {
 	
+	@PersistenceUnit
+	private EntityManagerFactory entityManagerFactory;
+	
+	private CriteriaBuilder criteriaBuilder;
+	
 	@Autowired
 	private static ComputerDAO pcdao;
 	
-	private static final String GET_ALL_COMPAGNIES_QUERY = "SELECT id, name FROM company";
 	private static final String GET_ONE_COMPANY_QUERY = "SELECT id, name FROM company WHERE id = :compId";
-	private static final String COUNT_ALL_COMPANIES_QUERY = "SELECT COUNT(id) AS rowcount FROM company";
-	private static final String GET_PAGE_COMPANIES_QUERY = "SELECT id, name FROM company ORDER BY id LIMIT :start, :qty";
 	
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired
 	private CompanyRawMapper compRawMapper;
+	
+	
 	
 	private CompanyDAO() {}
 	
@@ -42,14 +54,18 @@ public class CompanyDAO {
 	 * fetch all Companies from db and return them as an ArrayList
 	 * @return ArrayList with all the companies
 	 */
-	public List<Company> getAllCompaniesRequest() {
+	public List<Company> getAllCompaniesRequest(){
 		
-		try {
-			return jdbcTemplate.query(GET_ALL_COMPAGNIES_QUERY, compRawMapper);
-		} catch (DataAccessException dataE) {
-			dataE.printStackTrace();
-			return Collections.emptyList();
-		}
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Company> cq = criteriaBuilder.createQuery(Company.class);
+		
+		Root<Company> root = cq.from(Company.class);
+		cq.select(root);
+		
+		TypedQuery<Company> companyList = em.createQuery(cq);
+		em.close();
+		return companyList.getResultList();
 	}
 	
 	/**
@@ -76,13 +92,12 @@ public class CompanyDAO {
 	 * Get the number of different Companies in company
 	 * @return the number of companies
 	 */
-	public int countAllCompanies() {
-		try {
-			return jdbcTemplate.queryForObject(COUNT_ALL_COMPANIES_QUERY, new MapSqlParameterSource(), Integer.class);
-		} catch (DataAccessException dataE) {
-			dataE.printStackTrace();
-			return 0;
-		}
+	public long countAllCompanies() {
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
+		cq.select(criteriaBuilder.count(cq.from(Company.class)));
+		return em.createQuery(cq).getSingleResult();
 	}
 	
 	/**
@@ -90,15 +105,19 @@ public class CompanyDAO {
 	 * @return ArrayList with the Companies in computer-database
 	 */
 	public List<Company> getPageCompaniesRequest(Pagination page) {
-		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource()
-											.addValue("start", page.getActualPageNb() * page.getPageSize())
-											.addValue("qty", page.getPageSize());
-			return jdbcTemplate.query(GET_PAGE_COMPANIES_QUERY, paramMap, compRawMapper);
-		} catch(DataAccessException dataE) {
-			dataE.printStackTrace();
-			return Collections.emptyList();
-		}
+		
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Company> cq = criteriaBuilder.createQuery(Company.class);
+		
+		Root<Company> root = cq.from(Company.class);
+		cq.select(root);
+		
+		TypedQuery<Company> companyList = em.createQuery(cq)
+											.setFirstResult(page.getActualPageNb() * page.getPageSize())
+											.setMaxResults(page.getPageSize());
+		em.close();
+		return companyList.getResultList();
 	}
 	
 	@Transactional

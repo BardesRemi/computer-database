@@ -36,6 +36,10 @@ public class Computer {
 	@ManyToOne
 	private Company company;
 	
+	public Computer () {
+		super();
+	}
+	
 	/**
 	 * Constructor using BUILDER design pattern
 	 * @param name
