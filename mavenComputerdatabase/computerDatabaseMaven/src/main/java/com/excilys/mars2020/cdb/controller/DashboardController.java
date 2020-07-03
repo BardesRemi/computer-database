@@ -36,7 +36,7 @@ public class DashboardController {
 			int currP = Integer.parseInt(currPage);
 			
 			
-			int count = 0;
+			long count = 0;
 			if(search.equals("noSearch")) {
 				count = pcService.getCountComputers();
 				page = new Pagination.Builder(count).pageSize(pageS).actualPangeNb(currP).build();
@@ -55,7 +55,7 @@ public class DashboardController {
 			else {
 				pcList = pcService.getComputersByName(search.replace("%", "\\%"));
 				count = pcList.size();
-				page = new Pagination.Builder(count).maxPages(1).pageSize(count).actualPangeNb(0).build();
+				page = new Pagination.Builder(count).maxPages(1).pageSize((int)count).actualPangeNb(0).build();
 			}
 			
 			model.addObject("pageSize", pageS);

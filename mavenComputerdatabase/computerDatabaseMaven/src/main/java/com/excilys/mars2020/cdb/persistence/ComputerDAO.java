@@ -4,6 +4,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -12,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
+import com.excilys.mars2020.cdb.model.Computer_;
 import com.excilys.mars2020.cdb.model.Pagination;
 
 /**
@@ -47,6 +57,11 @@ public class ComputerDAO {
 	private static final String DELETE_COMPUTER_DB = "DELETE FROM computer WHERE id = :pc_id";
 	private static final String COUNT_ALL_COMPUTERS_QUERY = "SELECT COUNT(id) AS rowcount FROM computer";
 	
+	
+	@PersistenceUnit
+	private EntityManagerFactory entityManagerFactory;
+	
+	private CriteriaBuilder criteriaBuilder;
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired
@@ -60,12 +75,16 @@ public class ComputerDAO {
 	 * @return List with all the computers in computer-database
 	 */
 	public List<Computer> getAllComputersRequest() {
-		try {
-			return jdbcTemplate.query(GET_ALL_COMPUTER_DETAILS_QUERY, pcRawMapper);
-		} catch (DataAccessException dataE) {
-			dataE.printStackTrace();
-			return Collections.emptyList();
-		}
+		
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
+		
+		Root<Computer> root = cq.from(Computer.class);
+		cq.select(root);
+		
+		TypedQuery<Computer> computerList = em.createQuery(cq);
+		return computerList.getResultList();
 	}
 	
 	/**
@@ -74,18 +93,21 @@ public class ComputerDAO {
 	 * @return Optional<Computer>
 	 */
 	public Optional<Computer> getOneComputers(long id) {
-		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("pcId", id);
-			List<Computer> res = jdbcTemplate.query(GET_COMPUTER_DETAILS_QUERY, paramMap, pcRawMapper);
-			if(res.isEmpty()) {
-				return Optional.empty();
-			} else {
-				return Optional.of(res.get(0));
-			}
-		} catch (DataAccessException dataE) {
-			dataE.printStackTrace();
-			return Optional.empty();
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
+		
+		Root<Computer> root = cq.from(Computer.class);
+		Predicate byId = criteriaBuilder.equal(root.get("id"), id);
+		cq.select(root).where(byId);
+		
+		TypedQuery<Computer> computerList = em.createQuery(cq);
+		Computer pc = computerList.getSingleResult();
+		em.close();
+		if(pc != null) {
+			return Optional.of(pc);
 		}
+		return Optional.empty();
 	}
 	
 	/**
@@ -158,13 +180,12 @@ public class ComputerDAO {
 	 * Get the number of different PC in computer
 	 * @return the number of PC
 	 */
-	public int countAllComputer() {
-		try {
-			return jdbcTemplate.queryForObject(COUNT_ALL_COMPUTERS_QUERY, new MapSqlParameterSource(), Integer.class);
-		} catch (DataAccessException sqle) {
-			sqle.printStackTrace();
-			return 0;
-		}
+	public long countAllComputer() {
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
+		cq.select(criteriaBuilder.count(cq.from(Computer.class)));
+		return em.createQuery(cq).getSingleResult();
 	}
 	
 	/**
@@ -173,15 +194,29 @@ public class ComputerDAO {
 	 * @return List with the computers in computer-database
 	 */
 	public List<Computer> getPageComputersRequest(Pagination page, OrderByPossibilities order) {
-		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource()
-											.addValue("start", page.getActualPageNb() * page.getPageSize())
-											.addValue("qty", page.getPageSize());
-			return jdbcTemplate.query(GET_ALL_COMPUTER_DETAILS_QUERY + order.getOrderBy(), paramMap, pcRawMapper);
-		} catch(DataAccessException sqle) {
-			sqle.printStackTrace();
-			return Collections.emptyList();
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
+		
+		Root<Computer> root = cq.from(Computer.class);
+		switch(order) {
+		case ID_UP :
+			cq.orderBy(criteriaBuilder.asc(root.get(Computer_.pcId)));
+			break;
+		case PC_UP :
+			cq.orderBy(criteriaBuilder.asc(root.get(Computer_.name)));
+			break;
+		case COMPANY_UP :
+			cq.orderBy(criteriaBuilder.asc(root.get(Computer_.company.getName())));
+			break;
+		default :
+			//shouldn't happen
 		}
+		cq.select(root);
+		TypedQuery<Computer> companyList = em.createQuery(cq)
+											.setFirstResult(page.getActualPageNb() * page.getPageSize())
+											.setMaxResults(page.getPageSize());
+		return companyList.getResultList();
 	}
 	
 	/**

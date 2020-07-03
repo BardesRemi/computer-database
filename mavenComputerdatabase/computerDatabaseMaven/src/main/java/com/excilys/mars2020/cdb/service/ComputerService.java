@@ -65,7 +65,7 @@ public class ComputerService {
 	 * 
 	 * @return number of Computer in the database
 	 */
-	public int getCountComputers() {
+	public long getCountComputers() {
 		return pcdao.countAllComputer();
 	}
 	

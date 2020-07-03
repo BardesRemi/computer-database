@@ -10,6 +10,7 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import com.excilys.mars2020.cdb.model.Company;
@@ -39,12 +40,8 @@ public class CompanyDAO {
 	@Autowired
 	private static ComputerDAO pcdao;
 	
-	private static final String GET_ONE_COMPANY_QUERY = "SELECT id, name FROM company WHERE id = :compId";
-	
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
-	@Autowired
-	private CompanyRawMapper compRawMapper;
 	
 	
 	
@@ -74,18 +71,22 @@ public class CompanyDAO {
 	 * @return Optional with the company, empty if doesn't exist
 	 */
 	public Optional<Company> getOneCompanyRequest(long id){
-		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("compId", id);
-			List<Company> res = jdbcTemplate.query(GET_ONE_COMPANY_QUERY, paramMap, compRawMapper);
-			if(res.isEmpty()) {
-				return Optional.empty();
-			} else {
-				return Optional.of(res.get(0));
-			}
-		} catch (DataAccessException dataE) {
-			dataE.printStackTrace();
-			return Optional.empty();
+		
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Company> cq = criteriaBuilder.createQuery(Company.class);
+		
+		Root<Company> root = cq.from(Company.class);
+		Predicate byId = criteriaBuilder.equal(root.get("id"), id);
+		cq.select(root).where(byId);
+		
+		TypedQuery<Company> companyList = em.createQuery(cq);
+		Company comp = companyList.getSingleResult();
+		em.close();
+		if(comp != null) {
+			return Optional.of(comp);
 		}
+		return Optional.empty();
 	}
 	
 	/**
