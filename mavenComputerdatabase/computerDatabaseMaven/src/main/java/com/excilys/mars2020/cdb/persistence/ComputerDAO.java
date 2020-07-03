@@ -1,6 +1,5 @@
 package com.excilys.mars2020.cdb.persistence;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,15 +8,16 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
@@ -32,40 +32,11 @@ import com.excilys.mars2020.cdb.model.Pagination;
 @Repository
 public class ComputerDAO {
 	
-	private static final String GET_ALL_COMPUTER_DETAILS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
-															   + "FROM computer AS pc "
-															   + "LEFT JOIN company AS comp ON "
-															   + "comp.id = pc.company_id";
-	private static final String GET_COMPUTER_BY_NAME_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
-			   												+ "FROM computer AS pc "
-			   												+ "LEFT JOIN company AS comp ON "
-			   												+ "comp.id = pc.company_id "
-															+ "WHERE pc.name LIKE :name "
-			   												+ "OR comp.name LIKE :name";
-	private static final String GET_COMPUTER_BY_COMPANY_ID_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
-																	+ "FROM computer AS pc "
-																	+ "LEFT JOIN company AS comp ON "
-																	+ "comp.id = pc.company_id "
-																	+ "WHERE comp.id = :company_id ";
-	private static final String GET_COMPUTER_DETAILS_QUERY = "SELECT pc.name, pc.id, pc.introduced, pc.discontinued, pc.company_id, comp.name "
-			  									 			+ "FROM computer AS pc "
-			  									 			+ "LEFT JOIN company AS comp ON "
-			  									 			+ "comp.id = pc.company_id "
-			  									 			+ "WHERE pc.id = :pcId";
-	private static final String ADD_NEW_COMPUTER_DB = "INSERT INTO computer (name,introduced,discontinued,company_id) VALUES ( :name, :introduced, :discontinued, :company_id)";
-	private static final String UPDATE_COMPUTER_DB = "UPDATE computer SET name = :name, introduced = :introduced, discontinued = :discontinued, company_id = :company_id WHERE id = :pc_id";
-	private static final String DELETE_COMPUTER_DB = "DELETE FROM computer WHERE id = :pc_id";
-	private static final String COUNT_ALL_COMPUTERS_QUERY = "SELECT COUNT(id) AS rowcount FROM computer";
-	
 	
 	@PersistenceUnit
 	private EntityManagerFactory entityManagerFactory;
 	
 	private CriteriaBuilder criteriaBuilder;
-	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
-	@Autowired
-	private ComputerRawMapper pcRawMapper;
 	
 	
 	private ComputerDAO() {} //private constructor, singleton
@@ -98,12 +69,11 @@ public class ComputerDAO {
 		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
 		
 		Root<Computer> root = cq.from(Computer.class);
-		Predicate byId = criteriaBuilder.equal(root.get("id"), id);
+		Predicate byId = criteriaBuilder.equal(root.get(Computer_.pcId), id);
 		cq.select(root).where(byId);
 		
 		TypedQuery<Computer> computerList = em.createQuery(cq);
 		Computer pc = computerList.getSingleResult();
-		em.close();
 		if(pc != null) {
 			return Optional.of(pc);
 		}
@@ -115,24 +85,21 @@ public class ComputerDAO {
 	 * @param the pc to add in the db
 	 * @return the id associated to the new PC
 	 */
+	@Transactional
 	public int insertNewComputer(Computer pc) {
+		
+		EntityManager em = entityManagerFactory.createEntityManager();
 		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource()
-												.addValue("name", pc.getName())
-												.addValue("introduced", pc.getIntroduced())
-												.addValue("discontinued", pc.getDiscontinued());
-			Company comp = pc.getcompany();
-			if (comp == null) {
-				paramMap.addValue("company_id", null);
-			}
-			else {
-				paramMap.addValue("company_id", pc.getcompany().getCompId());
-			}
-			return jdbcTemplate.update(ADD_NEW_COMPUTER_DB, paramMap);
-		} catch (DataAccessException sqle) {
-			sqle.printStackTrace();
-			return 0;
+			em.persist(pc);
+			return 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return  0;
 		}
+		
+		
+		
+		
 	}
 	
 	/**
@@ -140,25 +107,25 @@ public class ComputerDAO {
 	 * @param pc
 	 * @return 1 if the update were done correctly, 0 otherwise
 	 */
+	@Transactional
 	public int updateComputer(Computer pc) {
-		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource()
-												.addValue("name", pc.getName())
-												.addValue("introduced", pc.getIntroduced())
-												.addValue("discontinued", pc.getDiscontinued())
-												.addValue("pc_id", pc.getPcId());
-			Company comp = pc.getcompany();
-			if (comp == null) {
-				paramMap.addValue("company_id", null);
-			}
-			else {
-				paramMap.addValue("company_id", pc.getcompany().getCompId());
-			}
-			return jdbcTemplate.update(UPDATE_COMPUTER_DB, paramMap);
-		} catch (DataAccessException sqle) {
-			sqle.printStackTrace();
-			return 0;
-		}
+		
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		
+		CriteriaUpdate<Computer> update = criteriaBuilder.createCriteriaUpdate(Computer.class);
+		Root<Computer> root = update.from(Computer.class);
+		
+		update.set(Computer_.name, pc.getName());
+		update.set(Computer_.introduced, pc.getIntroduced());
+		update.set(Computer_.discontinued, pc.getDiscontinued());
+		update.set(Computer_.company, pc.getcompany());
+		update.where(criteriaBuilder.equal(root.get(Computer_.pcId), pc.getPcId()));
+		
+		em.getTransaction().begin();
+		int res = em.createQuery(update).executeUpdate();
+		em.getTransaction().commit();
+		return res;
 	}
 	
 	/**
@@ -166,14 +133,22 @@ public class ComputerDAO {
 	 * @param id
 	 * @return number of row deleted (should be 1 or 0)
 	 */
+	@Transactional
 	public int deleteComputer (long id) {
-		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("pc_id", id);
-			return jdbcTemplate.update(DELETE_COMPUTER_DB, paramMap);
-		} catch (DataAccessException sqle) {
-			sqle.printStackTrace();
-			return 0;
-		}
+		
+		EntityManager em = entityManagerFactory.createEntityManager();
+		
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaDelete<Computer> cd = criteriaBuilder.createCriteriaDelete(Computer.class);
+		
+		Root<Computer> root = cd.from(Computer.class);
+		Predicate computerId = criteriaBuilder.equal(root.get(Computer_.pcId), id);
+		cd.where(computerId);
+		
+		em.getTransaction().begin();
+		int res = em.createQuery(cd).executeUpdate();
+		em.getTransaction().commit();
+		return res;
 	}
 	
 	/**
@@ -225,14 +200,23 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> searchComputersByName(String name){
-		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource()
-											.addValue("name", "%" + name + "%");
-			return jdbcTemplate.query(GET_COMPUTER_BY_NAME_QUERY, paramMap, pcRawMapper);
-		} catch(DataAccessException sqle) {
-			sqle.printStackTrace();
-			return Collections.emptyList();
-		}
+		
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
+		
+		Root<Computer> root = cq.from(Computer.class);
+		cq.select(root);
+		
+		Join<Company, Computer> companyGroup = root.join("company", JoinType.LEFT);
+		String searchParam = "%" + name.toLowerCase() + "%";
+		Predicate byComputerName = criteriaBuilder.like(root.get("name"), searchParam);
+		Predicate byCompanyName = criteriaBuilder.like(companyGroup.get("name"), searchParam);
+		Predicate orSearch = criteriaBuilder.greaterThanOrEqualTo(byCompanyName, byComputerName);
+		cq.where(orSearch);
+		
+		TypedQuery<Computer> computerList = em.createQuery(cq);
+		return computerList.getResultList();
 	}
 
 	/**
@@ -241,14 +225,21 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> getComputerByCompanyId(long id){
-		try {
-			MapSqlParameterSource paramMap = new MapSqlParameterSource()
-											.addValue("company_id", id);
-			return jdbcTemplate.query(GET_COMPUTER_BY_COMPANY_ID_QUERY, paramMap, pcRawMapper);
-		} catch(DataAccessException sqle) {
-			sqle.printStackTrace();
-			return Collections.emptyList();
-		}
+		
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
+		
+		Root<Computer> root = cq.from(Computer.class);
+		cq.select(root);
+		
+		Join<Company, Computer> companyGroup = root.join("company", JoinType.LEFT);
+		
+		Predicate byCompId = criteriaBuilder.equal(companyGroup.get("compId"), id);
+		cq.where(byCompId);
+		
+		TypedQuery<Computer> computerList = em.createQuery(cq);
+		return computerList.getResultList();
 	}
 	
 }

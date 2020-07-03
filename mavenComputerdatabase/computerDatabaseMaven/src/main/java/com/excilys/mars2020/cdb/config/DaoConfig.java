@@ -29,11 +29,11 @@ public class DaoConfig {
 	public NamedParameterJdbcTemplate namedParameterJdbcTemplate(HikariDataSource datasource) {
 		return new NamedParameterJdbcTemplate(datasource);
 	}
-	
-	/*@Bean
+
+	@Bean
     public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
-    }*/
+    }
 	
 	@Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(HikariDataSource dataSource) {

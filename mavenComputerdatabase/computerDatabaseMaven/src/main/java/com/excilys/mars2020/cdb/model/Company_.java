@@ -4,6 +4,11 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
+/**
+ * Metamodel class
+ * @author remi
+ *
+ */
 @Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(Company.class)
 public abstract class Company_ {

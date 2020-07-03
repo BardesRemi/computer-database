@@ -1,6 +1,5 @@
 package com.excilys.mars2020.cdb.persistence;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,18 +8,15 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import com.excilys.mars2020.cdb.model.Company;
-import com.excilys.mars2020.cdb.model.Computer;
+import com.excilys.mars2020.cdb.model.Company_;
 import com.excilys.mars2020.cdb.model.Pagination;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,12 +32,6 @@ public class CompanyDAO {
 	private EntityManagerFactory entityManagerFactory;
 	
 	private CriteriaBuilder criteriaBuilder;
-	
-	@Autowired
-	private static ComputerDAO pcdao;
-	
-	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
 	
 	
 	
@@ -61,7 +51,6 @@ public class CompanyDAO {
 		cq.select(root);
 		
 		TypedQuery<Company> companyList = em.createQuery(cq);
-		em.close();
 		return companyList.getResultList();
 	}
 	
@@ -77,12 +66,11 @@ public class CompanyDAO {
 		CriteriaQuery<Company> cq = criteriaBuilder.createQuery(Company.class);
 		
 		Root<Company> root = cq.from(Company.class);
-		Predicate byId = criteriaBuilder.equal(root.get("id"), id);
+		Predicate byId = criteriaBuilder.equal(root.get(Company_.compId), id);
 		cq.select(root).where(byId);
 		
 		TypedQuery<Company> companyList = em.createQuery(cq);
 		Company comp = companyList.getSingleResult();
-		em.close();
 		if(comp != null) {
 			return Optional.of(comp);
 		}
@@ -117,21 +105,23 @@ public class CompanyDAO {
 		TypedQuery<Company> companyList = em.createQuery(cq)
 											.setFirstResult(page.getActualPageNb() * page.getPageSize())
 											.setMaxResults(page.getPageSize());
-		em.close();
 		return companyList.getResultList();
 	}
 	
 	@Transactional
 	public int deleteCompany(long id) {
-		List<Computer> pcToDeleteList = pcdao.getComputerByCompanyId(id);
-		//delete all pc in pcToDeleteList then the given company with transactions to keep the ACID idea
-		try {
-			for(Computer pc : pcToDeleteList) { pcdao.deleteComputer(pc.getPcId());}
-			MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("company_id", id);
-			return jdbcTemplate.update("DELETE FROM company WHERE id = :company_id", paramMap);
-		} catch (DataAccessException dataE) {
-			dataE.printStackTrace();
-			return 0;
-		}
+		
+		EntityManager em = entityManagerFactory.createEntityManager();
+		criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaDelete<Company> cd = criteriaBuilder.createCriteriaDelete(Company.class);
+		
+		Root<Company> root = cd.from(Company.class);
+		Predicate computerId = criteriaBuilder.equal(root.get(Company_.compId), id);
+		cd.where(computerId);
+		
+		em.getTransaction().begin();
+		int res = em.createQuery(cd).executeUpdate();
+		em.getTransaction().commit();
+		return res;
 	}
 }
