@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
@@ -28,22 +27,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class CompanyDAO {
 	
-	@PersistenceUnit
-	private EntityManagerFactory entityManagerFactory;
-	
 	private CriteriaBuilder criteriaBuilder;
 	
+	@PersistenceContext
+	private EntityManager em;
 	
-	
-	private CompanyDAO() {}
 	
 	/**
 	 * fetch all Companies from db and return them as an ArrayList
 	 * @return ArrayList with all the companies
 	 */
 	public List<Company> getAllCompaniesRequest(){
-		
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Company> cq = criteriaBuilder.createQuery(Company.class);
 		
@@ -60,8 +55,7 @@ public class CompanyDAO {
 	 * @return Optional with the company, empty if doesn't exist
 	 */
 	public Optional<Company> getOneCompanyRequest(long id){
-		
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Company> cq = criteriaBuilder.createQuery(Company.class);
 		
@@ -82,7 +76,7 @@ public class CompanyDAO {
 	 * @return the number of companies
 	 */
 	public long countAllCompanies() {
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
 		cq.select(criteriaBuilder.count(cq.from(Company.class)));
@@ -94,8 +88,7 @@ public class CompanyDAO {
 	 * @return ArrayList with the Companies in computer-database
 	 */
 	public List<Company> getPageCompaniesRequest(Pagination page) {
-		
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Company> cq = criteriaBuilder.createQuery(Company.class);
 		
@@ -110,8 +103,7 @@ public class CompanyDAO {
 	
 	@Transactional
 	public int deleteCompany(long id) {
-		
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaDelete<Company> cd = criteriaBuilder.createCriteriaDelete(Company.class);
 		
@@ -119,9 +111,7 @@ public class CompanyDAO {
 		Predicate computerId = criteriaBuilder.equal(root.get(Company_.compId), id);
 		cd.where(computerId);
 		
-		em.getTransaction().begin();
 		int res = em.createQuery(cd).executeUpdate();
-		em.getTransaction().commit();
 		return res;
 	}
 }

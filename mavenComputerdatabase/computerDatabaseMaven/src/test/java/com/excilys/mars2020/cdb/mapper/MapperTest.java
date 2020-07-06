@@ -106,12 +106,12 @@ public class MapperTest {
 	@Test
 	public void computerToComputerDTOTest() {
 		Company comp1 = new Company.Builder().compId(10l).name("aaa").build();
-		Computer pc1 = new Computer.Builder("pc1").pcId(0l).build();
+		Computer pc1 = new Computer.Builder("pc1").pcId(6l).build();
 		Computer pc2 = new Computer.Builder("pc2").pcId(1l).company(comp1).build();
 		Computer pc4 = new Computer.Builder("pc4").pcId(3l).introduced(LocalDate.of(2020, 01, 01)).discontinued(LocalDate.of(2022, 6, 18)).build();
 		CompanyDTO compDTO1 = new CompanyDTO.Builder().compId("10").name("aaa").build();
-		ComputerDTO pcDTO1 = new ComputerDTO.Builder("pc1").pcId("0").build();
-		ComputerDTO pcDTO1Bis = new ComputerDTO.Builder("pc1").pcId("0").company(compDTO1).build();
+		ComputerDTO pcDTO1 = new ComputerDTO.Builder("pc1").pcId("6").build();
+		ComputerDTO pcDTO1Bis = new ComputerDTO.Builder("pc1").pcId("6").company(compDTO1).build();
 		ComputerDTO pcDTO2 = new ComputerDTO.Builder("pc2").pcId("1").company(compDTO1).build();
 		ComputerDTO pcDTO3 = new ComputerDTO.Builder("pc4").pcId("3").introduced("01/01/2020").discontinued("18/06/2022").build();
 		assertEquals(pcDTO1, pcMapper.computerToComputerDTO(pc1));

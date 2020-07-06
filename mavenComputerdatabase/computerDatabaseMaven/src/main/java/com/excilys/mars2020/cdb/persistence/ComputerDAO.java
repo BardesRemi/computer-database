@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
@@ -15,9 +14,9 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
@@ -33,21 +32,18 @@ import com.excilys.mars2020.cdb.model.Pagination;
 public class ComputerDAO {
 	
 	
-	@PersistenceUnit
-	private EntityManagerFactory entityManagerFactory;
 	
 	private CriteriaBuilder criteriaBuilder;
 	
-	
-	private ComputerDAO() {} //private constructor, singleton
+	@PersistenceContext
+	private EntityManager em;
 	
 	/**
 	 * Create an List of Computers corresponding to all the registered Computer in the DB
 	 * @return List with all the computers in computer-database
 	 */
 	public List<Computer> getAllComputersRequest() {
-		
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
 		
@@ -64,7 +60,7 @@ public class ComputerDAO {
 	 * @return Optional<Computer>
 	 */
 	public Optional<Computer> getOneComputers(long id) {
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
 		
@@ -83,12 +79,11 @@ public class ComputerDAO {
 	/**
 	 * add a new PC in the db following the given informations
 	 * @param the pc to add in the db
-	 * @return the id associated to the new PC
+	 * @return how the insert goes (with an int)
 	 */
 	@Transactional
 	public int insertNewComputer(Computer pc) {
-		
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		try {
 			em.persist(pc);
 			return 1;
@@ -96,10 +91,6 @@ public class ComputerDAO {
 			e.printStackTrace();
 			return  0;
 		}
-		
-		
-		
-		
 	}
 	
 	/**
@@ -109,8 +100,7 @@ public class ComputerDAO {
 	 */
 	@Transactional
 	public int updateComputer(Computer pc) {
-		
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		
 		CriteriaUpdate<Computer> update = criteriaBuilder.createCriteriaUpdate(Computer.class);
@@ -122,9 +112,7 @@ public class ComputerDAO {
 		update.set(Computer_.company, pc.getcompany());
 		update.where(criteriaBuilder.equal(root.get(Computer_.pcId), pc.getPcId()));
 		
-		em.getTransaction().begin();
 		int res = em.createQuery(update).executeUpdate();
-		em.getTransaction().commit();
 		return res;
 	}
 	
@@ -136,8 +124,6 @@ public class ComputerDAO {
 	@Transactional
 	public int deleteComputer (long id) {
 		
-		EntityManager em = entityManagerFactory.createEntityManager();
-		
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaDelete<Computer> cd = criteriaBuilder.createCriteriaDelete(Computer.class);
 		
@@ -145,9 +131,7 @@ public class ComputerDAO {
 		Predicate computerId = criteriaBuilder.equal(root.get(Computer_.pcId), id);
 		cd.where(computerId);
 		
-		em.getTransaction().begin();
 		int res = em.createQuery(cd).executeUpdate();
-		em.getTransaction().commit();
 		return res;
 	}
 	
@@ -156,7 +140,7 @@ public class ComputerDAO {
 	 * @return the number of PC
 	 */
 	public long countAllComputer() {
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
 		cq.select(criteriaBuilder.count(cq.from(Computer.class)));
@@ -169,7 +153,7 @@ public class ComputerDAO {
 	 * @return List with the computers in computer-database
 	 */
 	public List<Computer> getPageComputersRequest(Pagination page, OrderByPossibilities order) {
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
 		
@@ -200,8 +184,7 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> searchComputersByName(String name){
-		
-		EntityManager em = entityManagerFactory.createEntityManager();
+
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
 		
@@ -212,7 +195,7 @@ public class ComputerDAO {
 		String searchParam = "%" + name.toLowerCase() + "%";
 		Predicate byComputerName = criteriaBuilder.like(root.get("name"), searchParam);
 		Predicate byCompanyName = criteriaBuilder.like(companyGroup.get("name"), searchParam);
-		Predicate orSearch = criteriaBuilder.greaterThanOrEqualTo(byCompanyName, byComputerName);
+		Predicate orSearch = criteriaBuilder.or(byCompanyName, byComputerName);
 		cq.where(orSearch);
 		
 		TypedQuery<Computer> computerList = em.createQuery(cq);
@@ -226,7 +209,6 @@ public class ComputerDAO {
 	 */
 	public List<Computer> getComputerByCompanyId(long id){
 		
-		EntityManager em = entityManagerFactory.createEntityManager();
 		criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Computer> cq = criteriaBuilder.createQuery(Computer.class);
 		

@@ -51,7 +51,7 @@ public class LogicalChecker {
 	}
 	
 	public Optional<LogicalProblem> companyIsUnknownChecking (Company company){
-		if(compServ.companyInDb(compMapper.companyToCompanyDTO(company))) {
+		if(company==null || compServ.companyInDb(compMapper.companyToCompanyDTO(company))) {
 			return Optional.empty();
 		}
 		return Optional.of(LogicalProblem.createUnknownCompanyProblem("given company : " + company.getName() + " isn't in the DB !"));

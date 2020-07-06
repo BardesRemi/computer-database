@@ -31,20 +31,23 @@ public class AddComputerController {
 	public ModelAndView initPage(@RequestParam(name="computerName", required=false, defaultValue= "") String pcName,
 								 @RequestParam(name="introduced", required=false, defaultValue="") String introducedDate,
 								 @RequestParam(name="discontinued", required=false, defaultValue="") String discontinuedDate,
-								 @RequestParam(name="companyId", required=false, defaultValue="noCompName") String companyId){
+								 @RequestParam(name="companyId", required=false, defaultValue="noCompName") String companyId,
+								 @RequestParam(name="add", required=false, defaultValue="false") Boolean add){
 		CompanyDTO company = null;
 		if(companyId != null && !companyId.equals("noCompName")) {
 			company = compService.getCompanyById(mapper.stringToLong(companyId).get());
 		}
 		ComputerDTO pcToSave = new ComputerDTO.Builder(pcName).introduced(introducedDate).discontinued(discontinuedDate).company(company).build();
-		try {
-			pcService.addNewComputer(pcToSave);
-		} catch (ParseExceptions e) {
-			//shouldn't happened if front verification are done correctly
-			e.printStackTrace();
-		} catch (LogicalExceptions e) {
-			//shouldn't happened if front verification are done correctly
-			e.printStackTrace();
+		if(add) {
+			try {
+				pcService.addNewComputer(pcToSave);
+			} catch (ParseExceptions e) {
+				//shouldn't happened if front verification are done correctly
+				e.printStackTrace();
+			} catch (LogicalExceptions e) {
+				//shouldn't happened if front verification are done correctly
+				e.printStackTrace();
+			}
 		}
 		
 		List<CompanyDTO> compList = compService.getAllCompanies();

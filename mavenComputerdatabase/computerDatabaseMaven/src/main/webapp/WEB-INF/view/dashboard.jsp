@@ -230,7 +230,7 @@
         				</c:url>>100</button>
         	</form>
             
-      </div> 
+      </div>
       </div>
     </footer>
 <script src="./js/jquery.min.js"></script>

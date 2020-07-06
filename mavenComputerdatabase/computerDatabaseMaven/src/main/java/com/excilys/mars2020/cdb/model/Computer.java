@@ -46,7 +46,9 @@ public class Computer {
 	 */
 	private Computer (Builder builder) {
 		this.name = builder.name;
-		this.pcId = builder.pcId;
+		if(builder.pcId > 0) {
+			this.pcId = builder.pcId;
+		}
 		this.introduced = builder.introduced;
 		this.discontinued = builder.discontinued;
 		this.company = builder.company;

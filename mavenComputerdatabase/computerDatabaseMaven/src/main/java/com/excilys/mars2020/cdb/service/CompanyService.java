@@ -37,18 +37,22 @@ public class CompanyService {
 	 */
 	public boolean companyInDb(CompanyDTO compDTO) {
 		try {
-			Company comp = compMapper.companyDTOToCompany(compDTO).get();
+			Company comp;
+			if(compMapper.companyDTOToCompany(compDTO).isEmpty()) {
+				return false;
+			}
+			comp = compMapper.companyDTOToCompany(compDTO).get();
 			Optional<Company> checkingComp = compdao.getOneCompanyRequest(comp.getCompId());
 			if (checkingComp.isEmpty()) {
 				return false;
 			}
-			else { 
+			else {
 				return (comp.getName()==null || comp.getName().isEmpty() || checkingComp.get().getName().equals(comp.getName()));
 			}
 		} catch (Exception e){
 			e.printStackTrace();
+			return false;
 		}
-		return false;
 	}
 	
 	/**
