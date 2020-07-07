@@ -4,10 +4,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.excilys.Mars2020.cdb</groupId>
-  <artifactId>computerDatabaseMaven</artifactId>
+  <groupId>com.excilys.mars2020.cdb</groupId>
+  <artifactId>mavenComputerdatabase</artifactId>
   <version>4.3.0</version>
-  <packaging>war</packaging>
+  <packaging>pom</packaging>
 
   <name>computerDatabaseMaven excilys Webapp</name>
   <!-- FIXME change it to the project's website -->
@@ -186,6 +186,14 @@
       </plugins>
     </pluginManagement>
   </build>
+  
+  <modules>
+  	<module>binding</module>
+  	<module>core</module>
+  	<module>persistence</module>
+  	<module>service</module>
+  	<module>webapp</module>
+  </modules>
   
   <reporting>
     <plugins>
