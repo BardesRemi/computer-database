@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DateMapper {
-
+	
+	DateMapper(){};
+	
 	/**
 	 * Convert a Timestamp into the corresponding LocalDate
 	 * @param tmsp a timestamp

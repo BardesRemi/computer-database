@@ -4,18 +4,14 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
-import com.excilys.mars2020.cdb.mapper.Mapper;
+import com.excilys.mars2020.cdb.mapper.CompanyMapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Computer;
-import com.excilys.mars2020.cdb.persistance.CompanyDAO;
-import com.excilys.mars2020.cdb.persistance.ComputerDAO;
+import com.excilys.mars2020.cdb.persistence.ComputerDAO;
 import com.excilys.mars2020.cdb.service.CompanyService;
-import com.excilys.mars2020.cdb.service.ComputerService;
-import com.excilys.mars2020.cdb.spring.SpringConfig;
 
 /**
  * 
@@ -26,10 +22,12 @@ import com.excilys.mars2020.cdb.spring.SpringConfig;
 public class LogicalChecker {
 	
 	@Autowired
-	private Mapper mapper;
+	private CompanyMapper compMapper;
 	
 	@Autowired 
 	CompanyService compServ;
+	
+	LogicalChecker(){};
 	
 	public Optional<LogicalProblem> idGivenChecking (Computer computer, ComputerDAO pcdao){
 		if(computer.getPcId() == 0l) {
@@ -53,7 +51,7 @@ public class LogicalChecker {
 	}
 	
 	public Optional<LogicalProblem> companyIsUnknownChecking (Company company){
-		if(compServ.companyInDb(mapper.companyToCompanyDTO(company))) {
+		if(company==null || compServ.companyInDb(compMapper.companyToCompanyDTO(company))) {
 			return Optional.empty();
 		}
 		return Optional.of(LogicalProblem.createUnknownCompanyProblem("given company : " + company.getName() + " isn't in the DB !"));

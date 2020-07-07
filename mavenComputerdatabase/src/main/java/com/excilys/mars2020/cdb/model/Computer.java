@@ -2,20 +2,43 @@ package com.excilys.mars2020.cdb.model;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 /**
  * Computer representation
  * @author remi
  *
  */
+@Entity
+@Table(name="computer")
 public class Computer {
 	
 	//required attribute
+	@Column(name="name")
 	private String name;
 	//optionnal attributes
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="id")
 	private Long pcId;
+	@Column(name="introduced")
 	private LocalDate introduced;
+	@Column(name="discontinued")
 	private LocalDate discontinued;
+	@JoinColumn(name="company_id")
+	@ManyToOne
 	private Company company;
+	
+	public Computer () {
+		super();
+	}
 	
 	/**
 	 * Constructor using BUILDER design pattern
@@ -23,7 +46,9 @@ public class Computer {
 	 */
 	private Computer (Builder builder) {
 		this.name = builder.name;
-		this.pcId = builder.pcId;
+		if(builder.pcId > 0) {
+			this.pcId = builder.pcId;
+		}
 		this.introduced = builder.introduced;
 		this.discontinued = builder.discontinued;
 		this.company = builder.company;

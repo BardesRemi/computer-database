@@ -4,30 +4,30 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
-import com.excilys.mars2020.cdb.persistance.CompanyDAO;
-import com.excilys.mars2020.cdb.persistance.ComputerDAO;
+import com.excilys.mars2020.cdb.persistence.OrderByPossibilities;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
-import com.excilys.mars2020.cdb.spring.SpringConfig;
-import com.excilys.mars2020.cdb.persistance.OrderByPossibilities;
-import com.excilys.mars2020.cdb.ui.CLI;
 
 /**
  * Class managing all users interactions and running the program
  * @author remi
  *
  */
+@Component
 public class ControlerUi {
 	
+	@Autowired
 	private CompanyService compServ;
+	@Autowired
 	private ComputerService pcServ;
+	
 	private CLI view;
 	private final Scanner scanner;
 	
@@ -43,10 +43,6 @@ public class ControlerUi {
 	private static final String ENDING_TEXT = "\n Do you want to make an other action ? (y or n) \n";
 	
 	public ControlerUi () {
-		AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
-		
-		this.pcServ = appContext.getBean(ComputerService.class);
-		this.compServ = appContext.getBean(CompanyService.class);
 		this.view = new CLI();
 		this.scanner = new Scanner(System.in);
 	}

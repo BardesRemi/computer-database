@@ -26,6 +26,7 @@
                 <div class="col-xs-8 col-xs-offset-2 box">
                     <h1><spring:message code="add.title"/></h1>
                     <form id="pcInfoForm" action="addComputer" method="GET">
+                     <input type="hidden" name="add" id="add" value="true" >
                         <fieldset>
                             <div class="form-group">
                                 <label for="computerName"><spring:message code="add.pcName"/></label>

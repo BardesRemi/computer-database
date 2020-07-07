@@ -17,7 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <junit.version>4.11</junit.version>
+    <junit.version>4.12</junit.version>
     <slf4j.version>1.7.30</slf4j.version>
     <mysqlConnector.version>8.0.19</mysqlConnector.version>
     <mockito.version>2.5.0</mockito.version>
@@ -29,6 +29,8 @@
     <HikariCP.version>3.4.5</HikariCP.version>
     <spring.version>5.2.7.RELEASE</spring.version>
     <logback.version>1.2.3</logback.version>
+    <hibernate.version>5.4.18.Final</hibernate.version>
+    <criteria.version>7.4.0</criteria.version>
   </properties>
 
   <dependencies>
@@ -116,10 +118,25 @@
 	</dependency>
 	<dependency>
 	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-orm</artifactId>
+	    <version>${spring.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.springframework</groupId>
 	    <artifactId>spring-test</artifactId>
 	    <version>${spring.version}</version>
 	    <scope>test</scope>
-	</dependency>	
+	</dependency>
+	<dependency>
+	    <groupId>org.hibernate</groupId>
+	    <artifactId>hibernate-core</artifactId>
+	    <version>5.4.18.Final</version>
+	</dependency>
+	<dependency>
+	    <groupId>net.n2oapp.criteria</groupId>
+	    <artifactId>criteria-api</artifactId>
+	    <version>${criteria.version}</version>
+	</dependency>
 	
   </dependencies>
 

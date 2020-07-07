@@ -7,19 +7,10 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import com.excilys.mars2020.cdb.service.CompanyService;
-import com.excilys.mars2020.cdb.service.ComputerService;
-import com.excilys.mars2020.cdb.spring.SpringConfig;
-import com.excilys.mars2020.cdb.validations.LogicalChecker;
 
 public class DateMapperTest {
-	
-	private static AnnotationConfigApplicationContext appContext = SpringConfig.getContext();
 
-	private DateMapper dateMapper = appContext.getBean(DateMapper.class);
+	private DateMapper dateMapper = new DateMapper();
 
 	@Test
 	public void timestamptoLocalDateTest() {

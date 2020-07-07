@@ -14,20 +14,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
+import com.excilys.mars2020.cdb.mapper.CompanyMapper;
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.CompanyDTO;
-import com.excilys.mars2020.cdb.persistance.CompanyDAO;
-import com.excilys.mars2020.cdb.spring.SpringConfig;
+import com.excilys.mars2020.cdb.persistence.CompanyDAO;
 
 @RunWith (MockitoJUnitRunner.class)
 public class CompanyServiceTest {
 	@Mock 
 	CompanyDAO MockDAO;
+	
+	@Mock
+	CompanyMapper compMapper;
 	
 	@Mock
 	Mapper mapper;
@@ -62,7 +63,7 @@ public class CompanyServiceTest {
 	}
 	
 	private void mockGetCountCompanies() {
-		Mockito.when(MockDAO.countAllCompanies()).thenReturn(compList.size());
+		Mockito.when(MockDAO.countAllCompanies()).thenReturn((long)compList.size());
 	}
 	
 	private void mockGetAllCompanies() {
@@ -71,19 +72,19 @@ public class CompanyServiceTest {
 	
 	private void mockCompanyDTOToCompany() {
 		try {
-			Mockito.when(mapper.companyDTOToCompany(dellId0DTO)).thenReturn(Optional.of(dellId0));
-			Mockito.when(mapper.companyDTOToCompany(lenovoId1DTO)).thenReturn(Optional.of(lenovoId1));
-			Mockito.when(mapper.companyDTOToCompany(id2DTO)).thenReturn(Optional.of(id2));
-			Mockito.when(mapper.companyDTOToCompany(dellId10DTO)).thenReturn(Optional.of(dellId10));
+			Mockito.when(compMapper.companyDTOToCompany(dellId0DTO)).thenReturn(Optional.of(dellId0));
+			Mockito.when(compMapper.companyDTOToCompany(lenovoId1DTO)).thenReturn(Optional.of(lenovoId1));
+			Mockito.when(compMapper.companyDTOToCompany(id2DTO)).thenReturn(Optional.of(id2));
+			Mockito.when(compMapper.companyDTOToCompany(dellId10DTO)).thenReturn(Optional.of(dellId10));
 		} catch (ParseExceptions e) {
 			e.printStackTrace();
 		}
 	}
 	
 	private void mockCompanyToCompanyDTO() {
-		Mockito.when(mapper.companyToCompanyDTO(dellId0)).thenReturn(dellId0DTO);
-		Mockito.when(mapper.companyToCompanyDTO(lenovoId1)).thenReturn(lenovoId1DTO);
-		Mockito.when(mapper.companyToCompanyDTO(id2)).thenReturn(id2DTO);
+		Mockito.when(compMapper.companyToCompanyDTO(dellId0)).thenReturn(dellId0DTO);
+		Mockito.when(compMapper.companyToCompanyDTO(lenovoId1)).thenReturn(lenovoId1DTO);
+		Mockito.when(compMapper.companyToCompanyDTO(id2)).thenReturn(id2DTO);
 	}
 	
 	@Before
@@ -117,7 +118,7 @@ public class CompanyServiceTest {
 	
 	@Test
 	public void getCountCompanies() {
-		Mockito.when(MockDAO.countAllCompanies()).thenReturn(compList.size());
+		Mockito.when(MockDAO.countAllCompanies()).thenReturn((long)compList.size());
 		assertTrue(myService.getCountCompanies()==3);
 	}
 }
