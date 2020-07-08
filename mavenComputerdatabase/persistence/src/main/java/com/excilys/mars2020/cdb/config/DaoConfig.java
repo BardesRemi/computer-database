@@ -21,14 +21,9 @@ import org.springframework.context.annotation.Bean;
 @EnableTransactionManagement
 public class DaoConfig {
 	
-	@Bean(destroyMethod = "")
+	@Bean
 	public HikariDataSource HikariDataSource() {
 		return new HikariDataSource(new HikariConfig("/db.properties"));
-	}
-	
-	@Bean
-	public NamedParameterJdbcTemplate namedParameterJdbcTemplate(HikariDataSource datasource) {
-		return new NamedParameterJdbcTemplate(datasource);
 	}
 	
 	@Bean
