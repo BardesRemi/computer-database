@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.excilys.mars2020.cdb.dto.CompanyDTO;
+import com.excilys.mars2020.cdb.dto.ComputerDTO;
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.mapper.Mapper;
-import com.excilys.mars2020.cdb.model.CompanyDTO;
-import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.service.CompanyService;
 import com.excilys.mars2020.cdb.service.ComputerService;
 

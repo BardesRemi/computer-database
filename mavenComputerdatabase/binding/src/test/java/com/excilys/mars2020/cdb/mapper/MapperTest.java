@@ -13,6 +13,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.mars2020.cdb.config.BindingConfig;
+import com.excilys.mars2020.cdb.dto.CompanyDTO;
+import com.excilys.mars2020.cdb.dto.ComputerDTO;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.model.*;
 

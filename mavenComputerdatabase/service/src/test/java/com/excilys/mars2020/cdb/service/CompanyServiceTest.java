@@ -15,11 +15,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.excilys.mars2020.cdb.dto.CompanyDTO;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.mapper.CompanyMapper;
 import com.excilys.mars2020.cdb.mapper.Mapper;
 import com.excilys.mars2020.cdb.model.Company;
-import com.excilys.mars2020.cdb.model.CompanyDTO;
 import com.excilys.mars2020.cdb.persistence.CompanyDAO;
 
 @RunWith (MockitoJUnitRunner.class)

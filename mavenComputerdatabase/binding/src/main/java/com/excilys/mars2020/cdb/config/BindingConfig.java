@@ -4,5 +4,5 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = {"com.excilys.mars2020.cdb.exceptions", "com.excilys.mars2020.cdb.mapper" } )
+@ComponentScan(basePackages = {"com.excilys.mars2020.cdb.exceptions", "com.excilys.mars2020.cdb.mapper", "com.excilys.mars2020.cdb.dto" } )
 public class BindingConfig {}

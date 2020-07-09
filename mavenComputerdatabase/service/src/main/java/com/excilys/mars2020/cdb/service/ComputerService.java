@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.excilys.mars2020.cdb.dto.ComputerDTO;
 import com.excilys.mars2020.cdb.exceptions.LogicalExceptions;
 import com.excilys.mars2020.cdb.exceptions.LogicalProblem;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.mapper.ComputerMapper;
 import com.excilys.mars2020.cdb.model.Computer;
-import com.excilys.mars2020.cdb.model.ComputerDTO;
 import com.excilys.mars2020.cdb.model.Pagination;
 import com.excilys.mars2020.cdb.persistence.ComputerDAO;
 import com.excilys.mars2020.cdb.persistence.OrderByPossibilities;

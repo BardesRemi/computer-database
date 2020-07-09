@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.excilys.mars2020.cdb.dto.CompanyDTO;
 import com.excilys.mars2020.cdb.exceptions.ParseExceptions;
 import com.excilys.mars2020.cdb.exceptions.ParseProblem;
 import com.excilys.mars2020.cdb.model.Company;
-import com.excilys.mars2020.cdb.model.CompanyDTO;
 
 @Component
 public class CompanyMapper {

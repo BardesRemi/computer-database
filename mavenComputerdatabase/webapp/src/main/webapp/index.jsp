@@ -15,7 +15,7 @@
 		<c:if test="${param.logout}">
 		<div ><spring:message code="login.logoutMsg"/></div>
 		</c:if>
-        <form action="/login" method="get">
+        <form action="dashboard" method="get">
             <div><label> <spring:message code="login.username"/> <input type="text" name="username"/> </label></div>
             <div><label> <spring:message code="login.password"/> <input type="password" name="password"/> </label></div>
             <div><input type="submit" value="Sign In"/></div>

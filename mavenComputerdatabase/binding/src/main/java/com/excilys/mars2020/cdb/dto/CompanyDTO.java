@@ -1,4 +1,4 @@
-package com.excilys.mars2020.cdb.model;
+package com.excilys.mars2020.cdb.dto;
 
 public class CompanyDTO {
 	
