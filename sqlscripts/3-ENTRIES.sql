@@ -1,3 +1,6 @@
+insert into user (id,username,password,role) values (1, 'firstUser', '123456789', 'USER');
+insert into user (id,username,password,role) values (2, 'admin', 'admin123', 'ADMIN');
+
 insert into company (id,name) values (  1,'Apple Inc.');
 insert into company (id,name) values (  2,'Thinking Machines');
 insert into company (id,name) values (  3,'RCA');

@@ -24,7 +24,7 @@ drop schema if exists `computer-database-db`;
     id                        bigint not null auto_increment,
     username                  varchar(32),
     password                  varchar(32),
-    enabled                   bit,
+    enabled                   TINYINT default 1,
     role                      varchar(32),
     constraint pk_user primary key (id))
   ;
