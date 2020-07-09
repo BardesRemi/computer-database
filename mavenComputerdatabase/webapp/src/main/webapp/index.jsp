@@ -9,15 +9,16 @@
 		<title>Welcoming Hub</title>
 	</head>
 	<body>
-		<h2><spring:message code="login.title"/></h2>
-		<form method="get" action="dashboard">
-			<label for="username"><spring:message code="login.username"/></label>
-			<input type="text" class="form-control" id="username" name="username" placeholder="<spring:message code="login.username"/>" required>
-			
-			<label for="password"><spring:message code="login.password"/></label>
-			<input type="text" class="form-control" id="password" name="password" placeholder="<spring:message code="password"/>" required>              
-		
-			<input type="submit" class="form-control" id="confirmation" name="confirmation" value="<spring:message code="login.validate"/>">
-		</form>
-	</body>
+		<c:if test="${param.error}">
+		<div ><spring:message code="login.errorMsg"/></div>
+		</c:if>
+		<c:if test="${param.logout}">
+		<div ><spring:message code="login.logoutMsg"/></div>
+		</c:if>
+        <form action="/login" method="get">
+            <div><label> <spring:message code="login.username"/> <input type="text" name="username"/> </label></div>
+            <div><label> <spring:message code="login.password"/> <input type="password" name="password"/> </label></div>
+            <div><input type="submit" value="Sign In"/></div>
+        </form>
+    </body>
 </html>
