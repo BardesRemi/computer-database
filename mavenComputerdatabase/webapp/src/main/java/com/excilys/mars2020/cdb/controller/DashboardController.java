@@ -21,7 +21,7 @@ public class DashboardController {
 	@Autowired
 	ComputerService pcService;
 	
-	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
 	
 	@GetMapping("/dashboard")
 	public ModelAndView initPage(@RequestParam(name="currPage", required=false, defaultValue="0") String currPage,
@@ -67,7 +67,7 @@ public class DashboardController {
 			
 			return model;
 		} catch(NumberFormatException e) {
-			logger.info("Number Format exception from {}", DashboardController.class.getSimpleName());
+			LOGGER.info("Number Format exception from {}", DashboardController.class.getSimpleName());
 			return model;
 		}
 	}

@@ -16,6 +16,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.mars2020.cdb.model.Company;
@@ -31,7 +33,8 @@ import com.excilys.mars2020.cdb.model.Pagination;
 @Repository
 public class ComputerDAO {
 	
-	
+	@SuppressWarnings("unused")
+	private final static Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 	
 	private CriteriaBuilder criteriaBuilder;
 	

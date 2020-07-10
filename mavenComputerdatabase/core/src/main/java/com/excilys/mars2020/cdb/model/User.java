@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 @Entity
-@Table(name = "USER")
+@Table(name = "user")
 public class User implements UserDetails {
 
 	private static final long serialVersionUID = 165216498465133154L;
@@ -172,6 +172,7 @@ public class User implements UserDetails {
 		private long id;
 		private final String username;
 		private final String password;
+		@SuppressWarnings("unused")
 		private Boolean enabled;
 		private String role;
 		

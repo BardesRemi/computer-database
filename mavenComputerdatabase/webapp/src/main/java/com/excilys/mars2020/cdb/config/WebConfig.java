@@ -20,7 +20,7 @@ import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = { "com.excilys.mars2020.cdb.controller"})
+@ComponentScan(basePackages = { "com.excilys.mars2020.cdb.controller" })
 public class WebConfig implements WebMvcConfigurer {
 	
 	@Override

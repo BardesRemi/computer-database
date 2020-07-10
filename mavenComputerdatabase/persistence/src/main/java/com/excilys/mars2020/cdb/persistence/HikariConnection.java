@@ -3,9 +3,15 @@ package com.excilys.mars2020.cdb.persistence;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.zaxxer.hikari.HikariDataSource;
 
 public class HikariConnection implements AutoCloseable{
+	
+	@SuppressWarnings("unused")
+	private final static Logger LOGGER = LoggerFactory.getLogger(HikariConnection.class);
 	
 	private static HikariConnection hikConnect;
 	

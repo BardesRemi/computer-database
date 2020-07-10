@@ -16,6 +16,8 @@ import com.excilys.mars2020.cdb.model.Company;
 import com.excilys.mars2020.cdb.model.Company_;
 import com.excilys.mars2020.cdb.model.Pagination;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public class CompanyDAO {
+	
+	@SuppressWarnings("unused")
+	private final static Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
 	
 	private CriteriaBuilder criteriaBuilder;
 	
