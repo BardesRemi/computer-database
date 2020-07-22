@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,9 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.mars2020.cdb.dto.UserDTO;
 import com.excilys.mars2020.cdb.model.User;
+import com.excilys.mars2020.cdb.persistence.UserDAO;
 
 @Service
 public class CustomUserDetailService implements UserDetailsService{
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(CustomUserDetailService.class);
 	
 	@Autowired
 	UserService userService;
@@ -43,7 +48,7 @@ public class CustomUserDetailService implements UserDetailsService{
 			throw new UsernameNotFoundException("User " + username + " not found");
 		}
 		
-		User user = userOpt.get(); 
+		User user = userOpt.get();
 		
 		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getGrantedAuthorities(user));
 	}

@@ -13,8 +13,7 @@ import com.excilys.mars2020.cdb.service.UserService;
 
 @Controller
 public class LoginController {
-
-	@SuppressWarnings("unused")
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 	
 	@Autowired
@@ -28,6 +27,7 @@ public class LoginController {
 		if(resCredential < 0) {
 			return new ModelAndView("login").addObject("error", true);
 		}
+		LOGGER.info("connection succesfull, redirect to dashboard with user id : {}", resCredential);
 		return new ModelAndView("dashboard");
 	}
 	

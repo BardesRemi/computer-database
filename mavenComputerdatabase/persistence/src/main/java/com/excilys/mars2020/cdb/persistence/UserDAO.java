@@ -52,13 +52,13 @@ public class UserDAO {
 			LOGGER.info("User with username = {} found", username);
 			return Optional.of(user.getId());
 		} catch (NoResultException noResExc) {
-			LOGGER.info("No User with username {} and Password {} in the db", username, password);
+			LOGGER.info("No User with username {} and the given password in the db", username);
 			return Optional.empty();
 		} catch (NonUniqueResultException multResExc) {
-			LOGGER.info("Multiple User with username {} and Password {} in the db", username, password);
+			LOGGER.info("Multiple User with username {} and the given password in the db", username);
 			return Optional.empty();
 		} catch (Exception e) {
-			LOGGER.info("Something went wrong when User with username {} and Password {} was searched in the db", username, password);
+			LOGGER.info("Something went wrong when User with username {} and the given password was searched in the db", username);
 			return Optional.empty();
 		}
 		

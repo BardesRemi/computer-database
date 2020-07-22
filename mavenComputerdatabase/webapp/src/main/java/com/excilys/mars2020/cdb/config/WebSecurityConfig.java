@@ -22,18 +22,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.csrf().disable()
-				.authorizeRequests().antMatchers("/").permitAll().anyRequest().authenticated()
-				.and().formLogin().loginPage("/WEB-INF/view/login").defaultSuccessUrl("/WEB-INF/view/dashboard")
-																	   .failureUrl("/WEB-INF/view/login?error=true")
-				.and().authorizeRequests().antMatchers("/WEB-INF/view/dashboard").hasAnyRole("USER","ADMIN")
-				.and().authorizeRequests().antMatchers("/WEB-INF/view/edit", "/WEB-INF/view/delete", "/WEB-INF/view/add")
-										  .hasRole("ADMIN")
-				.and().logout().logoutUrl("/WEB-INF/view/login?logout=true");
-		}
+			http
+			.csrf()
+			.disable();
 		
-		@Override
-		protected void configure(AuthenticationManagerBuilder authManagerBuilder) throws Exception {
+			http
+			.authorizeRequests()
+				.antMatchers("/login").permitAll()
+				.antMatchers("/dashboard").access("hasAnyRole('USER', 'ADMIN')")
+				.antMatchers("/editComputer", "/addComputer").access("hasRole('ADMIN')");
+				
+			
+			http
+			.authorizeRequests().and().formLogin()
+				.loginPage("/login")
+				.loginProcessingUrl("/j_spring_security_check")
+				.defaultSuccessUrl("/dashboard")
+				.failureUrl("/login?error=true")
+				.usernameParameter("username")
+				.passwordParameter("password")
+				.permitAll()
+			.and()
+				.logout()
+				.logoutUrl("/logout")
+				.permitAll();
+			}
+		
+		@Autowired
+		protected void configureGlobal(AuthenticationManagerBuilder authManagerBuilder) throws Exception {
 			authManagerBuilder.userDetailsService(customUserDetailService).passwordEncoder(bCryptPasswordEncoder());
 		}
 		
