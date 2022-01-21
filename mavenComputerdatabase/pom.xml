@@ -22,7 +22,7 @@
     <mysqlConnector.version>8.0.19</mysqlConnector.version>
     <mockito.version>2.5.0</mockito.version>
     <dbunit.version>2.7.0</dbunit.version>
-    <h2.version>1.4.200</h2.version>
+    <h2.version>2.1.210</h2.version>
     <tomcat.version>9.0.35</tomcat.version>
     <servelt.version>4.0.1</servelt.version>
     <jstl.version>1.2</jstl.version>
