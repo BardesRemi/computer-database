@@ -27,7 +27,7 @@
     <servelt.version>4.0.1</servelt.version>
     <jstl.version>1.2</jstl.version>
     <HikariCP.version>3.4.5</HikariCP.version>
-    <spring.version>5.2.7.RELEASE</spring.version>
+    <spring.version>5.3.18</spring.version>
     <spring.security.version>5.3.2.RELEASE</spring.security.version>
     <logback.version>1.2.3</logback.version>
     <hibernate.version>5.4.18.Final</hibernate.version>
